@@ -13,7 +13,7 @@
 
 # Hur Unity använder sin mic
 
-```C#
+```javascript
 //detect the default microphone
 audio.clip = Microphone.Start(selectedDevice, true, 10, 44100);
 
