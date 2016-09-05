@@ -12,38 +12,59 @@
 
 
 # Hur Unity använder sin mic
-  //detect the default microphone
-  audio.clip = Microphone.Start(selectedDevice, true, 10, 44100);
-  //loop the playing of the recording so it will be realtime
-  audio.loop = true;
-  //if you only need the data stream values  check Mute, if you want to hear yourself ingame don't check Mute. 
-  audio.mute = Mute;
-  //don't do anything until the microphone started up
-  while (!(Microphone.GetPosition(selectedDevice) > 0)){
-   
-  }
-  //Put the clip on play so the data stream gets ingame on realtime
-  audio.Play();
-   
-  }
+
+ //detect the default microphone
+ 
+ audio.clip = Microphone.Start(selectedDevice, true, 10, 44100);
+ 
+ //loop the playing of the recording so it will be realtime
+ 
+ audio.loop = true;
+ 
+ //if you only need the data stream values  check Mute, if you want to hear yourself ingame don't check Mute. 
+ 
+ audio.mute = Mute;
+ 
+ //don't do anything until the microphone started up
+ 
+ while (!(Microphone.GetPosition(selectedDevice) > 0)){
   
-  //apply the mic input data stream to a float;
-  function Update () {
-  //set timer for refreshing memory.
-   mTimer += Time.deltaTime;
-   //refresh the memory
+ }
+ //Put the clip on play so the data stream gets ingame on realtime
+ 
+ audio.Play();
+  
+ }
+ 
+ //apply the mic input data stream to a float;
+ 
+ function Update () {
+ 
+ //set timer for refreshing memory.
+ 
+  mTimer += Time.deltaTime;
+  
+  //refresh the memory
+  
   if (micSelected == true){
+  
    if (mTimer >= mRefTime) {
+   
   				StopMicrophone();
+  				
   				StartMicrophone();
+  				
   				mTimer = 0;
   			}
   		   }	
    
   if(Microphone.IsRecording(selectedDevice)){
+  
     loudness = GetDataStream()*sensitivity*(sourceVolume/10);
+    
     if(debug){
-    Debug.Log(loudness);
+    
+     Debug.Log(loudness);
     }
     }
    
