@@ -1,14 +1,14 @@
 # Sonar
 
 # Intressanta länkar
-  http://www.shaderslab.com/index.php?post/Echolocation-effect
-  https://support.unity3d.com/hc/en-us/articles/206485253-How-do-I-get-Unity-to-playback-a-Microphone-input-in-real-time-
-  http://forum.unity3d.com/threads/blow-detection-using-ios-microphone.118215/#post-801969
-  https://docs.unity3d.com/Manual/SL-DepthTextures.html
+  * http://www.shaderslab.com/index.php?post/Echolocation-effect
+  * https://support.unity3d.com/hc/en-us/articles/206485253-How-do-I-get-Unity-to-playback-a-Microphone-input-in-real-time-
+  * http://forum.unity3d.com/threads/blow-detection-using-ios-microphone.118215/#post-801969
+  * https://docs.unity3d.com/Manual/SL-DepthTextures.html
 
 # Basic shader tutorials
-  https://www.youtube.com/watch?v=T-HXmQAMhG0
-  https://www.youtube.com/watch?v=Tjl8jP5Nuvc
+  * https://www.youtube.com/watch?v=T-HXmQAMhG0
+  * https://www.youtube.com/watch?v=Tjl8jP5Nuvc
 
 
 # Hur Unity använder sin mic
