@@ -45,12 +45,18 @@ public class AudioMeasure : MonoBehaviour {
 		}
 
 		aud.Play();
+		prevTime = Time.time;
 	}
 
 	void Update() {
 		AnalyzeSound();
-		pointLight.range = DbValue+20;
-		pointLight.color = Color.HSVToRGB (PitchValue * .001f, .7f, .8f);
+		if (Time.time - prevTime >= .1f) {
+			if(DbValue > -10)
+				pointLight.range = DbValue + 20;
+			pointLight.color = Color.HSVToRGB (PitchValue * .001f, .7f, .8f);
+			prevTime = Time.time;
+		}
+		pointLight.range -= .1f;
 	}
 
 	void AnalyzeSound() {
