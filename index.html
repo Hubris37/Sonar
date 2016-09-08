@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Yo</title>
+        <meta charset="utf-8">
+    </head>
+    
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+    </style>
+
+    <body>
+        <div id="container"></div>
+    </body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r76/three.min.js"></script>
+
+    <script type="x-shader/x-vertex" id="vertexShader">
+        varying vec2 vUv;
+
+        void main() {
+
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+        }
+    </script>
+
+    <script type="x-shader/x-vertex" id="fragmentShader">
+        varying vec2 vUv;
+
+        void main() {
+            // colour is RGBA: u, v, 0, 1
+            gl_FragColor = vec4( vec3( vUv, 0. ), 1. );
+
+        }
+    </script>
+
+    <script type="text/javascript" id="mainCode">
+        var container, 
+            renderer, 
+            scene, 
+            camera, 
+            mesh, 
+            start = Date.now(),
+            fov = 30;
+
+        window.addEventListener( 'load', function() {
+
+            // grab the container from the DOM
+            container = document.getElementById( "container" );
+            
+            // create a scene
+            scene = new THREE.Scene();
+
+            // create a camera the size of the browser window
+            // and place it 100 units away, looking towards the center of the scene
+            camera = new THREE.PerspectiveCamera( 
+                fov, 
+                window.innerWidth / window.innerHeight, 
+                1, 
+                10000 );
+            camera.position.z = 100;
+            camera.target = new THREE.Vector3( 0, 0, 0 );
+
+            scene.add( camera );
+
+            material = new THREE.ShaderMaterial( {
+                vertexShader: document.getElementById( 'vertexShader' ).textContent,
+                fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+            } );
+            
+            // create a sphere and assign the material
+            mesh = new THREE.Mesh( 
+                new THREE.IcosahedronGeometry( 10, 4 ), 
+                material 
+            );
+            scene.add( mesh );
+            
+            // create the renderer and attach it to the DOM
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize( window.innerWidth-5, window.innerHeight-5 );
+            
+            container.appendChild( renderer.domElement );
+
+            render();
+
+        } );
+
+        function render() {
+
+            // let there be light
+            renderer.render( scene, camera );
+            requestAnimationFrame( render );
+            
+        }
+    </script>
+
+</html>
