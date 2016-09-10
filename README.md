@@ -11,6 +11,7 @@
   * https://www.youtube.com/watch?v=T-HXmQAMhG0
   * https://www.youtube.com/watch?v=Tjl8jP5Nuvc
   * http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/
+  * https://docs.unity3d.com/Manual/SL-Reference.html
 
 
 # Hur Unity använder sin mic
