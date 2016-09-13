@@ -26,14 +26,14 @@ public class ShaderController : MonoBehaviour {
         audioSrc = FindObjectOfType<AudioSource>();
         audioMeasure = audioSrc.GetComponent<AudioMeasure>();
         r = GetComponent<Renderer>();
-        r.material.shader = Shader.Find("Custom/Echolocation");
+        r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
 
         for(int i = 0; i < 10; ++i)
         {
             colors[i] = new Color(0.3f, 0.6f, 0.7f);
         }
         colors[1] = new Color(0.8f, 0.3f, 0.3f);
-        r.material.SetColorArray("_Color", colors);
+        r.sharedMaterial.SetColorArray("_Color", colors);
     }
 	
 	// Update is called once per frame
@@ -115,7 +115,7 @@ public class ShaderController : MonoBehaviour {
             }
         }
 
-        r.material.SetVectorArray("_Center", centers);
-        r.material.SetFloatArray("_Radius", radius);
+        r.sharedMaterial.SetVectorArray("_Center", centers);
+        r.sharedMaterial.SetFloatArray("_Radius", radius);
 	}
 }
