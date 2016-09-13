@@ -35,5 +35,15 @@ public class FirstPersonController : MonoBehaviour {
 
 	void FixedUpdate() {
 		myRigidBody.MovePosition(myRigidBody.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
+		Fire();
+	}
+
+	void Fire() {
+		RaycastHit objectHit;
+		Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
+		Debug.DrawRay(cameraT.position, fwd * 50, Color.green);
+		if (Physics.Raycast(cameraT.position, fwd, out objectHit, 50)) {
+
+		}
 	}
 }
