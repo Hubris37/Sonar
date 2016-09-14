@@ -38,7 +38,7 @@ Shader "Custom/Echolocation" {
 	}
 
 	fixed4 frag(v2f i) : COLOR {
-		fixed4 finalColor = fixed4(0, 0, 0, 1);
+		fixed4 finalColor = fixed4(0, 0, 0, 0);
 
 		/*float dist = distance(_Center, i.worldPos);
 		float val = 1 - step(dist, _Radius - 0.1) * 0.5;
@@ -52,10 +52,10 @@ Shader "Custom/Echolocation" {
 			float val = step(_Radius[j] - 1.5, dist) * step(dist, _Radius[j]);// * val;
 
 //			finalColor += (1 - _Radius[1]/_MaxRadius[1])* _Color[j] * val ; // TODO: Make this work for multiple circles
-			finalColor += (1 - _Radius[j]/_MaxRadius[j]) * fixed4(_Color[j].rgb * val  , 1);
+			finalColor += (1 - _Radius[j]/_MaxRadius[j]) * fixed4(_Color[j].rgb * val  , 0.01);
 		}
 
-		finalColor.a = 1;
+		/*finalColor.a = 1;*/
 		return finalColor;
 	}
 

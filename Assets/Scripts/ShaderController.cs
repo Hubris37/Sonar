@@ -18,6 +18,8 @@ public class ShaderController : MonoBehaviour {
 	private float[] maxRadius = new float[MAX_CIRCLES];
 	private float numCircles = 2;
 
+    private Transform cameraT;
+
     private bool fired, clickFired = false;
     private bool grow, clickGrow = true;
 
@@ -25,6 +27,7 @@ public class ShaderController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        cameraT = Camera.main.transform;
         audioSrc = FindObjectOfType<AudioSource>();
         audioMeasure = audioSrc.GetComponent<AudioMeasure>();
         r = GetComponent<Renderer>();
@@ -43,7 +46,7 @@ public class ShaderController : MonoBehaviour {
 	void Update () {
         if (audioMeasure.DbValue > 0 && !fired)
         {
-            size = Mathf.Min(size + (float)(audioMeasure.DbValue*0.1), 50);
+            size = Mathf.Min(size + (float)(audioMeasure.DbValue*0.1), 10);
 			maxRadius [0] = size;
             //Debug.Log(size);
         }
@@ -52,8 +55,8 @@ public class ShaderController : MonoBehaviour {
             if(!fired)
             {
                 RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit))
+                Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
+                if (Physics.Raycast(cameraT.position, fwd, out hit))
                 {
                     centers[0] = hit.point;
                 }
@@ -68,7 +71,7 @@ public class ShaderController : MonoBehaviour {
             {
                 if (grow)
                 {
-                    radius[0] += .2f;
+                    radius[0] += .1f;
                     if (radius[0] >= size)
                         grow = false;
                     prevTime = Time.time;
