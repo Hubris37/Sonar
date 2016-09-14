@@ -1,130 +1,118 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ShaderController : MonoBehaviour {
 
-    public static Shader s;
     public Renderer r;
 
     public AudioSource audioSrc;
 
     private AudioMeasure audioMeasure;
 
-    const int MAX_CIRCLES = 10;
-    private float size, clickSize = 0;
-    private float[] radius = new float[MAX_CIRCLES];
-    private Color[] colors = new Color[MAX_CIRCLES];
-    private Vector4[] centers = new Vector4[MAX_CIRCLES];
-	private float[] maxRadius = new float[MAX_CIRCLES];
-	private float numCircles = 2;
+    const int MAX_CIRCLES = 200;
+    // Variable size lists used to be able to add and remove circles easily
+    private List<float> radius = new List<float>();
+    private List<Color> colors = new List<Color>();
+    private List<Vector4> centers = new List<Vector4>();
+    private List<float> maxRadius = new List<float>();
+
+    // Fixed size arrays used because shader needs them fixed
+    private float[] radiusArray = new float[MAX_CIRCLES];
+    private Color[] colorsArray = new Color[MAX_CIRCLES];
+    private Vector4[] centersArray = new Vector4[MAX_CIRCLES];
+	private float[] maxRadiusArray = new float[MAX_CIRCLES];
+
+	private int numCircles = 0;
 
     private Transform cameraT;
 
-    private bool fired, clickFired = false;
-    private bool grow, clickGrow = true;
+    private float prevTime, prevSoundCheck;
 
-    private float prevTime, clickTime;
+    // float colorCounter = 0;
 
     // Use this for initialization
     void Start () {
         cameraT = Camera.main.transform;
+
         audioSrc = FindObjectOfType<AudioSource>();
         audioMeasure = audioSrc.GetComponent<AudioMeasure>();
+
         r = GetComponent<Renderer>();
         r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
-
-        for(int i = 0; i < 10; ++i)
-        {
-            colors[i] = new Color(0.3f, 0.6f, 0.7f);
-        }
-        colors[1] = new Color(0.8f, 0.3f, 0.3f);
-		maxRadius [1] = 15;
-        r.sharedMaterial.SetColorArray("_Color", colors);
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (audioMeasure.DbValue > 0 && !fired)
+        if (Time.time - prevSoundCheck > 0.1)
         {
-            size = Mathf.Min(size + (float)(audioMeasure.DbValue*0.1), 10);
-			maxRadius [0] = size;
-            //Debug.Log(size);
-        }
-        else if (size > 0)
-        {
-            if(!fired)
+            if(numCircles < MAX_CIRCLES && audioMeasure.DbValue > .5)
             {
+                // Create a new circle
                 RaycastHit hit;
                 Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
                 if (Physics.Raycast(cameraT.position, fwd, out hit))
                 {
-                    centers[0] = hit.point;
+                    ++numCircles;
+                    maxRadius.Add(Mathf.Min((float)(audioMeasure.DbValue*1.5), 10));
+                    centers.Add(hit.point);
+                    colors.Add(Color.HSVToRGB(audioMeasure.PitchValue*0.001f, .7f, .8f));
+                    radius.Add(0);
+                    // colorCounter = (colorCounter+0.01f)%1; // Can be used to cycle through colors
                 }
-
-                fired = true;
-                prevTime = Time.time;
-                grow = true;
-                radius[0] += 0.1f;
             }
 
-            if(Time.time - prevTime > 0.005)
+            prevSoundCheck = Time.time;
+        }
+
+        if (Time.time - prevTime > 0.005)
+        {
+            for(int i = 0; i < numCircles; ++i)
             {
-                if (grow)
+                radius[i] += .05f;
+
+                if (radius[i] >= maxRadius[i])
                 {
-                    radius[0] += .1f;
-                    if (radius[0] >= size)
-                        grow = false;
-                    prevTime = Time.time;
+                    // Remove circle
+                    radius.RemoveAt(i);
+                    colors.RemoveAt(i);
+                    centers.RemoveAt(i);
+                    maxRadius.RemoveAt(i);
+
+                    --numCircles;
+                    --i;
+                }
+            }
+
+            prevTime = Time.time;
+        }
+
+        // Set shader uniforms
+        r.sharedMaterial.SetInt("_NumCircles", numCircles);
+        if(numCircles > 0)
+        {
+            // Move properties of all the circles to the fixed size arrays
+            for(int i = 0; i < MAX_CIRCLES; ++i)
+            {
+                if(i < numCircles)
+                {
+                    centersArray[i] = centers[i];
+                    radiusArray[i] = radius[i];
+                    maxRadiusArray[i] = maxRadius[i];
+                    colorsArray[i] = colors[i];
                 }
                 else
                 {
-                    radius[0] = size = 0;
-                    fired = false;
+                    // Reset the radius of circles not in use
+                    radiusArray[i] = 0;
                 }
-            }
-        }
-
-        if (Input.GetMouseButtonDown(0) && !clickFired)
-        {
-            clickSize = 10;
-        }
-        else if (clickSize > 0)
-        {
-            if(!clickFired)
-            {
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit))
-                {
-                    centers[1] = hit.point;
-                }
-
-                clickFired = true;
-                clickTime = Time.time;
-                clickGrow = true;
-                radius[1] += 0.1f;
+                
             }
 
-            if (Time.time - clickTime > 0.005)
-            {
-                if (clickGrow)
-                {
-                    radius[1] += .3f;
-                    if (radius[1] >= clickSize)
-                        clickGrow = false;
-                    clickTime = Time.time;
-                }
-                else
-                {
-                    radius[1] = clickSize = 0;
-                    clickFired = false;
-                }
-            }
+            r.sharedMaterial.SetVectorArray("_Center", centersArray);
+            r.sharedMaterial.SetFloatArray("_Radius", radiusArray);
+            r.sharedMaterial.SetFloatArray("_MaxRadius", maxRadiusArray);
+            r.sharedMaterial.SetColorArray("_Color", colorsArray);
         }
-
-        r.sharedMaterial.SetVectorArray("_Center", centers);
-        r.sharedMaterial.SetFloatArray("_Radius", radius);
-		r.sharedMaterial.SetFloatArray("_MaxRadius", maxRadius);
-		r.sharedMaterial.SetFloat("_NumCircles", numCircles);
 	}
 }

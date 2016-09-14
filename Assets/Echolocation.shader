@@ -17,13 +17,13 @@ Shader "Custom/Echolocation" {
 	#pragma fragment frag
 	#include "UnityCG.cginc"
 	
-	#define MAX_CIRCLES 10
+	#define MAX_CIRCLES 200
 
 	float4 _Color[MAX_CIRCLES];
 	float3 _Center[MAX_CIRCLES];
 	float _Radius[MAX_CIRCLES];
 	float _MaxRadius[MAX_CIRCLES];
-	int _NumCircles;
+	int _NumCircles = 0;
 
 	struct v2f {
 		float4 pos : SV_POSITION;
@@ -38,7 +38,7 @@ Shader "Custom/Echolocation" {
 	}
 
 	fixed4 frag(v2f i) : COLOR {
-		fixed4 finalColor = fixed4(0, 0, 0, 0);
+		fixed4 finalColor = fixed4(0, 0, 0, .4);
 
 		/*float dist = distance(_Center, i.worldPos);
 		float val = 1 - step(dist, _Radius - 0.1) * 0.5;
@@ -49,13 +49,12 @@ Shader "Custom/Echolocation" {
 			float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
 			//float val = 1 - step(dist, _Radius[j] - 0.1) * 0.5; // Creates small edge on circle
 
-			float val = step(_Radius[j] - 1.5, dist) * step(dist, _Radius[j]);// * val;
-
-//			finalColor += (1 - _Radius[1]/_MaxRadius[1])* _Color[j] * val ; // TODO: Make this work for multiple circles
+			float val = step(_Radius[j] - .3, dist) * step(dist, _Radius[j]);// * val;
+			
 			finalColor += (1 - _Radius[j]/_MaxRadius[j]) * fixed4(_Color[j].rgb * val  , 0.01);
 		}
 
-		/*finalColor.a = 1;*/
+		// finalColor.a = 1;
 		return finalColor;
 	}
 
