@@ -15,6 +15,7 @@ public class ShaderController : MonoBehaviour {
     private float[] radius = new float[MAX_CIRCLES];
     private Color[] colors = new Color[MAX_CIRCLES];
     private Vector4[] centers = new Vector4[MAX_CIRCLES];
+	private float[] maxRadius = new float[MAX_CIRCLES];
 
     private bool fired, clickFired = false;
     private bool grow, clickGrow = true;
@@ -33,6 +34,7 @@ public class ShaderController : MonoBehaviour {
             colors[i] = new Color(0.3f, 0.6f, 0.7f);
         }
         colors[1] = new Color(0.8f, 0.3f, 0.3f);
+		maxRadius [1] = 15;
         r.sharedMaterial.SetColorArray("_Color", colors);
     }
 	
@@ -40,7 +42,8 @@ public class ShaderController : MonoBehaviour {
 	void Update () {
         if (audioMeasure.DbValue > 0 && !fired)
         {
-            size = Mathf.Min(size + (float)(audioMeasure.DbValue*0.08), 20);
+            size = Mathf.Min(size + (float)(audioMeasure.DbValue*0.1), 50);
+			maxRadius [0] = size;
             //Debug.Log(size);
         }
         else if (size > 0)
@@ -117,5 +120,6 @@ public class ShaderController : MonoBehaviour {
 
         r.sharedMaterial.SetVectorArray("_Center", centers);
         r.sharedMaterial.SetFloatArray("_Radius", radius);
+		r.sharedMaterial.SetFloatArray("_MaxRadius", maxRadius);
 	}
 }

@@ -8,7 +8,9 @@ Shader "Custom/Echolocation" {
 	}
 	SubShader{
 	Pass{
-	Tags{ "RenderType" = "Opaque" }
+	Tags{ "RenderType" = "Transparent" }
+
+	Blend SrcAlpha OneMinusSrcAlpha
 
 	CGPROGRAM
 	#pragma vertex vert
@@ -20,6 +22,7 @@ Shader "Custom/Echolocation" {
 	float4 _Color[MAX_CIRCLES];
 	float3 _Center[MAX_CIRCLES];
 	float _Radius[MAX_CIRCLES];
+	float _MaxRadius[MAX_CIRCLES];
 
 	struct v2f {
 		float4 pos : SV_POSITION;
@@ -34,17 +37,23 @@ Shader "Custom/Echolocation" {
 	}
 
 	fixed4 frag(v2f i) : COLOR {
-		fixed4 finalColor;
+		fixed4 finalColor = fixed4(0, 0, 0, 1);
+
 		/*float dist = distance(_Center, i.worldPos);
 		float val = 1 - step(dist, _Radius - 0.1) * 0.5;
 		val = step(_Radius - 1.5, dist) * step(dist, _Radius) * val;
 		return fixed4(val * _Color.r, val * _Color.g,val * _Color.b, 1.0);*/
+
 		for (int j = 0; j < MAX_CIRCLES; ++j) {
 			float dist = distance(_Center[j], i.worldPos);
-			float val = 1 - smoothstep(dist, _Radius[j] - 0.1, 3) * 0.5;
-			val = smoothstep(_Radius[j] - 1.5, dist, 7) * step(dist, _Radius[j]) * val;
-			finalColor = finalColor + fixed4(val * _Color[j].r, val * _Color[j].g, val * _Color[j].b, 1.0);
+			float val = 1 - step(dist, _Radius[j] - 0.1) * 0.5;
+
+			val = step(_Radius[j] - 1.5, dist) * step(dist, _Radius[j]) * val;
+
+			finalColor += (1 - _Radius[1]/_MaxRadius[1])* _Color[j] * val ; // TODO: Make this work for multiple circles
+			//finalColor += (1 - _Radius[j]/_MaxRadius[j]) * fixed4(_Color[j].rgb * val  , 1);
 		}
+		finalColor.a = 1;
 		return finalColor;
 	}
 
