@@ -16,6 +16,7 @@ public class ShaderController : MonoBehaviour {
     private Color[] colors = new Color[MAX_CIRCLES];
     private Vector4[] centers = new Vector4[MAX_CIRCLES];
 	private float[] maxRadius = new float[MAX_CIRCLES];
+	private float numCircles = 2;
 
     private bool fired, clickFired = false;
     private bool grow, clickGrow = true;
@@ -121,5 +122,6 @@ public class ShaderController : MonoBehaviour {
         r.sharedMaterial.SetVectorArray("_Center", centers);
         r.sharedMaterial.SetFloatArray("_Radius", radius);
 		r.sharedMaterial.SetFloatArray("_MaxRadius", maxRadius);
+		r.sharedMaterial.SetFloat("_NumCircles", numCircles);
 	}
 }
