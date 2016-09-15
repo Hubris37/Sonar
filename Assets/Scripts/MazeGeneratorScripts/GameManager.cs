@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
+	public GameObject Player;
 	public Maze mazePrefab;
 	private Maze mazeInstance;
 
@@ -19,6 +20,8 @@ public class GameManager : MonoBehaviour {
 	private void BeginGame () {
 		mazeInstance = Instantiate (mazePrefab) as Maze;
 		mazeInstance.Generate();
+		Vector3 pos = mazeInstance.GetCell (new IntVector2 (0, 0)).transform.position;
+		Player.transform.position = new Vector3(pos.x, pos.y+.1f, pos.z);
 	}
 
 	private void RestartGame () {
