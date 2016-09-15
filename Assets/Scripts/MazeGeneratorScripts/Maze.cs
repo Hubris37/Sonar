@@ -66,6 +66,7 @@ public class Maze : MonoBehaviour {
     {
         MazeWall wall = Instantiate(wallPrefab) as MazeWall;
         wall.Initialize(cell, otherCell, direction);
+		//wall.transform.localScale = transform.localScale;
         if (otherCell != null)
         {
             wall = Instantiate(wallPrefab) as MazeWall;
@@ -80,6 +81,7 @@ public class Maze : MonoBehaviour {
 		newCell.coordinates = coordinates;
 		newCell.name = "Maze Cell" + coordinates.x + ", " + coordinates.z;
 		newCell.transform.parent = transform;
+		//newCell.transform.localScale = transform.localScale;
 		newCell.transform.localPosition = 
 			new Vector3(coordinates.x - size.x * 0.5f + 0.5f, 0f, coordinates.z - size.z * 0.5f + 0.5f);
 		return newCell;
