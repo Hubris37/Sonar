@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class ShaderController : MonoBehaviour {
 
     public Renderer r;
-
     public AudioSource audioSrc;
+    public float waveFreq = 10; // Number of waves per sec
 
     private AudioMeasure audioMeasure;
 
@@ -24,9 +24,7 @@ public class ShaderController : MonoBehaviour {
 	private float[] maxRadiusArray = new float[MAX_CIRCLES];
 
 	private int numCircles = 0;
-
     private Transform cameraT;
-
     private float prevTime, prevSoundCheck;
 
     // float colorCounter = 0;
@@ -44,7 +42,8 @@ public class ShaderController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Time.time - prevSoundCheck > 0.1)
+        //How often waves should be sent out
+        if (Time.time - prevSoundCheck > (1/waveFreq))
         {
             if(numCircles < MAX_CIRCLES && audioMeasure.DbValue > .5)
             {
