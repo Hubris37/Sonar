@@ -73,6 +73,8 @@ public class ShaderController : MonoBehaviour {
 
                 if (radius[i] >= maxRadius[i])
                 {
+                    // Reset the circle's radius in the fixed size array
+                    radiusArray[i] = 0;
                     // Remove circle
                     radius.RemoveAt(i);
                     colors.RemoveAt(i);
@@ -92,21 +94,12 @@ public class ShaderController : MonoBehaviour {
         if(numCircles > 0)
         {
             // Move properties of all the circles to the fixed size arrays
-            for(int i = 0; i < MAX_CIRCLES; ++i)
+            for(int i = 0; i < numCircles; ++i)
             {
-                if(i < numCircles)
-                {
-                    centersArray[i] = centers[i];
-                    radiusArray[i] = radius[i];
-                    maxRadiusArray[i] = maxRadius[i];
-                    colorsArray[i] = colors[i];
-                }
-                else
-                {
-                    // Reset the radius of circles not in use
-                    radiusArray[i] = 0;
-                }
-                
+                centersArray[i] = centers[i];
+                radiusArray[i] = radius[i];
+                maxRadiusArray[i] = maxRadius[i];
+                colorsArray[i] = colors[i];
             }
 
             r.sharedMaterial.SetVectorArray("_Center", centersArray);
