@@ -13,6 +13,7 @@ public class ShaderController : MonoBehaviour {
     const int MAX_CIRCLES = 200;
     // Variable size lists used to be able to add and remove circles easily
     private List<float> radius = new List<float>();
+	private List<float> expansionSpeed = new List<float>();
     private List<Color> colors = new List<Color>();
     private List<Vector4> centers = new List<Vector4>();
     private List<float> maxRadius = new List<float>();
@@ -22,6 +23,7 @@ public class ShaderController : MonoBehaviour {
     private Color[] colorsArray = new Color[MAX_CIRCLES];
     private Vector4[] centersArray = new Vector4[MAX_CIRCLES];
 	private float[] maxRadiusArray = new float[MAX_CIRCLES];
+	//private float[] expansionSpeedArray = new float[MAX_CIRCLES];
 
 	private int numCircles = 0;
     private Transform cameraT;
@@ -55,8 +57,11 @@ public class ShaderController : MonoBehaviour {
                     ++numCircles;
                     maxRadius.Add(Mathf.Min((float)(audioMeasure.DbValue*1.5), 10));
                     centers.Add(hit.point);
-                    colors.Add(Color.HSVToRGB(audioMeasure.PitchValue*0.001f, .7f, .8f));
+					colors.Add(Color.HSVToRGB(.7f,  audioMeasure.DbValue*0.1f, audioMeasure.PitchValue*0.001f));
+					//colors.Add(Color.HSVToRGB(audioMeasure.PitchValue*0.001f, .7f,  .8f ));
+					expansionSpeed.Add (audioMeasure.PitchValue * 0.0001f);
                     radius.Add(0);
+
                     // colorCounter = (colorCounter+0.01f)%1; // Can be used to cycle through colors
                 }
             }
@@ -68,7 +73,7 @@ public class ShaderController : MonoBehaviour {
         {
             for(int i = 0; i < numCircles; ++i)
             {
-                radius[i] += .05f;
+				radius[i] += expansionSpeed[i];
 
                 if (radius[i] >= maxRadius[i])
                 {
@@ -79,6 +84,7 @@ public class ShaderController : MonoBehaviour {
                     colors.RemoveAt(i);
                     centers.RemoveAt(i);
                     maxRadius.RemoveAt(i);
+					expansionSpeed.RemoveAt(i);
 
                     --numCircles;
                     --i;
