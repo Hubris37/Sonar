@@ -5,7 +5,7 @@ public class FirstPersonController : MonoBehaviour {
 
 	public float mouseSensitivityX = 3.5f;
 	public float mouseSensitivityY = 3.5f;
-	public float walkSpeed = 4;
+	public float walkSpeed = 1;
 
 	Transform cameraT;
 	Rigidbody myRigidBody;
