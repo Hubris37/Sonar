@@ -56,7 +56,7 @@ Shader "Custom/Echolocation" {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
 					//float val = 1 - step(dist, _Radius[j] - 0.1) * 0.5; // Creates small edge on circle
 
-					float val = smoothstep(dist, _Radius[j] - _Width, .95) * step(dist, _Radius[j]);// * val;
+					float val = lerp(0, _Radius[j], dist/_Radius[j]) * step(dist, _Radius[j]);// * val;
 					
 					finalColor += (1 - _Radius[j]/_MaxRadius[j]) * fixed4(_Color[j].rgb * val  , 0.01);
 				}

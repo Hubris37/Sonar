@@ -55,7 +55,7 @@ public class ShaderController : MonoBehaviour {
                 if (Physics.Raycast(cameraT.position, fwd, out hit))
                 {
                     ++numCircles;
-                    maxRadius.Add(Mathf.Min((float)(audioMeasure.DbValue*1.5), 10));
+                    maxRadius.Add(Mathf.Min((float)(audioMeasure.DbValue), 5));
                     centers.Add(hit.point);
 					colors.Add(Color.HSVToRGB(.7f,  audioMeasure.DbValue*0.1f, audioMeasure.PitchValue*0.001f));
 					//colors.Add(Color.HSVToRGB(audioMeasure.PitchValue*0.001f, .7f,  .8f ));
