@@ -94,7 +94,7 @@ public class Maze : MonoBehaviour {
 		//wall.transform.localScale = transform.localScale;
         if (otherCell != null)
         {
-			wall = Instantiate(wallPrefabs[Random.Range(0,wallPrefabs.Length)]) as MazeWall;
+			//wall = Instantiate(wallPrefabs[Random.Range(0,wallPrefabs.Length)]) as MazeWall;
             wall.Initialize(otherCell, cell, direction.GetOpposite());
         }
     }

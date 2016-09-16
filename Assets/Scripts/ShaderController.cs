@@ -47,7 +47,7 @@ public class ShaderController : MonoBehaviour {
         //How often waves should be sent out
         if (Time.time - prevSoundCheck > (1/waveFreq))
         {
-            if(numCircles < MAX_CIRCLES && audioMeasure.DbValue > .5)
+            if(numCircles < MAX_CIRCLES && audioMeasure.DbValue > 0)
             {
                 // Create a new circle
                 RaycastHit hit;
