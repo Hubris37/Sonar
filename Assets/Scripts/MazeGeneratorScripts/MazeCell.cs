@@ -2,13 +2,20 @@
 using System.Collections;
 
 public class MazeCell : MonoBehaviour {
+	
 	public IntVector2 coordinates;
     private int initializedEdgeCount;
+	public MazeRoom room;
     private MazeCellEdge[] edges = new MazeCellEdge[MazeDirections.Count];
 
     public MazeCellEdge GetEdge(MazeDirection direction) {
         return edges[(int)direction];
     }
+
+	public void Initialize (MazeRoom room) {
+		room.Add(this);
+		transform.GetChild(0).GetComponent<Renderer>().material = room.settings.floorMaterial;
+	}
 
     public void SetEdge(MazeDirection direction, MazeCellEdge edge) {
         edges[(int)direction] = edge;
