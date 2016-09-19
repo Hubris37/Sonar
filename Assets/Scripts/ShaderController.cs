@@ -7,6 +7,8 @@ public class ShaderController : MonoBehaviour {
     public Renderer r;
     public AudioSource audioSrc;
     public float waveFreq = 10; // Number of waves per sec
+	public GameObject soundBlastWave;
+	public bool useSoundBLAST = true;
 
     private AudioMeasure audioMeasure;
 
@@ -29,6 +31,8 @@ public class ShaderController : MonoBehaviour {
     private Transform cameraT;
     private float prevTime, prevSoundCheck;
 
+	private GameObject soundBlastList;
+
     // float colorCounter = 0;
 
     // Use this for initialization
@@ -40,6 +44,8 @@ public class ShaderController : MonoBehaviour {
 
         r = GetComponent<Renderer>();
         r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
+
+		soundBlastList = GameObject.FindGameObjectsWithTag ("SoundBlastsList")[0];
     }
 	
 	// Update is called once per frame
@@ -63,6 +69,15 @@ public class ShaderController : MonoBehaviour {
                     radius.Add(0);
 
                     // colorCounter = (colorCounter+0.01f)%1; // Can be used to cycle through colors
+					// Spawn sound blast wave
+					if (useSoundBLAST) 
+					{
+						GameObject o = (GameObject)Instantiate(soundBlastWave,cameraT.position + (fwd * 0.5f), Quaternion.LookRotation(fwd));
+						o.GetComponent<SoundBlast> ().Freq = audioMeasure.PitchValue;
+						o.GetComponent<SoundBlast> ().DbVal = audioMeasure.DbValue;
+						o.transform.parent = soundBlastList.transform;	
+					}
+
                 }
             }
 
