@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+// using System.Collections;
 using System.Collections.Generic;
 
 public class ShaderController : MonoBehaviour {
@@ -7,6 +7,8 @@ public class ShaderController : MonoBehaviour {
     public Renderer r;
     public AudioSource audioSrc;
     public float waveFreq = 10; // Number of waves per sec
+    [RangeAttribute(-60,10)]
+    public float volumeSens;
 
     private AudioMeasure audioMeasure;
 
@@ -39,7 +41,7 @@ public class ShaderController : MonoBehaviour {
         audioMeasure = audioSrc.GetComponent<AudioMeasure>();
 
         r = GetComponent<Renderer>();
-        r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
+        //r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
     }
 	
 	// Update is called once per frame
@@ -47,7 +49,7 @@ public class ShaderController : MonoBehaviour {
         //How often waves should be sent out
         if (Time.time - prevSoundCheck > (1/waveFreq))
         {
-            if(numCircles < MAX_CIRCLES && audioMeasure.DbValue > 0)
+            if(numCircles < MAX_CIRCLES && audioMeasure.DbValue > volumeSens)
             {
                 // Create a new circle
                 RaycastHit hit;
@@ -55,7 +57,7 @@ public class ShaderController : MonoBehaviour {
                 if (Physics.Raycast(cameraT.position, fwd, out hit))
                 {
                     ++numCircles;
-                    maxRadius.Add(Mathf.Min((float)(audioMeasure.DbValue), 5));
+                    maxRadius.Add(Mathf.Min((float)(audioMeasure.DbValue), 5) + 1);
                     centers.Add(hit.point);
 					colors.Add(Color.HSVToRGB(.7f,  audioMeasure.DbValue*0.1f, audioMeasure.PitchValue*0.001f));
 					//colors.Add(Color.HSVToRGB(audioMeasure.PitchValue*0.001f, .7f,  .8f ));
@@ -95,22 +97,26 @@ public class ShaderController : MonoBehaviour {
         }
 
         // Set shader uniforms
-        r.sharedMaterial.SetInt("_NumCircles", numCircles);
-        if(numCircles > 0)
+        for(int i = 0; i < r.sharedMaterials.Length; ++i)
         {
-            // Move properties of all the circles to the fixed size arrays
-            for(int i = 0; i < numCircles; ++i)
+            r.sharedMaterials[i].SetInt("_NumCircles", numCircles);
+            if(numCircles > 0)
             {
-                centersArray[i] = centers[i];
-                radiusArray[i] = radius[i];
-                maxRadiusArray[i] = maxRadius[i];
-                colorsArray[i] = colors[i];
-            }
+                // Move properties of all the circles to the fixed size arrays
+                for(int j = 0; j < numCircles; ++j)
+                {
+                    centersArray[j] = centers[j];
+                    radiusArray[j] = radius[j];
+                    maxRadiusArray[j] = maxRadius[j];
+                    colorsArray[j] = colors[j];
+                }
 
-            r.sharedMaterial.SetVectorArray("_Center", centersArray);
-            r.sharedMaterial.SetFloatArray("_Radius", radiusArray);
-            r.sharedMaterial.SetFloatArray("_MaxRadius", maxRadiusArray);
-            r.sharedMaterial.SetColorArray("_Color", colorsArray);
+                r.sharedMaterials[i].SetVectorArray("_Center", centersArray);
+                r.sharedMaterials[i].SetFloatArray("_Radius", radiusArray);
+                r.sharedMaterials[i].SetFloatArray("_MaxRadius", maxRadiusArray);
+                r.sharedMaterials[i].SetColorArray("_Color", colorsArray);
+            }
         }
+        
 	}
 }

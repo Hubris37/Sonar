@@ -6,15 +6,22 @@ Shader "Custom/Echolocation" {
 		_Center("CenterX", vector) = (0, 0, 0)
 		_Radius("Radius", float) = 0*/
 		_Width("Circle Width", Range(0.05, 0.5)) = 0.3
-		_WallO("Wall Opacity", Range(0.001,1)) = 1.0
+		_WallO("Wall Opacity", Range(0.00,1)) = 1.0
 		_NormalMap ("Normal Map", 2D) = "bump" {}
 	}
 		SubShader{
-			Pass{
-			Tags{ "RenderType" = "Transparent" }
+			Tags{ "Queue"="Transparent" "IgnoreProjector"="True" "RenderType" = "Transparent" }
 
+			// extra pass that renders to depth buffer only
+			Pass {
+				ZWrite On
+				ColorMask 0
+			}
+
+			Pass{
 			Blend SrcAlpha OneMinusSrcAlpha
 			//Cull Back 	// Don’t render polygons facing away from the viewer. Performance stuff?
+			ZWrite Off
 
 			CGPROGRAM
 			#pragma vertex vert
@@ -86,11 +93,14 @@ Shader "Custom/Echolocation" {
 					float bump = max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos)));
 
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * _Color[j].rgb * val * bump;
+					
+					finalColor.a += (1 - _Radius[j]/_MaxRadius[j]) * val * bump;
 				}
+				finalColor.a *= 0.9;
 				return finalColor;
 			}
 			ENDCG
 		}
 	}
-	FallBack "Diffuse"
+	Fallback "Transparent/VertexLit"
 }
