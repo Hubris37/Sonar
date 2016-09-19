@@ -7,7 +7,7 @@ Shader "Custom/Echolocation" {
 		_Radius("Radius", float) = 0*/
 		_Width("Circle Width", Range(0.05, 0.5)) = 0.3
 		_WallO("Wall Opacity", Range(0.001,1)) = 1.0
-		_BumpMap ("Normal Map", 2D) = "bump" {}
+		_NormalMap ("Normal Map", 2D) = "bump" {}
 	}
 		SubShader{
 			Pass{
@@ -75,18 +75,18 @@ Shader "Custom/Echolocation" {
 				half3 worldViewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
                 half3 worldRefl = reflect(-worldViewDir, worldNormal);
 
-				fixed4 finalColor = fixed4(0, 0, 0, 0.4);
+				fixed4 finalColor = fixed4(0, 0, 0, _WallO);
 
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
 					//float val = 1 - step(dist, _Radius[j] - 0.1) * 0.5; // Creates small edge on circle
 
 					float val = lerp(0, _Radius[j], dist/_Radius[j]) * step(dist, _Radius[j]);
-					
-					float bump = max(0.0, dot(worldNormal, normalize(_Center[j]+worldNormal-i.worldPos)));
+
+					float bump = max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos)));
+
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * _Color[j].rgb * val * bump;
 				}
-				// finalColor.a = 1;
 				return finalColor;
 			}
 			ENDCG
