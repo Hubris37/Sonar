@@ -46,7 +46,10 @@ public class ShaderController : MonoBehaviour {
 
         r = GetComponent<Renderer>();
         //r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
-		soundBlastList = GameObject.FindGameObjectsWithTag ("SoundBlastsList")[0];
+        if(useSoundBLAST)
+        {
+            soundBlastList = GameObject.FindGameObjectsWithTag ("SoundBlastsList")[0];
+        }
     }
 	
 	// Update is called once per frame
@@ -76,7 +79,7 @@ public class ShaderController : MonoBehaviour {
 						GameObject o = (GameObject)Instantiate(soundBlastWave,cameraT.position + (fwd * 0.5f), Quaternion.LookRotation(fwd));
 						o.GetComponent<SoundBlast> ().Freq = audioMeasure.PitchValue;
 						o.GetComponent<SoundBlast> ().DbVal = audioMeasure.DbValue;
-						o.transform.parent = soundBlastList.transform;	
+						o.transform.parent = soundBlastList.transform;
 					}
 
                 }
