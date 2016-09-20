@@ -51,7 +51,7 @@ public class FirstPersonController : MonoBehaviour {
 		//myRigidBody.AddRelativeTorque (h * Vector3.back );
 		//myRigidBody.AddRelativeTorque (v * Vector3.right);
 
-		if (Input.GetButton ("Jump")) {
+		if (Input.GetButton ("Fire1")) {
 			myRigidBody.AddRelativeForce (Vector3.forward * walkSpeed, ForceMode.Impulse);
 		}
 

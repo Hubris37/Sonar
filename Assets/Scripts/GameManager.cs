@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void Update () {
-		if (Input.GetKeyDown(KeyCode.LeftControl)) {
+		if (Input.GetKeyDown("z")) {
 			RestartGame();
 		}
 	}
