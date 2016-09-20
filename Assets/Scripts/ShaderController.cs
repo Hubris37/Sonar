@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class ShaderController : MonoBehaviour {
 
+    public bool standardShader = false;
     public Renderer r;
     public AudioSource audioSrc;
     public float waveFreq = 10; // Number of waves per sec
@@ -49,7 +50,10 @@ public class ShaderController : MonoBehaviour {
         audioMeasure = audioSrc.GetComponent<AudioMeasure>();
 
         r = GetComponent<Renderer>();
-        //r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
+        if(standardShader) // Use standard shader to see everything
+            r.sharedMaterial.shader = Shader.Find("Standard");
+        else
+            r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
         if(useSoundBLAST)
         {
             soundBlastList = GameObject.FindGameObjectsWithTag ("SoundBlastsList")[0];
@@ -69,6 +73,11 @@ public class ShaderController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if(standardShader) // Use standard shader to see everything
+            r.sharedMaterial.shader = Shader.Find("Standard");
+        else
+            r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
+        
         if(Input.GetMouseButtonDown(0))
         {
             // Create a new circle
