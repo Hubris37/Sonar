@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour {
 	FirstPersonController player;
 	CarController car;
 	GameObject goal;
+	public GameObject carPrefab;
+	public GameObject playerPrefab;
 	public GameObject goalPrefab;
 	public Maze mazePrefab;
 	private Maze mazeInstance;
@@ -14,6 +16,8 @@ public class GameManager : MonoBehaviour {
 
 	private void Start () {
 		goal = Instantiate (goalPrefab);
+		Instantiate(playerPrefab);
+		Instantiate(carPrefab);
 		player = FindObjectOfType<FirstPersonController> ();
 		car = FindObjectOfType<CarController> ();
 		player.OnGoalTouch += WonGame;
