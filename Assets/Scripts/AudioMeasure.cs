@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 
 public class AudioMeasure : MonoBehaviour {
-
-	public Light pointLight;
+	
 	public float RmsValue;
 	public float DbValue;
 	public float PitchValue;
@@ -48,13 +47,6 @@ public class AudioMeasure : MonoBehaviour {
 
 	void Update() {
 		AnalyzeSound();
-		//if (Time.time - prevTime >= .1f) {
-		//	if(DbValue > 40)
-		//		pointLight.range = DbValue + 10;
-		//	pointLight.color = Color.HSVToRGB (PitchValue * .001f, .7f, .8f);
-		//	prevTime = Time.time;
-		//}
-		//pointLight.range -= .1f;
 	}
 
 	void AnalyzeSound() {

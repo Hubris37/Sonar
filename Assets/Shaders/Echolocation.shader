@@ -1,24 +1,25 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "Custom/Echolocation" {
-	Properties{
-		/*_Color("Color", Color) = (1, 1, 1, 1)
-		_Center("CenterX", vector) = (0, 0, 0)
-		_Radius("Radius", float) = 0*/
-		_Width("Circle Width", Range(0.05, 0.5)) = 0.3
+	Properties {
+		_EdgeWidth("Circle Edge Width", Range(0.0, 0.5)) = 0.15
+		_DistortScale("Distort Scale", range(0.005, 0.1)) = 0.01
 		_WallO("Wall Opacity", Range(0.00,1)) = 1.0
+		[MaterialToggle] _UseNormalMap("Use Normal Map", Float) = 0
 		_NormalMap ("Normal Map", 2D) = "bump" {}
 	}
-		SubShader{
-			Tags{ "Queue"="Transparent" "IgnoreProjector"="True" "RenderType" = "Transparent" }
 
-			// extra pass that renders to depth buffer only
-			Pass {
-				ZWrite On
-				ColorMask 0
-			}
+	SubShader {
+		Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType" = "Transparent" }
 
-			Pass{
+		// https://docs.unity3d.com/Manual/SL-CullAndDepth.html
+		// extra pass that renders to depth buffer only
+		Pass {
+			ZWrite On
+			ColorMask 0
+		}
+
+		Pass {
 			Blend SrcAlpha OneMinusSrcAlpha
 			//Cull Back 	// Don’t render polygons facing away from the viewer. Performance stuff?
 			ZWrite Off
@@ -34,20 +35,23 @@ Shader "Custom/Echolocation" {
 			float3 _Center[MAX_CIRCLES];
 			float _Radius[MAX_CIRCLES];
 			float _MaxRadius[MAX_CIRCLES];
-			float _Width; // Circle Width	
-			float _WallO; // Wall Opacity		
+			float _Frequency[MAX_CIRCLES];
+			float _EdgeWidth; // Circle Edge Width
+			float _DistortScale; // Amplitude of bump map distortion
+			float _WallO; // Wall Opacity	
+			float _UseNormalMap;	
 			int _NumCircles = 0;
 
 			struct v2f {
 				float3 worldPos : TEXCOORD0;
-                // these three vectors will hold a 3x3 rotation matrix
-                // that transforms from tangent to world space
-                half3 tspace0 : TEXCOORD1; // tangent.x, bitangent.x, normal.x
-                half3 tspace1 : TEXCOORD2; // tangent.y, bitangent.y, normal.y
-                half3 tspace2 : TEXCOORD3; // tangent.z, bitangent.z, normal.z
-                // texture coordinate for the normal map
-                float2 uv : TEXCOORD4;
-                float4 pos : SV_POSITION;
+				// these three vectors will hold a 3x3 rotation matrix
+				// that transforms from tangent to world space
+				half3 tspace0 : TEXCOORD1; // tangent.x, bitangent.x, normal.x
+				half3 tspace1 : TEXCOORD2; // tangent.y, bitangent.y, normal.y
+				half3 tspace2 : TEXCOORD3; // tangent.z, bitangent.z, normal.z
+				// texture coordinate for the normal map
+				float2 uv : TEXCOORD4;
+				float4 pos : SV_POSITION;
 			};
 
 			v2f vert(float4 vertex : POSITION, float3 normal : NORMAL, float4 tangent : TANGENT, float2 uv : TEXCOORD0) {
@@ -56,14 +60,14 @@ Shader "Custom/Echolocation" {
 				o.worldPos = mul(unity_ObjectToWorld, vertex).xyz;
 				
 				half3 wNormal = UnityObjectToWorldNormal(normal);
-                half3 wTangent = UnityObjectToWorldDir(tangent.xyz);
-                // compute bitangent from cross product of normal and tangent
-                half tangentSign = tangent.w * unity_WorldTransformParams.w;
-                half3 wBitangent = cross(wNormal, wTangent) * tangentSign;
-                // output the tangent space matrix
-                o.tspace0 = half3(wTangent.x, wBitangent.x, wNormal.x);
-                o.tspace1 = half3(wTangent.y, wBitangent.y, wNormal.y);
-                o.tspace2 = half3(wTangent.z, wBitangent.z, wNormal.z);
+				half3 wTangent = UnityObjectToWorldDir(tangent.xyz);
+				// compute bitangent from cross product of normal and tangent
+				half tangentSign = tangent.w * unity_WorldTransformParams.w;
+				half3 wBitangent = cross(wNormal, wTangent) * tangentSign;
+				// output the tangent space matrix
+				o.tspace0 = half3(wTangent.x, wBitangent.x, wNormal.x);
+				o.tspace1 = half3(wTangent.y, wBitangent.y, wNormal.y);
+				o.tspace2 = half3(wTangent.z, wBitangent.z, wNormal.z);
 				o.uv = uv;
 				return o;
 			}
@@ -71,36 +75,46 @@ Shader "Custom/Echolocation" {
 			sampler2D _NormalMap;
 
 			fixed4 frag(v2f i) : SV_Target {
-				// sample the normal map, and decode from the Unity encoding
-                half3 tnormal = UnpackNormal(tex2D(_NormalMap, i.uv));
-                // transform normal from tangent to world space
-                half3 worldNormal;
-                worldNormal.x = dot(i.tspace0, tnormal);
-                worldNormal.y = dot(i.tspace1, tnormal);
-                worldNormal.z = dot(i.tspace2, tnormal);
+				half3 tnormal;
+				half3 worldNormal;
 
 				half3 worldViewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
-                half3 worldRefl = reflect(-worldViewDir, worldNormal);
+				half3 worldRefl = reflect(-worldViewDir, worldNormal);
+				// half3 refractDir = -refract(normalize(i.worldPos-_WorldSpaceCameraPos), worldNormal, .5);
 
 				fixed4 finalColor = fixed4(0, 0, 0, _WallO);
-
+				
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
-					//float val = 1 - step(dist, _Radius[j] - 0.1) * 0.5; // Creates small edge on circle
+					float val = step(dist, _Radius[j]) * step(_Radius[j] - _EdgeWidth, dist); // Hollow circle
 
-					float val = lerp(0, _Radius[j], dist/_Radius[j]) * step(dist, _Radius[j]);
+					i.uv.x += val * sin((i.uv.x+i.uv.y)*dist + _Time.g*4)*_DistortScale;
+					i.uv.y += val * sin((i.uv.x-i.uv.y)*dist + _Time.g*_Frequency[j]*.2)*_DistortScale*2;
+					tnormal = UnpackNormal(tex2D(_NormalMap, i.uv)); // sample the normal map, and decode from the Unity encoding
+					// transform normal from tangent to world space
+					worldNormal.x = dot(i.tspace0, tnormal);
+					worldNormal.y = dot(i.tspace1, tnormal);
+					worldNormal.z = dot(i.tspace2, tnormal);
 
-					float bump = max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos)));
+					// Circle with edge
+					val = (1 - step(dist, _Radius[j] - _EdgeWidth) * 0.5) * step(dist, _Radius[j]);
+					//max(lerp(_Radius[j]*.5, 0, dist/_Radius[j]*2)*.5, lerp(0, _Radius[j], dist/_Radius[j])) *
+
+					float bump = (_UseNormalMap==1) ? max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) : 1;
 
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * _Color[j].rgb * val * bump;
 					
-					finalColor.a += (1 - _Radius[j]/_MaxRadius[j]) * val * bump;
+					finalColor.a += max(0, (1 - _Radius[j]/_MaxRadius[j]) * val * bump - 0.1);
 				}
-				finalColor.a *= 0.9;
+				
+				finalColor.a *= 0.7;
 				return finalColor;
 			}
 			ENDCG
 		}
+		// Pass {
+
+		// }
 	}
 	Fallback "Transparent/VertexLit"
 }

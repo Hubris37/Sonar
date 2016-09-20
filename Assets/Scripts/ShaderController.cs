@@ -14,31 +14,35 @@ public class ShaderController : MonoBehaviour {
 
     private AudioMeasure audioMeasure;
 
-    const int MAX_CIRCLES = 200;
+    const int MAX_CIRCLES = 200; // Maximum circles allowed at once
+    private int numCircles = 0;
+
     // Variable size lists used to be able to add and remove circles easily
     private List<float> radius = new List<float>();
-	private List<float> expansionSpeed = new List<float>();
+	private List<float> expansionSpeeds = new List<float>();
     private List<Color> colors = new List<Color>();
     private List<Vector4> centers = new List<Vector4>();
     private List<float> maxRadius = new List<float>();
+    private List<float> frequencies = new List<float>();
 
     // Fixed size arrays used because shader needs them fixed
     private float[] radiusArray = new float[MAX_CIRCLES];
     private Color[] colorsArray = new Color[MAX_CIRCLES];
     private Vector4[] centersArray = new Vector4[MAX_CIRCLES];
 	private float[] maxRadiusArray = new float[MAX_CIRCLES];
-	//private float[] expansionSpeedArray = new float[MAX_CIRCLES];
+    private float[] frequenciesArray = new float[MAX_CIRCLES];
+	//private float[] expansionSpeedsArray = new float[MAX_CIRCLES];
 
-	private int numCircles = 0;
     private Transform cameraT;
     private float prevTime, prevSoundCheck;
 
 	private GameObject soundBlastList;
 
-    // float colorCounter = 0;
+    float colorCounter = 0;
 
     // Use this for initialization
     void Start () {
+        // Camera.main.depthTextureMode = DepthTextureMode.Depth;
         cameraT = Camera.main.transform;
 
         audioSrc = FindObjectOfType<AudioSource>();
@@ -51,9 +55,41 @@ public class ShaderController : MonoBehaviour {
             soundBlastList = GameObject.FindGameObjectsWithTag ("SoundBlastsList")[0];
         }
     }
+
+    void addCircle(float maxRad, float rad, Vector3 hitPoint, Color col, float expSpeed, float freq)
+    {
+        ++numCircles;
+        maxRadius.Add(maxRad);
+        radius.Add(rad);
+        centers.Add(hitPoint);
+        colors.Add(col);
+        expansionSpeeds.Add (expSpeed);
+        frequencies.Add(freq);
+    }
 	
 	// Update is called once per frame
 	void Update () {
+        if(Input.GetMouseButtonDown(0))
+        {
+            // Create a new circle
+            RaycastHit hit;
+            Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
+            if (Physics.Raycast(cameraT.position, fwd, out hit))
+            {
+                addCircle(10, 0, hit.point, Color.HSVToRGB(colorCounter, .9f, .7f), .01f, 220);
+
+                colorCounter = (colorCounter+0.1f)%1; // Can be used to cycle through colors
+                // Spawn sound blast wave
+                if (useSoundBLAST) 
+                {
+                    GameObject o = (GameObject)Instantiate(soundBlastWave, cameraT.position + (fwd * 0.5f), Quaternion.LookRotation(fwd));
+                    o.GetComponent<SoundBlast> ().Freq = audioMeasure.PitchValue;
+                    o.GetComponent<SoundBlast> ().DbVal = audioMeasure.DbValue;
+                    o.transform.parent = soundBlastList.transform;
+                }
+            }
+        }
+
         //How often waves should be sent out
         if (Time.time - prevSoundCheck > (1/waveFreq))
         {
@@ -64,24 +100,19 @@ public class ShaderController : MonoBehaviour {
                 Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
                 if (Physics.Raycast(cameraT.position, fwd, out hit))
                 {
-                    ++numCircles;
-                    maxRadius.Add(Mathf.Min((float)(audioMeasure.DbValue), 5) + 1);
-                    centers.Add(hit.point);
-					colors.Add(Color.HSVToRGB(.7f,  audioMeasure.DbValue*0.1f, audioMeasure.PitchValue*0.001f));
-					//colors.Add(Color.HSVToRGB(audioMeasure.PitchValue*0.001f, .7f,  .8f ));
-					expansionSpeed.Add (audioMeasure.PitchValue * 0.0001f);
-                    radius.Add(0);
+                    float maxRad = Mathf.Min((float)(audioMeasure.DbValue), 5) + 1;
+                    Color col = Color.HSVToRGB(.7f,  audioMeasure.DbValue*0.1f, audioMeasure.PitchValue*0.001f);
+                    addCircle(maxRad, 0, hit.point, col, audioMeasure.PitchValue*0.0001f, audioMeasure.PitchValue);
 
                     // colorCounter = (colorCounter+0.01f)%1; // Can be used to cycle through colors
 					// Spawn sound blast wave
 					if (useSoundBLAST) 
 					{
-						GameObject o = (GameObject)Instantiate(soundBlastWave,cameraT.position + (fwd * 0.5f), Quaternion.LookRotation(fwd));
+						GameObject o = (GameObject)Instantiate(soundBlastWave, cameraT.position + (fwd * 0.5f), Quaternion.LookRotation(fwd));
 						o.GetComponent<SoundBlast> ().Freq = audioMeasure.PitchValue;
 						o.GetComponent<SoundBlast> ().DbVal = audioMeasure.DbValue;
 						o.transform.parent = soundBlastList.transform;
 					}
-
                 }
             }
 
@@ -92,7 +123,7 @@ public class ShaderController : MonoBehaviour {
         {
             for(int i = 0; i < numCircles; ++i)
             {
-				radius[i] += expansionSpeed[i];
+				radius[i] += expansionSpeeds[i];
 
                 if (radius[i] >= maxRadius[i])
                 {
@@ -103,7 +134,8 @@ public class ShaderController : MonoBehaviour {
                     colors.RemoveAt(i);
                     centers.RemoveAt(i);
                     maxRadius.RemoveAt(i);
-					expansionSpeed.RemoveAt(i);
+					expansionSpeeds.RemoveAt(i);
+                    frequencies.RemoveAt(i);
 
                     --numCircles;
                     --i;
@@ -126,12 +158,14 @@ public class ShaderController : MonoBehaviour {
                     radiusArray[j] = radius[j];
                     maxRadiusArray[j] = maxRadius[j];
                     colorsArray[j] = colors[j];
+                    frequenciesArray[j] = frequencies[j];
                 }
 
                 r.sharedMaterials[i].SetVectorArray("_Center", centersArray);
                 r.sharedMaterials[i].SetFloatArray("_Radius", radiusArray);
                 r.sharedMaterials[i].SetFloatArray("_MaxRadius", maxRadiusArray);
                 r.sharedMaterials[i].SetColorArray("_Color", colorsArray);
+                r.sharedMaterials[i].SetFloatArray("_Frequency", frequenciesArray);
             }
         }
         
