@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
 
@@ -12,9 +13,13 @@ public class GameManager : MonoBehaviour {
 	public Maze mazePrefab;
 	private Maze mazeInstance;
 
-	public int level = 1;
+    private List<GameObject> bots;
+    public GameObject Chef;
+
+    public int level = 1;
 
 	private void Start () {
+        bots = new List<GameObject>();
 		goal = Instantiate (goalPrefab);
 		Instantiate(playerPrefab);
 		Instantiate(carPrefab);
@@ -23,7 +28,8 @@ public class GameManager : MonoBehaviour {
 		player.OnGoalTouch += WonGame;
 		player.goal = goal;
 		BeginGame();
-	}
+        spawnAI(Chef);
+    }
 
 	private void Update () {
 		if (Input.GetKeyDown("z")) {
@@ -46,7 +52,10 @@ public class GameManager : MonoBehaviour {
 
 	private void RestartGame () {
 		Destroy (mazeInstance.gameObject);
-		level = 1;
+        foreach (GameObject bot in bots) {
+            Destroy(bot);
+        }
+        level = 1;
 		BeginGame ();
 	}
 
@@ -55,4 +64,11 @@ public class GameManager : MonoBehaviour {
 		level++;
 		BeginGame ();
 	}
+
+    private void spawnAI(GameObject AIPrefab) {
+        // Vector3 initPos = new Vector3(Player.transform.position);
+        GameObject bot = Instantiate(AIPrefab, player.transform.position, Quaternion.identity) as GameObject;
+        bots.Add(bot);
+        bot.GetComponent<EnemyAI>().initializeAI(mazeInstance);
+    }
 }
