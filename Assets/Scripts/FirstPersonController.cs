@@ -59,7 +59,7 @@ public class FirstPersonController : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider triggerCollider) {
-		print (triggerCollider.gameObject.name);
+		//print (triggerCollider.gameObject.name);
 		if (triggerCollider.gameObject == goal) {
 			OnGoalTouch ();
 		}
