@@ -10,8 +10,6 @@ public class ShaderController : MonoBehaviour {
     public float waveFreq = 10; // Number of waves per sec
     [RangeAttribute(-60,10)]
     public float volumeSens;
-	public GameObject soundBlastWave;
-	public bool useSoundBLAST = true;
 
     private AudioMeasure audioMeasure;
 
@@ -54,10 +52,6 @@ public class ShaderController : MonoBehaviour {
             r.sharedMaterial.shader = Shader.Find("Standard");
         else
             r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
-        if(useSoundBLAST)
-        {
-            soundBlastList = GameObject.FindGameObjectsWithTag ("SoundBlastsList")[0];
-        }
     }
 
     void addCircle(float maxRad, float rad, Vector3 hitPoint, Color col, float expSpeed, float freq)
@@ -88,14 +82,6 @@ public class ShaderController : MonoBehaviour {
                 addCircle(10, 0, hit.point, Color.HSVToRGB(colorCounter, .9f, .7f), .01f, 220);
 
                 colorCounter = (colorCounter+0.1f)%1; // Can be used to cycle through colors
-                // Spawn sound blast wave
-                if (useSoundBLAST) 
-                {
-                    GameObject o = (GameObject)Instantiate(soundBlastWave, cameraT.position + (fwd * 0.5f), Quaternion.LookRotation(fwd));
-                    o.GetComponent<SoundBlast> ().Freq = audioMeasure.PitchValue;
-                    o.GetComponent<SoundBlast> ().DbVal = audioMeasure.DbValue;
-                    o.transform.parent = soundBlastList.transform;
-                }
             }
         }
 
@@ -114,17 +100,8 @@ public class ShaderController : MonoBehaviour {
                     addCircle(maxRad, 0, hit.point, col, audioMeasure.PitchValue*0.0001f, audioMeasure.PitchValue);
 
                     // colorCounter = (colorCounter+0.01f)%1; // Can be used to cycle through colors
-					// Spawn sound blast wave
-					if (useSoundBLAST) 
-					{
-						GameObject o = (GameObject)Instantiate(soundBlastWave, cameraT.position + (fwd * 0.5f), Quaternion.LookRotation(fwd));
-						o.GetComponent<SoundBlast> ().Freq = audioMeasure.PitchValue;
-						o.GetComponent<SoundBlast> ().DbVal = audioMeasure.DbValue;
-						o.transform.parent = soundBlastList.transform;
-					}
                 }
             }
-
             prevSoundCheck = Time.time;
         }
 
