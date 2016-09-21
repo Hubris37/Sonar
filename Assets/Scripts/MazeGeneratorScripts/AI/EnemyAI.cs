@@ -42,10 +42,19 @@ public class EnemyAI : MonoBehaviour {
             if (patrolsRoom) {
                 // Get a random cell in the current room
                 List<MazeCell> roomCells = currentPositionCell.room.getCells();
-                MazeCell targetCell = roomCells[Random.Range(0, roomCells.Count)];
-                movementPath = aStar(targetCell, roomCells);
+                movementPath = aStar(findTargetPosition(), roomCells);
             }
         }
+    }
+
+    private MazeCell findTargetPosition() {
+        // return roomCells[Random.Range(0, roomCells.Count)];
+        MazeCell target = currentPositionCell;
+        float maxDist = 0;
+        foreach (MazeCell m in currentPositionCell.room.getCells()) {
+            target = (heuristicCost(currentPositionCell, target) < heuristicCost(m, target)) ? m : target;
+        }
+        return target;
     }
 
     private List<MazeCell> aStar(MazeCell targetCell, List<MazeCell> map) {
@@ -123,7 +132,6 @@ public class EnemyAI : MonoBehaviour {
             movementPath.RemoveAt(0);
             if (movementPath.Count == 0) return;
         }
-        // transform.LookAt(movementPath[0].transform.position);
         transform.Translate(dif.normalized * movementSpeed * Time.deltaTime);
     }
 

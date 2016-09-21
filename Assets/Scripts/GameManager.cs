@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour {
 		player.OnGoalTouch += WonGame;
 		player.goal = goal;
 		BeginGame();
-        spawnAI(Chef);
     }
 
 	private void Update () {
@@ -48,7 +47,8 @@ public class GameManager : MonoBehaviour {
 
 		pos = mazeInstance.GetCell (new IntVector2 (mazeInstance.size.x - 1, mazeInstance.size.z - 1)).transform.position;
 		goal.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
-	}
+        spawnAI(Chef);
+    }
 
 	private void RestartGame () {
 		Destroy (mazeInstance.gameObject);
@@ -66,7 +66,11 @@ public class GameManager : MonoBehaviour {
 	}
 
     private void spawnAI(GameObject AIPrefab) {
-        // Vector3 initPos = new Vector3(Player.transform.position);
+        IntVector2 initCell = new IntVector2();
+        initCell.x = Random.Range(0, mazeInstance.size.x);
+        initCell.z = Random.Range(0, mazeInstance.size.z);
+        Vector3 initPos = mazeInstance.GetCell(initCell).transform.position;
+        initPos.y += 1;
         GameObject bot = Instantiate(AIPrefab, player.transform.position, Quaternion.identity) as GameObject;
         bots.Add(bot);
         bot.GetComponent<EnemyAI>().initializeAI(mazeInstance);
