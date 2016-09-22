@@ -9,10 +9,13 @@ public class SoundBlast : MonoBehaviour {
 
 	private Rigidbody rb;
 	private float lifeTime = 0;
-	private float freq;
+	private float pitchVal;
 	private float dbVal;
 	private Vector3 fireDir;
 	private bool readyFire = false;
+
+	public delegate void SoundBlastHit(GameObject blast);
+	public static event SoundBlastHit onBlastHit;
 
 	// Use this for initialization
 	void Start () 
@@ -23,21 +26,21 @@ public class SoundBlast : MonoBehaviour {
 
 	public void Fire(){ readyFire = true; }
 
-	// When we collide with a wall send wave info to shaderController
-	// Then destroy the wave
+	// Allow scripts to subscribe to this on collision event.
 	void OnTriggerEnter(Collider other)
 	{
-		//print("Other is: " + other.name);
 		if(other.tag == "MazePiece")
 		{
-			//print("MazeCollision");
-			Destroy(this.gameObject);
+			// Check if someone is subscribing to the event
+			if(onBlastHit != null) 
+				onBlastHit(this.gameObject);
 		}
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
+		// TODO: The size of the sound blast aint doin any thing
 		transform.localScale += new Vector3(1f,1f,1f) * Time.deltaTime * 0.5f;
 		lifeTime += Time.deltaTime;
 		if (lifeTime >= deathTime)
@@ -49,18 +52,18 @@ public class SoundBlast : MonoBehaviour {
 	{
 		if(readyFire)
 		{
-			rb.AddForce(Camera.main.transform.TransformDirection(Vector3.forward) * speed, ForceMode.Impulse);
+			rb.AddForce(Camera.main.transform.TransformDirection(Vector3.forward) * speed, ForceMode.VelocityChange);
 			readyFire = false;
 		}		
 	}
 
 	/// Getters and Setters ///
-	public float Freq
+	public float PitchVal
 	{
-		get{ return freq;}
+		get{ return pitchVal;}
 		set{ 
-			freq = value;
-			speed = freq *.01f; 
+			pitchVal = value;
+			speed = pitchVal *.01f; 
 		}
 	}
 
