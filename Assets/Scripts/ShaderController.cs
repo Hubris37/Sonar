@@ -40,6 +40,7 @@ public class ShaderController : MonoBehaviour {
 
         // Subscribe to SoundBlast onBlastHit function
         SoundBlast.onBlastHit += addCircle;
+        Camera.main.depthTextureMode = DepthTextureMode.Depth;
     }
 
     void addCircle(GameObject soundBlast)

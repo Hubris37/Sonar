@@ -10,13 +10,75 @@ Shader "Custom/Echolocation" {
 	}
 
 	SubShader {
-		Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType" = "Transparent" }
+		Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
 
 		// https://docs.unity3d.com/Manual/SL-CullAndDepth.html
 		// extra pass that renders to depth buffer only
 		Pass {
 			ZWrite On
 			ColorMask 0
+		}
+
+		// Pass {
+		// 	Blend SrcAlpha OneMinusSrcAlpha
+		// 	ZWrite Off
+        //     CGPROGRAM
+
+        //     #pragma vertex vert
+        //     #pragma fragment frag
+        //     #include "UnityCG.cginc"
+
+		// 	struct v2f {
+		// 		float2 uv : TEXCOORD0;
+		// 		float4 pos : SV_POSITION;
+		// 	};
+
+        //     sampler2D _CameraDepthTexture;
+		// 	v2f vert( appdata_img v )
+		// 	{
+		// 		v2f o;
+		// 		o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+		// 		o.uv =  v.texcoord;
+		// 		return o;
+		// 	}    
+			
+		// 	half4 frag (v2f i) : COLOR
+		// 	{      
+		// 		half4 depth = tex2D(_CameraDepthTexture, i.uv);
+		// 		return depth;
+		// 	}
+        //     ENDCG
+        // }
+
+		Pass {
+			Blend SrcAlpha OneMinusSrcAlpha
+
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#include "UnityCG.cginc"
+
+			struct appdata {
+				float4 vertex: POSITION;
+			};
+
+			struct v2f {
+				float4 vertex: SV_POSITION;
+				float depth: DEPTH;
+			};
+
+			v2f vert(appdata v) {
+				v2f o;
+				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.depth = -mul(UNITY_MATRIX_MV, v.vertex).z * _ProjectionParams.w;
+				return o;
+			}
+
+			fixed4 frag(v2f i) : SV_Target {
+				float invert = 1-i.depth;
+				return fixed4(invert, invert, invert, 1);
+			}
+			ENDCG
 		}
 
 		Pass {
@@ -51,6 +113,7 @@ Shader "Custom/Echolocation" {
 				half3 tspace2 : TEXCOORD3; // tangent.z, bitangent.z, normal.z
 				// texture coordinate for the normal map
 				float2 uv : TEXCOORD4;
+				float depth: DEPTH;
 				float4 pos : SV_POSITION;
 			};
 
@@ -69,10 +132,12 @@ Shader "Custom/Echolocation" {
 				o.tspace1 = half3(wTangent.y, wBitangent.y, wNormal.y);
 				o.tspace2 = half3(wTangent.z, wBitangent.z, wNormal.z);
 				o.uv = uv;
+				o.depth = -mul(UNITY_MATRIX_MV, vertex).z * _ProjectionParams.w;;
 				return o;
 			}
 
 			sampler2D _NormalMap;
+			sampler2D _CameraDepthTexture;
 
 			fixed4 frag(v2f i) : SV_Target {
 				half3 tnormal;
@@ -107,8 +172,10 @@ Shader "Custom/Echolocation" {
 					finalColor.a += max(0, (1 - _Radius[j]/_MaxRadius[j]) * val * bump - 0.1);
 				}
 				
+				float invert = 1-i.depth;
+
 				finalColor.a *= 0.7;
-				return finalColor;
+				return fixed4(finalColor.rgb * invert, finalColor.a);
 			}
 			ENDCG
 		}
