@@ -46,7 +46,7 @@ public class FirstPersonController : MonoBehaviour {
 
 		float h = Input.GetAxis ("Horizontal") * Time.fixedDeltaTime * turnSpeed;
 		float v = Input.GetAxis ("Vertical") * Time.fixedDeltaTime * turnSpeed;
-		transform.Rotate (h * Vector3.back);
+		transform.Rotate (h * Vector3.up);
 		transform.Rotate (v * Vector3.right);
 		//myRigidBody.AddRelativeTorque (h * Vector3.back );
 		//myRigidBody.AddRelativeTorque (v * Vector3.right);

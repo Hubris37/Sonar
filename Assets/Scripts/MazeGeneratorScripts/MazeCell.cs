@@ -7,6 +7,7 @@ public class MazeCell : MonoBehaviour {
     public IntVector2 coordinates;
     private int initializedEdgeCount;
     public MazeRoom room;
+    private GameObject decor;
     public MazeCellEdge[] edges = new MazeCellEdge[MazeDirections.Count];
 
     public MazeCellEdge GetEdge(MazeDirection direction) {
@@ -22,8 +23,13 @@ public class MazeCell : MonoBehaviour {
         return neighbours;
     }
 
-    public void Initialize(MazeRoom room) {
+    public void Initialize(MazeRoom room, bool decoration) {
         room.Add(this);
+        if (decoration && room.settings.Decor.Length > 0){
+            decor = Instantiate(room.settings.Decor[Random.Range(0,room.settings.Decor.Length-1)]);
+            decor.transform.parent = transform;
+            decor.transform.position = transform.position;
+        }
         transform.GetChild(0).GetComponent<Renderer>().material = room.settings.floorMaterial;
     }
 

@@ -16,6 +16,8 @@ public class Maze : MonoBehaviour {
 
 	[Range(0f, 1f)]
 	public float doorProbability;
+	[Range(0f, 1f)]
+	public float decorProbability;
 
 	public MazeCell GetCell (IntVector2 coordinates) {
 		return cells [coordinates.x, coordinates.z];
@@ -32,7 +34,7 @@ public class Maze : MonoBehaviour {
 
 	private void DoFirstGenerationStep (List<MazeCell> activeCells) {
 		MazeCell newCell = CreateCell(RandomCoordinates);
-		newCell.Initialize(CreateRoom(-1));
+		newCell.Initialize(CreateRoom(-1),false);
 		activeCells.Add(newCell);
 	}
 
@@ -69,13 +71,15 @@ public class Maze : MonoBehaviour {
     private void CreatePassage(MazeCell cell, MazeCell otherCell, MazeDirection direction) {
 		MazePassage prefab = Random.value < doorProbability ? doorPrefab : passagePrefab;
 		MazePassage passage = Instantiate(prefab) as MazePassage;
+		bool createDecor = Random.value < decorProbability ? true : false;
+
         passage.Initialize(cell, otherCell, direction);
         passage = Instantiate(prefab) as MazePassage;
 		if (passage is MazeDoor) {
-			otherCell.Initialize(CreateRoom(cell.room.settingsIndex));
+			otherCell.Initialize(CreateRoom(cell.room.settingsIndex),false);
 		}
 		else {
-			otherCell.Initialize(cell.room);
+			otherCell.Initialize(cell.room,createDecor);
 		}
         passage.Initialize(otherCell, cell, direction.GetOpposite());
     }
