@@ -12,6 +12,7 @@ public class FirstPersonController : MonoBehaviour {
 	public float turnSpeed = 2f;
 
 	Transform cameraT;
+	Camera cam;
 	Rigidbody myRigidBody;
 	float verticalLookRotation;
 	public GameObject goal;
@@ -21,6 +22,7 @@ public class FirstPersonController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		cam = Camera.main;
 		cameraT = Camera.main.transform;
 		myRigidBody = GetComponent<Rigidbody>();
 		myRigidBody.constraints = RigidbodyConstraints.FreezeRotation;
@@ -28,6 +30,15 @@ public class FirstPersonController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		RaycastHit hit;
+		Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
+        
+        if (Physics.Raycast(transform.position, fwd, out hit)) {
+            cam.farClipPlane = Mathf.MoveTowards(cam.farClipPlane,hit.distance*2f, Time.deltaTime*5f);
+            
+            // Do something with the object that was hit by the raycast.
+        }
 		/*
 		transform.Rotate(Vector3.up * Input.GetAxis("Mouse X") * mouseSensitivityX);
 		verticalLookRotation += Input.GetAxis("Mouse Y") * mouseSensitivityY;
