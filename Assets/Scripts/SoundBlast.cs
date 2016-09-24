@@ -63,7 +63,7 @@ public class SoundBlast : MonoBehaviour {
 		get{ return pitchVal;}
 		set{ 
 			pitchVal = value;
-			speed = pitchVal *.01f; 
+			speed = pitchVal *.08f; 
 		}
 	}
 
