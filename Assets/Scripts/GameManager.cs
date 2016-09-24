@@ -37,8 +37,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void BeginGame () {
-		mazeInstance = Instantiate (mazePrefab) as Maze;
-		mazeInstance.Generate();
+		GenerateMaze();
 
 		Vector3 pos = mazeInstance.GetCell (new IntVector2 (0, 0)).transform.position;
 		player.transform.position = new Vector3(pos.x, pos.y+.1f, pos.z);
@@ -49,6 +48,19 @@ public class GameManager : MonoBehaviour {
 		goal.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
         spawnAI(Chef);
     }
+
+	public void GenerateMaze() {
+		/*if(mazeInstance != null){
+			if(Application.isPlaying) {
+				Destroy(mazeInstance.gameObject);
+			} else {
+				DestroyImmediate (mazeInstance.gameObject);
+			}
+		}*/
+		mazeInstance = Instantiate (mazePrefab) as Maze;
+		mazeInstance.Generate();
+
+	}
 
 	private void RestartGame () {
 		Destroy (mazeInstance.gameObject);

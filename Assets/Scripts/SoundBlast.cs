@@ -4,7 +4,7 @@ using System.Collections;
 public class SoundBlast : MonoBehaviour {
 
 	public float startScale = 0.05f;
-	public float speed = 10;
+	public float speed = 50;
 	public float deathTime = 0.5f;
 
 	private Rigidbody rb;
