@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour {
 
-	FirstPersonController player;
+	public FirstPersonController player;
 	CarController car;
 	GameObject goal;
 	public GameObject carPrefab;
@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject goalPrefab;
 	public Maze mazePrefab;
 	private Maze mazeInstance;
+    public AudioMeasure audioMeasure;
 
     private List<GameObject> bots;
     public GameObject Chef;
@@ -24,8 +25,9 @@ public class GameManager : MonoBehaviour {
 		Instantiate(playerPrefab);
 		//Instantiate(carPrefab);
 		player = FindObjectOfType<FirstPersonController> ();
-		//car = FindObjectOfType<CarController> ();
-		player.OnGoalTouch += WonGame;
+        audioMeasure = GameObject.Find("Audio Source").GetComponent<AudioMeasure>();
+        //car = FindObjectOfType<CarController> ();
+        player.OnGoalTouch += WonGame;
 		player.goal = goal;
 		BeginGame();
     }

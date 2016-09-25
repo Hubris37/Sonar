@@ -10,13 +10,21 @@ public class EnemyAI : MonoBehaviour {
     private List<MazeCell> movementPath;
     public MazeCell currentPositionCell;
     public float movementSpeed = 1.4f;
+    public float chasingSpeedMultiplier = 1.2f;
+    public float aggroRange = 1.0f;
+
+    private Vector3 playerPos;
+    private float playerNoise;
+
+    private GameManager gameManager;
 
     public bool patrolsRoom;
+    private bool isChasing = false;
 
     // Use this for initialization
     void Start() {
         movementPath = new List<MazeCell>();
-
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     public void initializeAI(Maze m) {
@@ -34,7 +42,29 @@ public class EnemyAI : MonoBehaviour {
     void Update() {
         findPath();
         move();
-        tryGrabPlayer();
+        checkAggro();
+    }
+
+    public void getPlayerInformation() {
+        playerPos = gameManager.player.transform.position;
+        playerNoise = gameManager.audioMeasure.DbValue;
+    }
+
+    private void checkAggro() {
+        getPlayerInformation();
+        if (!isChasing) {
+            float detectionRadius = aggroRange + Mathf.Max(0, playerNoise);
+            isChasing = ((playerPos - transform.position).magnitude < detectionRadius) ? true : false;
+        }
+        // Check if in line of sight
+        if (isChasing) {
+            Vector3 dir = playerPos - transform.position;
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, dir.normalized, out hit, dir.magnitude)) {
+                if (hit.transform.name.Contains("Wall"))
+                    isChasing = false;
+            }
+        }
     }
 
     private void findPath() {
@@ -123,16 +153,50 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private void move() {
-        if (movementPath.Count == 0) return;
-        float thresh = 0.5f;
-        Vector3 dif = movementPath[0].transform.position - transform.position;
-        dif.y = 0;
-        if (dif.magnitude < thresh) {
-            currentPositionCell = movementPath[0];
-            movementPath.RemoveAt(0);
-            if (movementPath.Count == 0) return;
+        Vector3 dif;
+        float movementMultiplier = 1.0f;
+        // If chasing player, move towards him/her
+        if (isChasing) {
+            dif = playerPos - transform.position;
+            dif.y = 0;
+            movementMultiplier = chasingSpeedMultiplier;
         }
-        transform.Translate(dif.normalized * movementSpeed * Time.deltaTime);
+        else {
+            // Else, move on calculated path
+            int tilesLeft = movementPath.Count;
+            if (tilesLeft == 0) return;
+            movementPath = tryDiagonal(movementPath);
+            float thresh = 0.5f;
+            dif = movementPath[0].transform.position - transform.position;
+            dif.y = 0;
+            if (dif.magnitude < thresh) {
+                currentPositionCell = movementPath[0];
+                movementPath.RemoveAt(0);
+                if (movementPath.Count == 0) return;
+            }
+        }
+        transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime);
+    }
+
+    private List<MazeCell> tryDiagonal(List<MazeCell> path) {
+        int tilesLeft = path.Count;
+        //If there are only two tiles there are no chances for diagonal skips
+        if (tilesLeft < 2) return path;
+        int removed = 0;
+        for (int i = 0; i < tilesLeft-1-removed; ++i) {
+            RaycastHit hit;
+            Vector3 dir = path[i + 1].transform.position - transform.position;
+            if (Physics.Raycast(transform.position, dir.normalized, out hit, dir.magnitude)) {
+                if (hit.transform.name.Contains("Wall"))
+                    break;
+            }
+            else {
+                Debug.LogWarning("Warning: Diagonal check ray collided with nothing.", transform);
+            }
+            path.RemoveAt(i);
+            removed++;
+        }
+        return path;
     }
 
     private void tryGrabPlayer() {
