@@ -98,7 +98,9 @@ public class Maze : MonoBehaviour {
 		//wall.transform.localScale = transform.localScale;
         if (otherCell != null)
         {
-			//wall = Instantiate(wallPrefabs[Random.Range(0,wallPrefabs.Length)]) as MazeWall;
+            //wall = Instantiate(wallPrefabs[Random.Range(0,wallPrefabs.Length)]) as MazeWall;
+            cell.wallBetween.Add(otherCell);
+            otherCell.wallBetween.Add(cell);
             wall.Initialize(otherCell, cell, direction.GetOpposite());
         }
     }
@@ -136,5 +138,13 @@ public class Maze : MonoBehaviour {
 	public bool ContainsCoordinates (IntVector2 coordinate) {
 		return coordinate.x >= 0 && coordinate.x < size.x && coordinate.z >= 0 && coordinate.z < size.z;
 	}
+
+    public List<MazeCell> getCellList() {
+        List<MazeCell> cellList = new List<MazeCell>();
+        foreach (MazeCell c in cells) {
+            cellList.Add(c);
+        }
+        return cellList;
+    }
 
 }

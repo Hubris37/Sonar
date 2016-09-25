@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class EnemyAI : MonoBehaviour {
 
     private Maze maze;
+    private List<MazeCell> mazeNodes;
 
     private bool moving = false;
     private List<MazeCell> movementPath;
@@ -29,6 +30,11 @@ public class EnemyAI : MonoBehaviour {
 
     public void initializeAI(Maze m) {
         maze = m;
+        mazeNodes = maze.getCellList();
+        findCurrentCell();
+    }
+
+    private void findCurrentCell() {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -Vector3.up, out hit)) {
             currentPositionCell = hit.transform.parent.transform.gameObject.GetComponent<MazeCell>();
@@ -61,28 +67,34 @@ public class EnemyAI : MonoBehaviour {
             Vector3 dir = playerPos - transform.position;
             RaycastHit hit;
             if (Physics.Raycast(transform.position, dir.normalized, out hit, dir.magnitude)) {
-                if (hit.transform.name.Contains("Wall"))
+                if (hit.transform.name.Contains("Wall")) {
                     isChasing = false;
+                    findCurrentCell();
+                    movementPath.Clear();
+                }
             }
         }
     }
 
     private void findPath() {
         if (movementPath.Count == 0) {
+            List<MazeCell> map;
             if (patrolsRoom) {
                 // Get a random cell in the current room
-                List<MazeCell> roomCells = currentPositionCell.room.getCells();
-                movementPath = aStar(findTargetPosition(), roomCells);
+                map = currentPositionCell.room.getCells();
+            } else {
+                map = mazeNodes;
             }
+            movementPath = aStar(findTargetPosition(map), mazeNodes);
         }
     }
 
-    private MazeCell findTargetPosition() {
+    private MazeCell findTargetPosition(List<MazeCell> map) {
         // return roomCells[Random.Range(0, roomCells.Count)];
         MazeCell target = currentPositionCell;
         float maxDist = 0;
-        foreach (MazeCell m in currentPositionCell.room.getCells()) {
-            target = (heuristicCost(currentPositionCell, target) < heuristicCost(m, target)) ? m : target;
+        foreach (MazeCell m in map) {
+            target = (heuristicCost(currentPositionCell, target) < heuristicCost(currentPositionCell, m)) ? m : target;
         }
         return target;
     }

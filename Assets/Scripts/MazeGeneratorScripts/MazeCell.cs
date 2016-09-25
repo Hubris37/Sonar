@@ -9,6 +9,7 @@ public class MazeCell : MonoBehaviour {
     public MazeRoom room;
     private GameObject decor;
     public MazeCellEdge[] edges = new MazeCellEdge[MazeDirections.Count];
+    public List<MazeCell> wallBetween = new List<MazeCell>();
 
     public MazeCellEdge GetEdge(MazeDirection direction) {
         return edges[(int)direction];
@@ -17,8 +18,8 @@ public class MazeCell : MonoBehaviour {
     public List<MazeCell> getNeighbours() {
         List<MazeCell> neighbours = new List<MazeCell>();
         for (int i = 0; i < MazeDirections.Count; ++i) {
-            // Fixa - filtrera bort grannar som blockerade av vägg
-            neighbours.Add(edges[i].otherCell);
+           if (!wallBetween.Contains(edges[i].otherCell))
+                neighbours.Add(edges[i].otherCell);
         }
         return neighbours;
     }
