@@ -3,6 +3,8 @@ using System.Collections;
 
 public class FireSoundWave : MonoBehaviour {
 
+	
+
 	public GameObject soundBlast;
     public GameObject audioSrc;
     public float waveFreq = 10; // Number of waves per sec
@@ -15,6 +17,7 @@ public class FireSoundWave : MonoBehaviour {
     private Transform cameraT;
     private float prevTime, prevSoundCheck;
 
+	//public delegate void OnSoundMade();
 	public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
 	public static event SoundBlastHit onBlastHit;
 
@@ -49,7 +52,7 @@ public class FireSoundWave : MonoBehaviour {
 		{
 			//onBlastHit(hit.point, audioMeasure.PitchValue, audioMeasure.DbValue);
 			StartCoroutine(hitDelay(hit.point, audioMeasure.PitchValue, audioMeasure.DbValue));
-			
+			//OnSoundMade ();
 		}
 	}
 
