@@ -18,8 +18,12 @@ public class MazeCell : MonoBehaviour {
     public List<MazeCell> getNeighbours() {
         List<MazeCell> neighbours = new List<MazeCell>();
         for (int i = 0; i < MazeDirections.Count; ++i) {
-           if (!wallBetween.Contains(edges[i].otherCell))
-                neighbours.Add(edges[i].otherCell);
+            if (!wallBetween.Contains(edges[i].otherCell) && !wallBetween.Contains(edges[i].cell)) {
+                if (edges[i].otherCell == this)
+                    neighbours.Add(edges[i].cell);
+                else
+                    neighbours.Add(edges[i].otherCell);
+            }
         }
         return neighbours;
     }
