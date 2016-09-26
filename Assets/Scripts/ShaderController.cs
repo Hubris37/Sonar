@@ -48,7 +48,7 @@ public class ShaderController : MonoBehaviour {
     {
         // TODO: Tweak these for maxumum performance
         float maxRad = Mathf.Min((float)(dbVal), 5) + 1;
-        Color col = Color.HSVToRGB(.0f * pitchVal * 0.001f, dbVal * 0.1f, pitchVal * 0.001f);
+        Color col = Color.HSVToRGB(pitchVal * 0.0007f, dbVal * 0.1f, pitchVal * 0.001f);
 
         float rad = 0; // Expand this
         Vector3 hitPoint = hitPos;
