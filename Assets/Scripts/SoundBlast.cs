@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// Currently not in use ///
 public class SoundBlast : MonoBehaviour {
 
 	public float startScale = 0.05f;

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-// using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 
 public class ShaderController : MonoBehaviour {
@@ -39,21 +39,20 @@ public class ShaderController : MonoBehaviour {
             r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
 
         // Subscribe to SoundBlast onBlastHit function
-        SoundBlast.onBlastHit += addCircle;
+        FireSoundWave.onBlastHit += addCircle;
+
         Camera.main.depthTextureMode = DepthTextureMode.Depth;
     }
 
-    void addCircle(GameObject soundBlast)
+    void addCircle(Vector3 hitPos, float pitchVal, float dbVal)
     {
-        SoundBlast soundData = soundBlast.GetComponent<SoundBlast>();
-
         // TODO: Tweak these for maxumum performance
-        float maxRad = Mathf.Min((float)(soundData.DbVal), 5) + 1;
-        Color col = Color.HSVToRGB(.7f, soundData.DbVal * 0.1f, soundData.PitchVal * 0.001f);
+        float maxRad = Mathf.Min((float)(dbVal), 5) + 1;
+        Color col = Color.HSVToRGB(.7f, dbVal * 0.1f, pitchVal * 0.001f);
         float rad = 0; // Expand this
-        Vector3 hitPoint = soundBlast.transform.position;
-        float expSpeed = soundData.PitchVal*0.0001f;
-        float freq = soundData.PitchVal;
+        Vector3 hitPoint = hitPos;
+        float expSpeed = pitchVal*0.0001f;
+        float freq = pitchVal;
 
         ++numCircles;
         maxRadius.Add(maxRad);
@@ -62,8 +61,6 @@ public class ShaderController : MonoBehaviour {
         colors.Add(col);
         expansionSpeeds.Add(expSpeed);
         frequencies.Add(freq);
-
-        Destroy(soundBlast);
     }
 	
 	// Update is called once per frame

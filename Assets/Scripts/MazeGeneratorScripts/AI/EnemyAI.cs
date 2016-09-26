@@ -145,7 +145,7 @@ public class EnemyAI : MonoBehaviour {
                 fScore[n] = gScore[n] + heuristicCost(n, targetCell);
             }
         }
-        Debug.Log("Error: AI could not find a path.", transform);
+        // Debug.Log("Error: AI could not find a path.", transform);
         return openSet;
     }
 

@@ -8,11 +8,15 @@ public class FireSoundWave : MonoBehaviour {
     public float waveFreq = 10; // Number of waves per sec
     [RangeAttribute(-60,10)]
     public float volumeSens;
+	public float soundSpeed = 340f;
 
 	private GameObject soundBlastList;
     private AudioMeasure audioMeasure;
     private Transform cameraT;
     private float prevTime, prevSoundCheck;
+
+	public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
+	public static event SoundBlastHit onBlastHit;
 
 	// Use this for initialization
 	void Start () 
@@ -38,16 +42,28 @@ public class FireSoundWave : MonoBehaviour {
 
 	void FireSoundBlast()
 	{
+		//Raycast
 		Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
-		// Spawm soundBlast and fire it away!
-		GameObject o = (GameObject)Instantiate(soundBlast, cameraT.position 
-						+ (fwd * 0.5f), Quaternion.LookRotation(fwd));
-		SoundBlast oSound = o.GetComponent<SoundBlast>();
-		oSound.PitchVal = audioMeasure.PitchValue;
-		oSound.DbVal = audioMeasure.DbValue;
-		oSound.FireDir = fwd;
-		oSound.Fire();
-		// Add soundBlast to the list in the Hierarchy
-		o.transform.parent = soundBlastList.transform;
+		RaycastHit hit;
+		if(Physics.Raycast(transform.position,fwd, out hit, 1000))
+		{
+			//onBlastHit(hit.point, audioMeasure.PitchValue, audioMeasure.DbValue);
+			StartCoroutine(hitDelay(hit.point, audioMeasure.PitchValue, audioMeasure.DbValue));
+			
+		}
+	}
+
+	/** Realistic sound delay! */
+	IEnumerator hitDelay(Vector3 hitPos, float pitchVal, float dbVal)
+	{
+		// s = v * t
+		float dist = (hitPos - transform.position).magnitude;
+		float delay = dist / soundSpeed;
+
+		yield return new WaitForSeconds(delay);
+
+		onBlastHit(hitPos, pitchVal, dbVal);
+
+		yield return null;
 	}
 }
