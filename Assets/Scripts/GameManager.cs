@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour {
 
     private List<GameObject> bots;
     public GameObject Chef;
+    public int startChefAmount = 3;
+    private int chefAmount;
 
     public int level = 1;
 
@@ -29,6 +31,7 @@ public class GameManager : MonoBehaviour {
         //car = FindObjectOfType<CarController> ();
         player.OnGoalTouch += WonGame;
 		player.goal = goal;
+        chefAmount = startChefAmount;
 		BeginGame();
     }
 
@@ -48,7 +51,8 @@ public class GameManager : MonoBehaviour {
 
 		pos = mazeInstance.GetCell (new IntVector2 (mazeInstance.size.x - 1, mazeInstance.size.z - 1)).transform.position;
 		goal.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
-        spawnAI(Chef);
+        for (int i = 0; i < chefAmount; ++i)
+            spawnAI(Chef);
     }
 
 	public void GenerateMaze() {
@@ -65,28 +69,38 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void RestartGame () {
-		Destroy (mazeInstance.gameObject);
-        foreach (GameObject bot in bots) {
-            Destroy(bot);
-        }
+        destroyLevel();
         level = 1;
+        chefAmount = startChefAmount;
 		BeginGame ();
 	}
 
+    private void destroyLevel() {
+        Destroy(mazeInstance.gameObject);
+        foreach (GameObject bot in bots) {
+            Destroy(bot);
+        }
+        bots.Clear();
+    }
+
 	private void WonGame() {
-		Destroy (mazeInstance.gameObject);
+		destroyLevel();
 		level++;
+        chefAmount++;
 		BeginGame ();
 	}
+
+    public void LostGame() {
+        RestartGame();
+    }
 
     private void spawnAI(GameObject AIPrefab) {
         IntVector2 initCell = new IntVector2();
         initCell.x = Random.Range(0, mazeInstance.size.x);
         initCell.z = Random.Range(0, mazeInstance.size.z);
         Vector3 initPos = mazeInstance.GetCell(initCell).transform.position;
-        initPos.y += 1;
-        GameObject bot = Instantiate(AIPrefab, player.transform.position, Quaternion.identity) as GameObject;
+        GameObject bot = Instantiate(AIPrefab, initPos, Quaternion.identity) as GameObject;
         bots.Add(bot);
-        bot.GetComponent<EnemyAI>().initializeAI(mazeInstance);
+        bot.GetComponent<EnemyAI>().initializeAI(mazeInstance, mazeInstance.GetCell(initCell));
     }
 }

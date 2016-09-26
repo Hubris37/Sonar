@@ -13,6 +13,7 @@ public class EnemyAI : MonoBehaviour {
     public float movementSpeed = 1.4f;
     public float chasingSpeedMultiplier = 1.2f;
     public float aggroRange = 1.0f;
+    public float grabRange = 0.6f;
 
     private Vector3 playerPos;
     private float playerNoise;
@@ -28,10 +29,12 @@ public class EnemyAI : MonoBehaviour {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
-    public void initializeAI(Maze m) {
+    public void initializeAI(Maze m, MazeCell c = null) {
         maze = m;
         mazeNodes = maze.getCellList();
-        findCurrentCell();
+        currentPositionCell = c;
+        if (currentPositionCell == null)
+            findCurrentCell();
     }
 
     private void findCurrentCell() {
@@ -172,12 +175,12 @@ public class EnemyAI : MonoBehaviour {
             dif = playerPos - transform.position;
             dif.y = 0;
             movementMultiplier = chasingSpeedMultiplier;
+            tryGrabPlayer();
         }
         else {
             // Else, move on calculated path
             int tilesLeft = movementPath.Count;
             if (tilesLeft == 0) return;
-            movementPath = tryDiagonal(movementPath);
             float thresh = 0.5f;
             dif = movementPath[0].transform.position - transform.position;
             dif.y = 0;
@@ -185,8 +188,10 @@ public class EnemyAI : MonoBehaviour {
                 currentPositionCell = movementPath[0];
                 movementPath.RemoveAt(0);
                 if (movementPath.Count == 0) return;
+                movementPath = tryDiagonal(movementPath);
             }
         }
+        //transform.LookAt(playerPos);
         transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime);
     }
 
@@ -212,6 +217,8 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private void tryGrabPlayer() {
-
+        if ((playerPos-transform.position).magnitude <= grabRange) {
+            gameManager.LostGame();
+        }
     }
 }
