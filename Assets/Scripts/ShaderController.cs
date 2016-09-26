@@ -49,7 +49,7 @@ public class ShaderController : MonoBehaviour {
 
         // TODO: Tweak these for maxumum performance
         float maxRad = Mathf.Min((float)(soundData.DbVal), 5) + 1;
-        Color col = Color.HSVToRGB(.7f, soundData.DbVal * 0.1f, soundData.PitchVal * 0.001f);
+        Color col = Color.HSVToRGB(.0f * soundData.PitchVal * 0.001f, soundData.DbVal * 0.1f, soundData.PitchVal * 0.001f);
         float rad = 0; // Expand this
         Vector3 hitPoint = soundBlast.transform.position;
         float expSpeed = soundData.PitchVal*0.0001f;

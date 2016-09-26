@@ -149,14 +149,14 @@ Shader "Custom/Echolocation" {
 				half3 worldRefl = reflect(-worldViewDir, worldNormal);
 				// half3 refractDir = -refract(normalize(i.worldPos-_WorldSpaceCameraPos), worldNormal, .5);
 
-				fixed4 finalColor = fixed4(0, 0, 0, 1);
+				fixed4 finalColor = fixed4(0, 0, 0, _WallO);
 				
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
-					//float val = step(dist, _Radius[j]) * step(_Radius[j] - _EdgeWidth, dist); // Hollow circle
+					float val = step(dist, _Radius[j]) * step(_Radius[j] - _EdgeWidth, dist); // Hollow circle
 
-					// i.uv.x += val * sin((i.uv.x+i.uv.y)*dist + _Time.g*4)*_DistortScale;
-					// i.uv.y += val * sin((i.uv.x-i.uv.y)*dist + _Time.g*_Frequency[j]*.2)*_DistortScale*2;
+					i.uv.x += val * sin((i.uv.x+i.uv.y)*dist + _Time.g*4)*_DistortScale;
+					i.uv.y += val * sin((i.uv.x-i.uv.y)*dist + _Time.g*_Frequency[j]*.2)*_DistortScale*2;
 					tnormal = UnpackNormal(tex2D(_NormalMap, i.uv)); // sample the normal map, and decode from the Unity encoding
 					// transform normal from tangent to world space
 					worldNormal.x = dot(i.tspace0, tnormal);
@@ -164,14 +164,14 @@ Shader "Custom/Echolocation" {
 					worldNormal.z = dot(i.tspace2, tnormal);
 
 					// Circle with edge
-					float val = /*(1 - step(dist, _Radius[j] - _EdgeWidth) * 0.5) **/ step(dist, _Radius[j]);
+					val += (1 - step(dist, _Radius[j] - _EdgeWidth) * 0.5) * step(dist, _Radius[j]);
 					//max(lerp(_Radius[j]*.5, 0, dist/_Radius[j]*2)*.5, lerp(0, _Radius[j], dist/_Radius[j])) *
 
-					//float bump = (_UseNormalMap==1) ? max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) : 1;
+					float bump = (_UseNormalMap==1) ? max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) : 1;
 
-					finalColor.r += (1 - _Radius[j]/_MaxRadius[j]) * val;//  _Color[j].rgb * bump;
+					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val *  _Color[j].rgb * bump;
 					
-					//finalColor.a += max(0, (1 - _Radius[j]/_MaxRadius[j]) * val * bump - 0.1);
+					finalColor.a += max(0, (1 - _Radius[j]/_MaxRadius[j]) * val * bump - 0.1);
 				}
 
 				//finalColor.a *= 0.7;
