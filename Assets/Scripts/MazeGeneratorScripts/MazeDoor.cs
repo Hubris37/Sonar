@@ -7,6 +7,8 @@ public class MazeDoor : MazePassage {
 	public float easeAmount;
 	private Vector3 startPos;
 	private Vector3 endPos;
+	private float startRot = 0f;
+	private float endRot = 90f;
 	float percentBetweenPoints;
 	float speed = 1f;
 	bool move;
@@ -14,6 +16,8 @@ public class MazeDoor : MazePassage {
 	void Start() {
 		startPos = hinge.localPosition;
 		endPos = startPos + new Vector3(0f,1f,0f);
+		//startRot = hinge.localRotation;
+		//endRot = endRot + new Quaternion.Euler(0f, -90f, 0f);
 	}
 
 	void Update() {
@@ -30,7 +34,9 @@ public class MazeDoor : MazePassage {
 				percentBetweenPoints += Time.deltaTime * speed;
 				percentBetweenPoints = Mathf.Clamp01(percentBetweenPoints);
 				float easedPercent = Ease (percentBetweenPoints);
-				hinge.localPosition = Vector3.Lerp(startPos, endPos, easedPercent);
+				//hinge.localPosition = Vector3.Lerp(startPos, endPos, easedPercent);
+				float angle = Mathf.LerpAngle(startRot, endRot, easedPercent);
+				hinge.localEulerAngles = new Vector3(0,angle,0);
 			}
 		}
 	}
