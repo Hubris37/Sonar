@@ -93,7 +93,7 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private MazeCell findTargetPosition(List<MazeCell> map) {
-        // return roomCells[Random.Range(0, roomCells.Count)];
+        return map[Random.Range(0, map.Count)];
         MazeCell target = currentPositionCell;
         float maxDist = 0;
         foreach (MazeCell m in map) {
@@ -168,12 +168,13 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private void move() {
-        Vector3 dif;
+        Vector3 dif, lookDir;
         float movementMultiplier = 1.0f;
         // If chasing player, move towards him/her
         if (isChasing) {
             dif = playerPos - transform.position;
             dif.y = 0;
+            lookDir = playerPos;
             movementMultiplier = chasingSpeedMultiplier;
             tryGrabPlayer();
         }
@@ -184,15 +185,17 @@ public class EnemyAI : MonoBehaviour {
             float thresh = 0.5f;
             dif = movementPath[0].transform.position - transform.position;
             dif.y = 0;
+            lookDir = movementPath[0].transform.position;
             if (dif.magnitude < thresh) {
                 currentPositionCell = movementPath[0];
                 movementPath.RemoveAt(0);
                 if (movementPath.Count == 0) return;
-                movementPath = tryDiagonal(movementPath);
+               // movementPath = tryDiagonal(movementPath);
             }
         }
-        //transform.LookAt(playerPos);
-        transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime);
+        lookDir.y = transform.position.y;
+        transform.LookAt(lookDir);
+        transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
     }
 
     private List<MazeCell> tryDiagonal(List<MazeCell> path) {
