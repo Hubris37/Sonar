@@ -30,7 +30,7 @@ public class FirstPersonController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+		/*
 		RaycastHit hit;
 		Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
         
