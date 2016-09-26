@@ -9,11 +9,14 @@ public class EnemyAI : MonoBehaviour {
 
     private bool moving = false;
     private List<MazeCell> movementPath;
+    private MazeCell startCell;
+
     public MazeCell currentPositionCell;
     public float movementSpeed = 1.4f;
     public float chasingSpeedMultiplier = 1.2f;
     public float aggroRange = 1.0f;
     public float grabRange = 0.6f;
+    public int patrolMinRoomSize = 4;
 
     private Vector3 playerPos;
     private float playerNoise;
@@ -35,6 +38,10 @@ public class EnemyAI : MonoBehaviour {
         currentPositionCell = c;
         if (currentPositionCell == null)
             findCurrentCell();
+        startCell = currentPositionCell;
+        if (currentPositionCell.room.getCells().Count < patrolMinRoomSize) {
+            patrolsRoom = false;
+        }
     }
 
     private void findCurrentCell() {
@@ -43,7 +50,7 @@ public class EnemyAI : MonoBehaviour {
             currentPositionCell = hit.transform.parent.transform.gameObject.GetComponent<MazeCell>();
         }
         else {
-            Debug.LogError("Error: Could not find MazeCell for AI.", transform);
+            Debug.LogWarning("Error: Could not find current MazeCell of AI.", transform);
         }
     }
 
@@ -63,7 +70,9 @@ public class EnemyAI : MonoBehaviour {
         getPlayerInformation();
         if (!isChasing) {
             float detectionRadius = aggroRange + Mathf.Max(0, playerNoise);
-            isChasing = ((playerPos - transform.position).magnitude < detectionRadius) ? true : false;
+            Vector3 dif = (playerPos - transform.position);
+            dif.y = 0;
+            isChasing = (dif.magnitude < detectionRadius) ? true : false;
         }
         // Check if in line of sight
         if (isChasing) {
@@ -73,7 +82,7 @@ public class EnemyAI : MonoBehaviour {
                 if (hit.transform.name.Contains("Wall")) {
                     isChasing = false;
                     findCurrentCell();
-                    movementPath.Clear();
+                    movementPath = aStar(startCell, mazeNodes);
                 }
             }
         }
