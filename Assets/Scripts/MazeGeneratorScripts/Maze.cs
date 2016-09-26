@@ -72,7 +72,7 @@ public class Maze : MonoBehaviour {
 		bool createDecor = Random.value < decorProbability ? true : false;
 
 		MazePassage prefab = Random.value < doorProbability ? doorPrefab : passagePrefab;
-		MazePassage passage = Instantiate(prefab) as MazePassage;
+		MazePassage passage = Instantiate(prefab,cell.transform.position,direction.ToRotation()) as MazePassage;
 
         passage.Initialize(cell, otherCell, direction);
         //passage = Instantiate(prefab) as MazePassage;

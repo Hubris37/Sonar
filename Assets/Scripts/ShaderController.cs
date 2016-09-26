@@ -47,7 +47,7 @@ public class ShaderController : MonoBehaviour {
     void addCircle(Vector3 hitPos, float pitchVal, float dbVal)
     {
         // TODO: Tweak these for maxumum performance
-        float maxRad = Mathf.Min((float)(dbVal), 5) + 1;
+        float maxRad = Mathf.Min((float)((20f+dbVal)*1.5f), 5) + 1;
         Color col = Color.HSVToRGB(pitchVal * 0.0007f, dbVal * 0.1f, pitchVal * 0.001f);
 
         float rad = 0; // Expand this
