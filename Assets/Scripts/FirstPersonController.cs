@@ -8,7 +8,7 @@ public class FirstPersonController : MonoBehaviour {
 
 	public float mouseSensitivityX = 3.5f;
 	public float mouseSensitivityY = 3.5f;
-	public float walkSpeed = 1f;
+	public float walkSpeed = 0.5f;
 	public float turnSpeed = 2f;
 
 	Transform cameraT;
@@ -58,12 +58,20 @@ public class FirstPersonController : MonoBehaviour {
 		float h = Input.GetAxis ("Horizontal") * Time.fixedDeltaTime * turnSpeed;
 		float v = Input.GetAxis ("Vertical") * Time.fixedDeltaTime * turnSpeed;
 		transform.Rotate (h * Vector3.up);
-		transform.Rotate (v * Vector3.right);
+		//transform.Rotate (v * Vector3.right);
 		//myRigidBody.AddRelativeTorque (h * Vector3.back );
 		//myRigidBody.AddRelativeTorque (v * Vector3.right);
 
+		//if (Input.GetButton ("Fire1")) {
+		myRigidBody.AddRelativeForce (v * Vector3.forward * walkSpeed, ForceMode.Impulse);
+		//}
+		
 		if (Input.GetButton ("Fire1")) {
-			myRigidBody.AddRelativeForce (Vector3.forward * walkSpeed, ForceMode.Impulse);
+			myRigidBody.AddRelativeForce (Vector3.up * 5f);
+		}
+
+		if (Input.GetButton ("Fire2")) {
+			myRigidBody.AddRelativeForce (Vector3.up * -5f);
 		}
 
 
