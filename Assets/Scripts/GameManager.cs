@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour {
 		GenerateMaze();
 
 		Vector3 pos = mazeInstance.GetCell (new IntVector2 (0, 0)).transform.position;
-		player.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
+		player.transform.position = new Vector3(pos.x, pos.y+1.25f, pos.z);
 		pos = mazeInstance.GetCell (new IntVector2 (1, 0)).transform.position;
 		//car.transform.position = new Vector3(pos.x, pos.y+1f, pos.z);
 
