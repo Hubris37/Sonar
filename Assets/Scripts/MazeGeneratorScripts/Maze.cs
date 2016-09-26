@@ -148,4 +148,8 @@ public class Maze : MonoBehaviour {
         return cellList;
     }
 
+    public List<MazeRoom> getRooms() {
+        return rooms;
+    }
+
 }
