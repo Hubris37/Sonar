@@ -91,7 +91,7 @@ Shader "Custom/Echolocation" {
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-			#define MAX_CIRCLES 200
+			#define MAX_CIRCLES 500
 
 			float4 _Color[MAX_CIRCLES];
 			float3 _Center[MAX_CIRCLES];
