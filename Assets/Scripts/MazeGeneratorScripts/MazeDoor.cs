@@ -19,16 +19,11 @@ public class MazeDoor : MazePassage {
 		//startRot = hinge.localRotation;
 		//endRot = endRot + new Quaternion.Euler(0f, -90f, 0f);
 	}
-
+	/*
 	void Update() {
 		if(move) {
 			if(percentBetweenPoints >= 1){
 				percentBetweenPoints = 1;
-				/*percentBetweenPoints = 0;
-				Vector3 temp = startPos;
-				startPos = endPos;
-				endPos = temp;
-				*/
 				move = false;
 			} else {
 				percentBetweenPoints += Time.deltaTime * speed;
@@ -39,7 +34,8 @@ public class MazeDoor : MazePassage {
 				hinge.localEulerAngles = new Vector3(0,angle,0);
 			}
 		}
-	}
+		
+	}*/
 
 	float Ease(float x) {
 		float a = easeAmount + 1;
