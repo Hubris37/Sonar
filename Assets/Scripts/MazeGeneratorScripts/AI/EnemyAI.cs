@@ -232,7 +232,9 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private void tryGrabPlayer() {
-        if ((playerPos-transform.position).magnitude <= grabRange) {
+        Vector3 dif = playerPos-transform.position;
+        dif.y = 0;
+        if (dif.magnitude <= grabRange) {
             gameManager.LostGame();
         }
     }

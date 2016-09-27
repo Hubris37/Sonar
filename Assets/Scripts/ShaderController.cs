@@ -47,12 +47,13 @@ public class ShaderController : MonoBehaviour {
     void addCircle(Vector3 hitPos, float pitchVal, float dbVal)
     {
         // TODO: Tweak these for maxumum performance
-        float maxRad = Mathf.Min((float)((20f+dbVal)*1.5f), 5) + 1;
-        Color col = Color.HSVToRGB(pitchVal * 0.0007f, dbVal * 0.1f, pitchVal * 0.001f);
+        float maxRad = dbVal * 50f;
+        //float maxRad = Mathf.Min((float)((20f+dbVal)*1.5f), 5) + 1;
+        Color col = Color.HSVToRGB(pitchVal * 0.0015f, dbVal*6f, pitchVal * 0.001f);
 
         float rad = 0; // Expand this
         Vector3 hitPoint = hitPos;
-        float expSpeed = pitchVal*0.0001f;
+        float expSpeed = pitchVal*0.003f + 0.003f;
         float freq = pitchVal;
 
         ++numCircles;
@@ -75,7 +76,7 @@ public class ShaderController : MonoBehaviour {
         {
             for(int i = 0; i < numCircles; ++i)
             {
-				radius[i] += expansionSpeeds[i];
+				radius[i] += expansionSpeeds[i]*Time.deltaTime;
 
                 if (radius[i] >= maxRadius[i])
                 {

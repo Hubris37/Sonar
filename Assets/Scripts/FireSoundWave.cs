@@ -8,8 +8,9 @@ public class FireSoundWave : MonoBehaviour {
 	public GameObject soundBlast;
     public GameObject audioSrc;
     public float waveFreq = 10; // Number of waves per sec
-    [RangeAttribute(-60,10)]
+    [RangeAttribute(-60,0)]
     public float volumeSens;
+	private float volumeMax = 120f;
 	public float soundSpeed = 340f;
 
 	private GameObject soundBlastList;
@@ -24,6 +25,7 @@ public class FireSoundWave : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
+		//volumeMax -= volumeSens;
 		cameraT = Camera.main.transform;
 		audioSrc = GameObject.FindGameObjectWithTag("AudioSource");
 		audioMeasure = audioSrc.GetComponent<AudioMeasure>();
@@ -45,13 +47,15 @@ public class FireSoundWave : MonoBehaviour {
 
 	void FireSoundBlast()
 	{
+		float temp = audioMeasure.DbValue - volumeSens;
+		float percent_Db = temp / volumeMax;
 		//Raycast
 		Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position,fwd, out hit, 1000))
 		{
 			//onBlastHit(hit.point, audioMeasure.PitchValue, audioMeasure.DbValue);
-			StartCoroutine(hitDelay(hit.point, audioMeasure.PitchValue, audioMeasure.DbValue));
+			StartCoroutine(hitDelay(hit.point, audioMeasure.PitchValue, percent_Db));
 			//OnSoundMade ();
 		}
 	}
