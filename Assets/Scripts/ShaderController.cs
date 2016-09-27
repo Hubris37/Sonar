@@ -46,23 +46,26 @@ public class ShaderController : MonoBehaviour {
 
     void addCircle(Vector3 hitPos, float pitchVal, float dbVal)
     {
-        // TODO: Tweak these for maxumum performance
-        float maxRad = dbVal * 50f;
-        //float maxRad = Mathf.Min((float)((20f+dbVal)*1.5f), 5) + 1;
-        Color col = Color.HSVToRGB(pitchVal * 0.0015f, dbVal*6f, pitchVal * 0.001f);
+        if(numCircles <= MAX_CIRCLES)
+        {
+            // TODO: Tweak these for maxumum performance
+            float maxRad = dbVal * 50f;
+            //float maxRad = Mathf.Min((float)((20f+dbVal)*1.5f), 5) + 1;
+            Color col = Color.HSVToRGB(pitchVal * 0.0015f, dbVal*6f, pitchVal * 0.001f);
 
-        float rad = 0; // Expand this
-        Vector3 hitPoint = hitPos;
-        float expSpeed = pitchVal*0.003f + 0.003f;
-        float freq = pitchVal;
+            float rad = 0; // Expand this
+            Vector3 hitPoint = hitPos;
+            float expSpeed = pitchVal*0.003f + 0.003f;
+            float freq = pitchVal;
 
-        ++numCircles;
-        maxRadius.Add(maxRad);
-        radius.Add(rad);
-        centers.Add(hitPoint);
-        colors.Add(col);
-        expansionSpeeds.Add(expSpeed);
-        frequencies.Add(freq);
+            ++numCircles;
+            maxRadius.Add(maxRad);
+            radius.Add(rad);
+            centers.Add(hitPoint);
+            colors.Add(col);
+            expansionSpeeds.Add(expSpeed);
+            frequencies.Add(freq);
+        }
     }
 	
 	// Update is called once per frame
