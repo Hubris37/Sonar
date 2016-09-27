@@ -7,7 +7,7 @@ public class ShaderController : MonoBehaviour {
     public bool standardShader = false;
     public Renderer r;
 
-    private const int MAX_CIRCLES = 500; // Maximum circles allowed at once
+    private const int MAX_CIRCLES = 120; // Maximum circles allowed at once !!!CHANGE IN SHADER AS WELL!!!
     private int numCircles = 0;
     private float prevTime, prevSoundCheck;
 	private GameObject soundBlastList;
@@ -46,7 +46,7 @@ public class ShaderController : MonoBehaviour {
 
     void addCircle(Vector3 hitPos, float pitchVal, float dbVal)
     {
-        if(numCircles <= MAX_CIRCLES)
+        if(numCircles < MAX_CIRCLES)
         {
             // TODO: Tweak these for maxumum performance
             float maxRad = dbVal * 50f;
@@ -55,7 +55,7 @@ public class ShaderController : MonoBehaviour {
 
             float rad = 0; // Expand this
             Vector3 hitPoint = hitPos;
-            float expSpeed = pitchVal*0.003f + 0.003f;
+            float expSpeed = Mathf.Max(pitchVal*0.008f + 0.03f, 1); // Quick fix for too small/slow values
             float freq = pitchVal;
 
             ++numCircles;
@@ -123,6 +123,5 @@ public class ShaderController : MonoBehaviour {
                 r.sharedMaterials[i].SetFloatArray("_Frequency", frequenciesArray);
             }
         }
-        //print("Number of circles: " + numCircles);
 	}
 }
