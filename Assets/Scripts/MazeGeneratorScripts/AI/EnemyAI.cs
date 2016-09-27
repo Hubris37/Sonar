@@ -204,6 +204,9 @@ public class EnemyAI : MonoBehaviour {
         }
         lookDir.y = transform.position.y;
         transform.LookAt(lookDir);
+        Vector3 rot = transform.eulerAngles;
+        rot.y += 180;
+        transform.eulerAngles = rot;
         transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
     }
 
