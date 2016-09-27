@@ -93,7 +93,7 @@ Shader "Custom/Echolocation" {
 			#pragma fragment frag
 			#include "UnityCG.cginc"
 
-			#define MAX_CIRCLES 200
+			#define MAX_CIRCLES 120 // Maximum circles allowed at once !!!CHANGE IN ShaderController AS WELL!!!
 
 			float4 _Color[MAX_CIRCLES];
 			float3 _Center[MAX_CIRCLES];
