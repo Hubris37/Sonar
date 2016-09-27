@@ -19,7 +19,7 @@ public class AddForce : MonoBehaviour {
 
 	void RecieveForce(Vector3 hitPos, float pitchVal, float dbVal) {
 
-		Vector3 heading = (transform.position - hitPos)*0.1f;
+		Vector3 heading = (transform.position - hitPos)*0.2f;
 		float dist = heading.sqrMagnitude;
 		Vector3 dir = heading / dist;
 		//float dist = Vector3.Distance(hitPos, transform.position);

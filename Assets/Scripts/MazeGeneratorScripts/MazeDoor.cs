@@ -46,6 +46,9 @@ public class MazeDoor : MazePassage {
 		//print (triggerCollider.gameObject.name);
 
 		if (triggerCollider.gameObject.name == "Player(Clone)") {
+
+			cell.room.Show();
+			otherCell.room.Show();
 			//hinge.localPosition += new Vector3(0f,1f,0f);
 			move = true;
 			//hinge.localRotation = hinge.localRotation = Quaternion.Euler(0f, -90f, 0f);
