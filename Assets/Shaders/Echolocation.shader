@@ -2,11 +2,13 @@
 
 Shader "Custom/Echolocation" {
 	Properties {
+		_DefaultColor("Default Color", Color) = (0, 0, 0, 0)
 		_EdgeWidth("Circle Edge Width", Range(0.0, 0.5)) = 0.15
 		_DistortScale("Distort Scale", range(0.005, 0.1)) = 0.01
 		_WallO("Wall Opacity", Range(0.00,1)) = 1.0
 		[MaterialToggle] _UseNormalMap("Use Normal Map", Float) = 0
 		_NormalMap ("Normal Map", 2D) = "bump" {}
+		[MaterialToggle] _UseDepth("Use Depth Map", Float) = 1
 	}
 
 	SubShader {
@@ -98,10 +100,13 @@ Shader "Custom/Echolocation" {
 			float _Radius[MAX_CIRCLES];
 			float _MaxRadius[MAX_CIRCLES];
 			float _Frequency[MAX_CIRCLES];
+
+			float4 _DefaultColor;
 			float _EdgeWidth; // Circle Edge Width
 			float _DistortScale; // Amplitude of bump map distortion
 			float _WallO; // Wall Opacity	
-			float _UseNormalMap;	
+			float _UseNormalMap;
+			float _UseDepth;	
 			int _NumCircles = 0;
 
 			struct v2f {
@@ -149,7 +154,7 @@ Shader "Custom/Echolocation" {
 				half3 worldRefl = reflect(-worldViewDir, worldNormal);
 				// half3 refractDir = -refract(normalize(i.worldPos-_WorldSpaceCameraPos), worldNormal, .5);
 
-				fixed4 finalColor = fixed4(0, 0, 0, _WallO);
+				fixed4 finalColor = fixed4(_DefaultColor.rgb, _WallO);
 				
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
@@ -175,7 +180,10 @@ Shader "Custom/Echolocation" {
 				}
 
 				//finalColor.a *= 0.7;
-				return fixed4(finalColor.rgb * invDepth, finalColor.a);
+				if(_UseDepth)
+					return fixed4(finalColor.rgb * invDepth, finalColor.a);
+				else
+					return fixed4(finalColor.rgb, finalColor.a);
 			}
 			ENDCG
 		}
