@@ -24,15 +24,20 @@ public class AudioMeasure : MonoBehaviour {
 
 		aud = GetComponent<AudioSource>();
 
-		//List all available microphones 
-		foreach (string device in Microphone.devices)
-			Debug.Log("Name: " + device);
+		if(Microphone.devices.Length <= 0) {  
+            Debug.LogWarning("Microphone not connected!");  
+        }
 
 		//Check frequency capabilities of device.
 		//deviceName = "" is the default microphone
 		Microphone.GetDeviceCaps("", out minFreq, out maxFreq);
 		Debug.Log("Min: " + minFreq);
 		Debug.Log("Max: " + maxFreq);
+
+		// According to the documentation, if minFreq and maxFreq are zero, the microphone supports any frequency
+		if(minFreq == 0 && maxFreq == 0) {
+			maxFreq = 44100;
+		}
 
 		aud.clip = Microphone.Start("", true, 10, maxFreq);
 		aud.loop = true;
@@ -51,14 +56,20 @@ public class AudioMeasure : MonoBehaviour {
 
 	void OnApplicationFocus( bool focusStatus )
 	{
-		aud.clip = Microphone.Start("", true, 10, maxFreq);
-		aud.Play();
+		// To not run before Start()
+		if(maxFreq > 0) {
+			aud.clip = Microphone.Start("", true, 10, maxFreq);
+			aud.Play();
+		}
 	}
 
 	void OnApplicationPause( bool pauseStatus )
 	{
-		Microphone.End("");
-		aud.Stop();
+		// To not run before Start()
+		if(maxFreq > 0) {
+			Microphone.End("");
+			aud.Stop();
+		}
 	}
 
 	void AnalyzeSound() {
