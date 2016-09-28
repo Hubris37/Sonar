@@ -109,7 +109,8 @@ public class EnemyAI : MonoBehaviour {
             if (patrolsRoom) {
                 // Get a random cell in the current room
                 map = currentPositionCell.room.getCells();
-            } else {
+            }
+            else {
                 map = mazeNodes;
             }
             movementPath = aStar(findTargetPosition(map), mazeNodes);
@@ -193,13 +194,14 @@ public class EnemyAI : MonoBehaviour {
 
     private void move() {
         Vector3 dif, lookDir;
-        float jumpDist = maxJumpDistance;
+        float movementMultiplier = 1.0f;
         // If chasing player, move towards him/her
         if (isChasing) {
             dif = playerPos - transform.position;
             dif.y = 0;
             lookDir = playerPos;
-            jumpDist *= jumpChaseMultiplier;
+            movementMultiplier = chasingSpeedMultiplier;
+            //            jumpDist *= jumpChaseMultiplier;
             tryGrabPlayer();
         }
         else {
@@ -214,17 +216,17 @@ public class EnemyAI : MonoBehaviour {
                 currentPositionCell = movementPath[0];
                 movementPath.RemoveAt(0);
                 if (movementPath.Count == 0) return;
-               // movementPath = tryDiagonal(movementPath);
+                // movementPath = tryDiagonal(movementPath);
             }
         }
         lookDir.y = transform.position.y;
         transform.LookAt(lookDir);
-        // transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
-        if (inAir) {
+        transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
+        /*if (inAir) {
             inAir = gravityPull();
         }
         else rigid.velocity = Vector3.zero;
-        jumpTowards(lookDir, jumpDist);
+        jumpTowards(lookDir, jumpDist);*/
     }
 
     private bool gravityPull() {
@@ -238,7 +240,8 @@ public class EnemyAI : MonoBehaviour {
             // Remove all velocity
             rigid.velocity = Vector3.zero;
             return false;
-        } else {
+        }
+        else {
             // Still in air
             return true;
         }
@@ -256,7 +259,8 @@ public class EnemyAI : MonoBehaviour {
             Vector3 vel = dir.normalized * dist / jumpTime;
             vel.y = vertSpeed;
             rigid.velocity = vel;
-        } else if(!inAir) {
+        }
+        else if (!inAir) {
             jumpCounter--;
         }
     }
@@ -266,7 +270,7 @@ public class EnemyAI : MonoBehaviour {
         //If there are only two tiles there are no chances for diagonal skips
         if (tilesLeft < 2) return path;
         int removed = 0;
-        for (int i = 0; i < tilesLeft-1-removed; ++i) {
+        for (int i = 0; i < tilesLeft - 1 - removed; ++i) {
             RaycastHit hit;
             Vector3 dir = path[i + 1].transform.position - transform.position;
             if (Physics.Raycast(transform.position, dir.normalized, out hit, dir.magnitude)) {
@@ -283,7 +287,7 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private void tryGrabPlayer() {
-        Vector3 dif = playerPos-transform.position;
+        Vector3 dif = playerPos - transform.position;
         dif.y = 0;
         if (dif.magnitude <= grabRange) {
             gameManager.LostGame();
