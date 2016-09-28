@@ -98,11 +98,11 @@ public class EnemyAI : MonoBehaviour {
         if (isChasing) {
             Vector3 pos = transform.position;
             pos.y += 0.5f;
-            Vector3 dir = playerPos - pos;
+            Vector3 dir = pos - playerPos;
             RaycastHit hit;
-            if (Physics.Raycast(pos, dir.normalized, out hit, 20)) {
-           //     print(hit.transform.name);
-                if (!hit.transform.name.Contains("Player") && !hit.transform.name.Contains("Door")) {
+            if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.magnitude)) {
+                 print(hit.transform.name);
+                if (!hit.transform.name.Contains("Body") && !hit.transform.name.Contains("Door")) {
                     isChasing = false;
                     findCurrentCell();
                     movementPath = aStar(startCell, mazeNodes);
@@ -286,6 +286,7 @@ public class EnemyAI : MonoBehaviour {
     private void tryGrabPlayer() {
         Vector3 dif = playerPos - transform.position;
         dif.y = 0;
+        print(dif.magnitude);
         if (dif.magnitude <= grabRange) {
             gameManager.LostGame();
         }
