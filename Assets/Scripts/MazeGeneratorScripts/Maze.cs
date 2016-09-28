@@ -12,7 +12,7 @@ public class Maze : MonoBehaviour {
     public MazeCell cellPrefab;
     public MazePassage passagePrefab;
 	public MazeDoor doorPrefab;
-    public MazeWall[] wallPrefabs;
+    public MazeWall wallPrefab;
 
 	[Range(0f, 1f)]
 	public float doorProbability;
@@ -30,10 +30,11 @@ public class Maze : MonoBehaviour {
 		while (activeCells.Count > 0) {
 			DoNextGenerationStep (activeCells);
 		}
-
+		
 		for (int i = 0; i < rooms.Count; i++) {
 			rooms[i].Hide();
 		}
+		
 	}
 
 	private void DoFirstGenerationStep (List<MazeCell> activeCells) {
@@ -79,7 +80,7 @@ public class Maze : MonoBehaviour {
 		MazePassage passage = Instantiate(prefab,cell.transform.position,direction.ToRotation()) as MazePassage;
 
         passage.Initialize(cell, otherCell, direction);
-        //passage = Instantiate(prefab) as MazePassage;
+        passage = Instantiate(prefab) as MazePassage;
 		if (passage is MazeDoor) {
 			otherCell.Initialize(CreateRoom(cell.room.settingsIndex),false);
 		}
@@ -98,12 +99,18 @@ public class Maze : MonoBehaviour {
 
     private void CreateWall(MazeCell cell, MazeCell otherCell, MazeDirection direction)
     {
-		MazeWall wall = Instantiate(wallPrefabs[Random.Range(0,wallPrefabs.Length)]) as MazeWall;
+		MazeWall wall = Instantiate(wallPrefab) as MazeWall;
         wall.Initialize(cell, otherCell, direction);
-		//wall.transform.localScale = transform.localScale;
+		
+		bool createDecor = Random.value < decorProbability ? true : false;
+		if (createDecor && cell.room.settings.WallDecor.Length > 0){
+			GameObject decor = Instantiate(cell.room.settings.WallDecor[Random.Range(0,cell.room.settings.WallDecor.Length-1)],wall.transform.position,wall.transform.rotation) as GameObject;
+			decor.transform.parent = wall.transform;
+		}
+
         if (otherCell != null)
         {
-            //wall = Instantiate(wallPrefabs[Random.Range(0,wallPrefabs.Length)]) as MazeWall;
+            wall = Instantiate(wallPrefab) as MazeWall;
             cell.wallBetween.Add(otherCell);
             otherCell.wallBetween.Add(cell);
             wall.Initialize(otherCell, cell, direction.GetOpposite());
