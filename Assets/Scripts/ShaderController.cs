@@ -49,13 +49,13 @@ public class ShaderController : MonoBehaviour {
         if(numCircles < MAX_CIRCLES)
         {
             // TODO: Tweak these for maxumum performance
-            float maxRad = dbVal * 50f;
+            float maxRad = dbVal * 40f;
             //float maxRad = Mathf.Min((float)((20f+dbVal)*1.5f), 5) + 1;
             Color col = Color.HSVToRGB(pitchVal * 0.0015f, dbVal*6f, pitchVal * 0.001f);
 
             float rad = 0; // Expand this
             Vector3 hitPoint = hitPos;
-            float expSpeed = Mathf.Max(pitchVal*0.008f + 0.03f, 1); // Quick fix for too small/slow values
+            float expSpeed = Mathf.Max(pitchVal*0.05f + 0.8f, 1); // Quick fix for too small/slow values
             float freq = pitchVal;
 
             ++numCircles;
@@ -79,7 +79,7 @@ public class ShaderController : MonoBehaviour {
         {
             for(int i = 0; i < numCircles; ++i)
             {
-				radius[i] += expansionSpeeds[i]*Time.deltaTime;
+                radius[i] += (expansionSpeeds[i]*Time.deltaTime)/(radius[i]*radius[i]+1f);
 
                 if (radius[i] >= maxRadius[i])
                 {
