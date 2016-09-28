@@ -49,6 +49,18 @@ public class AudioMeasure : MonoBehaviour {
 		AnalyzeSound();
 	}
 
+	void OnApplicationFocus( bool focusStatus )
+	{
+		aud.clip = Microphone.Start("", true, 10, maxFreq);
+		aud.Play();
+	}
+
+	void OnApplicationPause( bool pauseStatus )
+	{
+		Microphone.End("");
+		aud.Stop();
+	}
+
 	void AnalyzeSound() {
 		aud.GetOutputData(_samples, 0); // fill array with samples
 		int i;
