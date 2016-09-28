@@ -11,25 +11,40 @@ public class EnemyAI : MonoBehaviour {
     private List<MazeCell> movementPath;
     private MazeCell startCell;
 
-    public MazeCell currentPositionCell;
-    public float movementSpeed = 1.4f;
-    public float chasingSpeedMultiplier = 1.2f;
+    [Header("Behaviour modifiers")]
     public float aggroRange = 1.0f;
     public float grabRange = 0.6f;
     public int patrolMinRoomSize = 4;
+    public bool patrolsRoom = true;
+
+    [Header("Running modifiers")]
+    public MazeCell currentPositionCell;
+    public float movementSpeed = 1.4f;
+    public float chasingSpeedMultiplier = 1.2f;
+
+
+    [Header("Jumping modifiers")]
+    public float maxJumpDistance = 0.5f;
+    public float jumpChaseMultiplier = 1.5f;
+    public float jumpHeight = 0.4f;
+    public int jumpCooldown = 30;
+    private int jumpCounter = 0;
+    public Vector3 gravity = Physics.gravity;
+    private bool inAir = false;
 
     private Vector3 playerPos;
     private float playerNoise;
 
     private GameManager gameManager;
 
-    public bool patrolsRoom;
     private bool isChasing = false;
+    private Rigidbody rigid;
 
     // Use this for initialization
     void Start() {
         movementPath = new List<MazeCell>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        rigid = GetComponent<Rigidbody>();
     }
 
     public void initializeAI(Maze m, MazeCell c = null) {
@@ -178,13 +193,13 @@ public class EnemyAI : MonoBehaviour {
 
     private void move() {
         Vector3 dif, lookDir;
-        float movementMultiplier = 1.0f;
+        float jumpDist = maxJumpDistance;
         // If chasing player, move towards him/her
         if (isChasing) {
             dif = playerPos - transform.position;
             dif.y = 0;
             lookDir = playerPos;
-            movementMultiplier = chasingSpeedMultiplier;
+            jumpDist *= jumpChaseMultiplier;
             tryGrabPlayer();
         }
         else {
@@ -204,10 +219,46 @@ public class EnemyAI : MonoBehaviour {
         }
         lookDir.y = transform.position.y;
         transform.LookAt(lookDir);
-        Vector3 rot = transform.eulerAngles;
-        rot.y += 180;
-        transform.eulerAngles = rot;
-        transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
+        // transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
+        if (inAir) {
+            inAir = gravityPull();
+        }
+        else rigid.velocity = Vector3.zero;
+        jumpTowards(lookDir, jumpDist);
+    }
+
+    private bool gravityPull() {
+        rigid.AddForce(gravity);
+        // If has landed
+        if (transform.position.y < 0) {
+            // Snap back to ground
+            Vector3 pos = transform.position;
+            pos.y = 0;
+            transform.position = pos;
+            // Remove all velocity
+            rigid.velocity = Vector3.zero;
+            return false;
+        } else {
+            // Still in air
+            return true;
+        }
+    }
+
+    private void jumpTowards(Vector3 targetPos, float maxDist) {
+        if (jumpCounter == 0 && !inAir) {
+            inAir = true;
+            jumpCounter = jumpCooldown;
+            float g = Physics.gravity.magnitude;
+            float vertSpeed = Mathf.Sqrt(2 * g * jumpHeight);
+            Vector3 dir = targetPos - transform.position;
+            float dist = Mathf.Min(dir.magnitude, maxDist);
+            float jumpTime = 2 * vertSpeed / g;
+            Vector3 vel = dir.normalized * dist / jumpTime;
+            vel.y = vertSpeed;
+            rigid.velocity = vel;
+        } else if(!inAir) {
+            jumpCounter--;
+        }
     }
 
     private List<MazeCell> tryDiagonal(List<MazeCell> path) {
