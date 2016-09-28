@@ -10,9 +10,11 @@ public class OvervieiwCameraScript : MonoBehaviour {
 	private Color[] colorsArray = new Color[MAX_CIRCLES];
 
 	Camera camera;
+	
+	IEnumerator Start() {
+		yield return new WaitForEndOfFrame();
+		UnityEngine.VR.VRSettings.showDeviceView = false;
 
-	// Use this for initialization
-	void Start () {
 		shaderCtrlObj = GameObject.FindGameObjectWithTag("ShaderController");
 		shaderCtrl = (ShaderController) shaderCtrlObj.GetComponent(typeof(ShaderController));
 
@@ -25,7 +27,7 @@ public class OvervieiwCameraScript : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update() {
 
 	}
 

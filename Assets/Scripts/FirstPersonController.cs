@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.VR;
 
 public class FirstPersonController : MonoBehaviour {
 
@@ -26,6 +27,8 @@ public class FirstPersonController : MonoBehaviour {
 		cameraT = Camera.main.transform;
 		myRigidBody = GetComponent<Rigidbody>();
 		myRigidBody.constraints = RigidbodyConstraints.FreezeRotation;
+
+		VRSettings.enabled = true;
 	}
 	
 	// Update is called once per frame
