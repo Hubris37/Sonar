@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+#if UNITY_EDITOR
 using UnityEditor;
 
 [CustomEditor (typeof (GameManager))]
@@ -17,3 +18,4 @@ public class MapEditor : Editor {
 	}
 
 }
+#endif

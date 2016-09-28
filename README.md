@@ -1,5 +1,14 @@
 # Sonar
 
+# För att använda Oculus och skärm samtidigt
+##MainCamera:
+	Target Display: Display 1
+	Target eye: Both
+
+##OverviewCamera:
+	Target Display: Display 1
+	Target eye: None (Main Display)
+
 # Intressanta länkar
   * http://www.shaderslab.com/index.php?post/Echolocation-effect
   * https://support.unity3d.com/hc/en-us/articles/206485253-How-do-I-get-Unity-to-playback-a-Microphone-input-in-real-time-

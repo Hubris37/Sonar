@@ -11,10 +11,7 @@ public class OvervieiwCameraScript : MonoBehaviour {
 
 	Camera camera;
 	
-	IEnumerator Start() {
-		yield return new WaitForEndOfFrame();
-		UnityEngine.VR.VRSettings.showDeviceView = false;
-
+	void Start() {
 		shaderCtrlObj = GameObject.FindGameObjectWithTag("ShaderController");
 		shaderCtrl = (ShaderController) shaderCtrlObj.GetComponent(typeof(ShaderController));
 
