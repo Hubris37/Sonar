@@ -79,7 +79,7 @@ public class ShaderController : MonoBehaviour {
         {
             for(int i = 0; i < numCircles; ++i)
             {
-                radius[i] += (expansionSpeeds[i]*Time.deltaTime)/(radius[i]*radius[i]+1f);
+                radius[i] += Mathf.Max(0.015f, (expansionSpeeds[i]*Time.deltaTime)/(radius[i]*radius[i]+1f));
 
                 if (radius[i] >= maxRadius[i])
                 {

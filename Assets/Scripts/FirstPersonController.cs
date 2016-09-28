@@ -58,8 +58,8 @@ public class FirstPersonController : MonoBehaviour {
 	void FixedUpdate() {
 		//myRigidBody.MovePosition(myRigidBody.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
 
-		float h = Input.GetAxis ("Horizontal") * Time.fixedDeltaTime * turnSpeed;
-		float v = Input.GetAxis ("Vertical") * Time.fixedDeltaTime * turnSpeed;
+		float h = Input.GetAxis("Horizontal") * Time.fixedDeltaTime * turnSpeed;
+		float v = -Input.GetAxis("Accelerate") * Time.fixedDeltaTime * turnSpeed;
 		transform.Rotate (h * Vector3.up);
 		//transform.Rotate (v * Vector3.right);
 		//myRigidBody.AddRelativeTorque (h * Vector3.back );
@@ -76,8 +76,6 @@ public class FirstPersonController : MonoBehaviour {
 		if (Input.GetButton ("Fire2")) {
 			myRigidBody.AddRelativeForce (Vector3.up * -5f);
 		}
-
-
 	}
 
 	void OnTriggerEnter(Collider triggerCollider) {
