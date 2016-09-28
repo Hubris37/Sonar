@@ -48,6 +48,10 @@ public class EnemyAI : MonoBehaviour {
         anim = GetComponent<Animator>();
     }
 
+    void OnCollisionEnter(Collision collision) {
+        print(collision.transform.name);
+    }
+
     public void initializeAI(Maze m, MazeCell c = null) {
         maze = m;
         mazeNodes = maze.getCellList();
@@ -92,20 +96,28 @@ public class EnemyAI : MonoBehaviour {
         }
         // Check if in line of sight
         if (isChasing) {
-            Vector3 dir = playerPos - transform.position;
+            Vector3 pos = transform.position;
+            pos.y += 0.5f;
+            Vector3 dir = playerPos - pos;
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, dir.normalized, out hit, dir.magnitude)) {
-                if (hit.transform.name.Contains("Wall")) {
+            if (Physics.Raycast(pos, dir.normalized, out hit, 20)) {
+           //     print(hit.transform.name);
+                if (!hit.transform.name.Contains("Player") && !hit.transform.name.Contains("Door")) {
                     isChasing = false;
                     findCurrentCell();
                     movementPath = aStar(startCell, mazeNodes);
                 }
             }
         }
+        anim.SetBool("chasing", isChasing);
     }
 
     private void findPath() {
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Seek")) {
+            anim.SetBool("seek", false);
+        }
         if (movementPath.Count == 0) {
+            anim.SetBool("seek", true);
             List<MazeCell> map;
             if (patrolsRoom) {
                 // Get a random cell in the current room
