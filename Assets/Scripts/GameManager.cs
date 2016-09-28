@@ -18,8 +18,13 @@ public class GameManager : MonoBehaviour {
     public GameObject Chef;
     public int startChefAmount = 3;
     private int chefAmount;
+	private bool playerIsDead = false;
 
     public int level = 1;
+
+	public delegate void PlayerState();
+	public static event PlayerState isDead;
+	public static event PlayerState isReborn;
 
 	private void Start () {
         bots = new List<GameObject>();
@@ -37,6 +42,10 @@ public class GameManager : MonoBehaviour {
 
 	private void Update () {
 		if (Input.GetKeyDown("z")) {
+			RestartGame();
+		}
+		if(playerIsDead && Input.GetKeyDown("z"))
+		{
 			RestartGame();
 		}
 	}
@@ -74,6 +83,7 @@ public class GameManager : MonoBehaviour {
         level = 1;
         chefAmount = startChefAmount;
 		BeginGame ();
+		isReborn();
 	}
 
     private void destroyLevel() {
@@ -92,7 +102,9 @@ public class GameManager : MonoBehaviour {
 	}
 
     public void LostGame() {
-        RestartGame();
+        isDead();
+		playerIsDead = true;
+		//RestartGame();
     }
 
     private void spawnAI(GameObject AIPrefab, int count) {
