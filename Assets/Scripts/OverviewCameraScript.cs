@@ -11,8 +11,8 @@ public class OverviewCameraScript : MonoBehaviour {
 	public float rotationSpeed = 3;
 	private Vector3 rotationPoint;
 
-	private const int MAX_CIRCLES = 500; // Maximum circles allowed at once
-	private Color[] colorsArray = new Color[MAX_CIRCLES];
+	private const int MAX_CIRCLES = 120; // Maximum circles allowed at once
+	// private Color[] colorsArray = new Color[MAX_CIRCLES];
 
 	Camera camera;
 	
@@ -25,9 +25,9 @@ public class OverviewCameraScript : MonoBehaviour {
 
 		rotationPoint = new Vector3(-24, 0, -24);
 
-		for(int i = 0; i < colorsArray.Length; i++) {
-			colorsArray[i] = Color.HSVToRGB(.2f, 0.9f, .8f);;
-		}
+		// for(int i = 0; i < colorsArray.Length; i++) {
+		// 	colorsArray[i] = Color.HSVToRGB(.2f, 0.9f, .8f);;
+		// }
 	}
 	
 	// Update is called once per frame

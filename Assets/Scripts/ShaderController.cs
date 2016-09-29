@@ -7,7 +7,7 @@ public class ShaderController : MonoBehaviour {
     public bool standardShader = false;
     public Renderer r;
 
-    private const int MAX_CIRCLES = 120; // Maximum circles allowed at once !!!CHANGE IN SHADER AS WELL!!!
+    private const int MAX_CIRCLES = 120; // Maximum circles allowed at once !!!CHANGE IN SHADER AND OVERVIEWCAMERA AS WELL!!!
     private int numCircles = 0;
     private float prevTime, prevSoundCheck;
 	private GameObject soundBlastList;
