@@ -44,10 +44,9 @@ public class GameManager : MonoBehaviour {
 		if (Input.GetKeyDown("z")) {
 			RestartGame();
 		}
-		if(playerIsDead && Input.GetKeyDown("z"))
-		{
-			RestartGame();
-		}
+		if(playerIsDead)
+			if(Input.GetKeyDown("z") || Input.GetButtonDown("Fire1"))
+				RestartGame();
 	}
 
 	private void BeginGame () {
@@ -84,6 +83,7 @@ public class GameManager : MonoBehaviour {
         chefAmount = startChefAmount;
 		BeginGame ();
 		isReborn();
+		player.freezeMovement = false;
 	}
 
     private void destroyLevel() {
@@ -104,6 +104,7 @@ public class GameManager : MonoBehaviour {
     public void LostGame() {
         isDead();
 		playerIsDead = true;
+		player.freezeMovement = true;
 		//RestartGame();
     }
 

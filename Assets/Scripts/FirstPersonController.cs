@@ -21,6 +21,8 @@ public class FirstPersonController : MonoBehaviour {
 	Vector3 moveAmount;
 	Vector3 smoothMoveVelocity;
 
+	public bool freezeMovement = false;
+
 	// Use this for initialization
 	void Start () {
 		cam = Camera.main;
@@ -57,24 +59,26 @@ public class FirstPersonController : MonoBehaviour {
 
 	void FixedUpdate() {
 		//myRigidBody.MovePosition(myRigidBody.position + transform.TransformDirection(moveAmount) * Time.fixedDeltaTime);
+		if(!freezeMovement)
+		{
+			float h = Input.GetAxis("Horizontal") * Time.fixedDeltaTime * turnSpeed;
+			float v = -Input.GetAxis("Accelerate") * Time.fixedDeltaTime * turnSpeed;
+			transform.Rotate (h * Vector3.up);
+			//transform.Rotate (v * Vector3.right);
+			//myRigidBody.AddRelativeTorque (h * Vector3.back );
+			//myRigidBody.AddRelativeTorque (v * Vector3.right);
 
-		float h = Input.GetAxis("Horizontal") * Time.fixedDeltaTime * turnSpeed;
-		float v = -Input.GetAxis("Accelerate") * Time.fixedDeltaTime * turnSpeed;
-		transform.Rotate (h * Vector3.up);
-		//transform.Rotate (v * Vector3.right);
-		//myRigidBody.AddRelativeTorque (h * Vector3.back );
-		//myRigidBody.AddRelativeTorque (v * Vector3.right);
+			//if (Input.GetButton ("Fire1")) {
+			myRigidBody.AddRelativeForce (v * Vector3.forward * walkSpeed, ForceMode.Impulse);
+			//}
+			
+			if (Input.GetButton ("Fire1")) {
+				myRigidBody.AddRelativeForce (Vector3.up * 5f);
+			}
 
-		//if (Input.GetButton ("Fire1")) {
-		myRigidBody.AddRelativeForce (v * Vector3.forward * walkSpeed, ForceMode.Impulse);
-		//}
-		
-		if (Input.GetButton ("Fire1")) {
-			myRigidBody.AddRelativeForce (Vector3.up * 5f);
-		}
-
-		if (Input.GetButton ("Fire2")) {
-			myRigidBody.AddRelativeForce (Vector3.up * -5f);
+			if (Input.GetButton ("Fire2")) {
+				myRigidBody.AddRelativeForce (Vector3.up * -5f);
+			}
 		}
 	}
 
