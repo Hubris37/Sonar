@@ -272,7 +272,7 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private void makeLandingSound() {
-		onBlastHit(transform.position, 1000, .2f);
+		onBlastHit(transform.position, 750, .2f);
     }
 
     private List<MazeCell> tryDiagonal(List<MazeCell> path) {
