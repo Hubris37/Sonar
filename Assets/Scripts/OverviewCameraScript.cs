@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class OvervieiwCameraScript : MonoBehaviour {
+public class OverviewCameraScript : MonoBehaviour {
 
 	public GameObject shaderCtrlObj;
 	public ShaderController shaderCtrl;
+
+	public bool rotate = true;
+	[RangeAttribute(1,100)]
+	public float rotationSpeed = 3;
+	private Vector3 rotationPoint;
 
 	private const int MAX_CIRCLES = 500; // Maximum circles allowed at once
 	private Color[] colorsArray = new Color[MAX_CIRCLES];
@@ -18,6 +23,8 @@ public class OvervieiwCameraScript : MonoBehaviour {
 		camera = GetComponent<Camera>();
 		camera.backgroundColor = new Color(.266f, .486f, .482f, 1);
 
+		rotationPoint = new Vector3(-24, 0, -24);
+
 		for(int i = 0; i < colorsArray.Length; i++) {
 			colorsArray[i] = Color.HSVToRGB(.2f, 0.9f, .8f);;
 		}
@@ -25,7 +32,7 @@ public class OvervieiwCameraScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-
+		transform.RotateAround(rotationPoint, Vector3.up, rotationSpeed * Time.deltaTime);
 	}
 
 	void OnPreRender() {
