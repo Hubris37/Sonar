@@ -68,6 +68,18 @@ public class ShaderController : MonoBehaviour {
         }
     }
 	
+    // Reset circles on game restart
+    void ClearCircles()
+    {
+        maxRadius.Clear();
+        radius.Clear();
+        centers.Clear();
+        colors.Clear();
+        expansionSpeeds.Clear();
+        frequencies.Clear();
+        numCircles = 0;
+    }
+
 	// Update is called once per frame
 	void Update () {
         if(standardShader) // Use standard shader to see everything
