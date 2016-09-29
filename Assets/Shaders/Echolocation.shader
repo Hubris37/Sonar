@@ -176,7 +176,7 @@ Shader "Custom/Echolocation" {
 
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val *  _Color[j].rgb * bump;
 					
-					finalColor.a += max(0, (1 - _Radius[j]/_MaxRadius[j]) * val * bump - 0.1);
+					finalColor.a += max(0, (1 - _Radius[j]/_MaxRadius[j]) * val);
 				}
 
 				//finalColor.a *= 0.7;

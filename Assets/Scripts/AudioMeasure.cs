@@ -56,19 +56,31 @@ public class AudioMeasure : MonoBehaviour {
 
 	void OnApplicationFocus( bool focusStatus )
 	{
-		// To not run before Start()
-		if(maxFreq > 0) {
-			aud.clip = Microphone.Start("", true, 10, maxFreq);
-			aud.Play();
-		}
-	}
+        // To not run before Start()
+        if (maxFreq > 0) {
+            if (focusStatus == false) {
+                Microphone.End("");
+                aud.Stop();
+            }
+            else {
+                aud.clip = Microphone.Start("", true, 10, maxFreq);
+                aud.Play();
+            }
+        }
+    }
 
 	void OnApplicationPause( bool pauseStatus )
 	{
 		// To not run before Start()
 		if(maxFreq > 0) {
-			Microphone.End("");
-			aud.Stop();
+            if (pauseStatus == false) {
+                Microphone.End("");
+                aud.Stop();
+            }
+            else {
+                aud.clip = Microphone.Start("", true, 10, maxFreq);
+                aud.Play();
+            }
 		}
 	}
 
