@@ -41,6 +41,10 @@ public class EnemyAI : MonoBehaviour {
     private bool isChasing = false;
     private Animator anim;
 
+    public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
+	public static event SoundBlastHit onBlastHit;
+    private bool makeSound = true;
+
     // Use this for initialization
     void Start() {
         movementPath = new List<MazeCell>();
@@ -247,19 +251,28 @@ public class EnemyAI : MonoBehaviour {
                 anim.SetBool("jump", true);
             } else {
                 jumpCounter--;
+                if(makeSound) {
+                    makeLandingSound();
+                    makeSound = false;
+                }
             }
         } 
         // If has landed
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jump")) {
-            if (jumpOffsetCounter == 0) {
+            if (jumpOffsetCounter == 0) {                
                 anim.SetBool("jump", false);
                 Vector3 dir = movePoint - jumpStartPos;
                 float distance = Mathf.Min(dir.magnitude, dist);
                 transform.Translate(dir.normalized * distance * Time.deltaTime, Space.World);
+                makeSound = true;
             } else {
                 jumpOffsetCounter--;
             }
         }
+    }
+
+    private void makeLandingSound() {
+		onBlastHit(transform.position, 1000, .2f);
     }
 
     private List<MazeCell> tryDiagonal(List<MazeCell> path) {
