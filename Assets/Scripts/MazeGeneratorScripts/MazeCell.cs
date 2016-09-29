@@ -65,7 +65,14 @@ public class MazeCell : MonoBehaviour {
     }
 
     public void Show () {
-		gameObject.SetActive(true);
+        if(!isActiveAndEnabled) {
+            gameObject.SetActive(true);
+            foreach(MazeCellEdge edge in edges) {
+                if(edge is MazeDoor && edge.otherCell.isActiveAndEnabled) {
+                    edge.gameObject.SetActive(false);
+                }
+            }
+        }
 	}
 
 	public void Hide () {
