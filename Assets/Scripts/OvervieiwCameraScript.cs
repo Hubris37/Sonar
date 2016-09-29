@@ -7,7 +7,7 @@ public class OvervieiwCameraScript : MonoBehaviour {
 	public ShaderController shaderCtrl;
 
 	private const int MAX_CIRCLES = 500; // Maximum circles allowed at once
-	// private Color[] colorsArray = new Color[MAX_CIRCLES];
+	private Color[] colorsArray = new Color[MAX_CIRCLES];
 
 	Camera camera;
 	
@@ -18,9 +18,9 @@ public class OvervieiwCameraScript : MonoBehaviour {
 		camera = GetComponent<Camera>();
 		camera.backgroundColor = new Color(.266f, .486f, .482f, 1);
 
-		// for(int i = 0; i < colorsArray.Length; i++) {
-		// 	colorsArray[i] = Color.HSVToRGB(.2f, 0.9f, .8f);;
-		// }
+		for(int i = 0; i < colorsArray.Length; i++) {
+			colorsArray[i] = Color.HSVToRGB(.2f, 0.9f, .8f);;
+		}
 	}
 	
 	// Update is called once per frame
