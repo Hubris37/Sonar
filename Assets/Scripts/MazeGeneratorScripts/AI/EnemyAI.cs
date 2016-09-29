@@ -45,11 +45,14 @@ public class EnemyAI : MonoBehaviour {
 	public static event SoundBlastHit onBlastHit;
     private bool makeSound = true;
 
+    private AudioSource audioplayer;
+
     // Use this for initialization
     void Start() {
         movementPath = new List<MazeCell>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         anim = GetComponent<Animator>();
+        audioplayer = GetComponent<AudioSource>();
     }
 
     void OnCollisionEnter(Collision collision) {
@@ -272,6 +275,7 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private void makeLandingSound() {
+        audioplayer.Play();
 		onBlastHit(transform.position, 750, .2f);
     }
 

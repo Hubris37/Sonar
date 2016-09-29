@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour {
 
 		pos = mazeInstance.GetCell (new IntVector2 (mazeInstance.size.x - 1, mazeInstance.size.z - 1)).transform.position;
 		goal.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
-        spawnAI(Chef, chefAmount);
+        spawnAI(Chef, chefAmount, startingCell);
     }
 
 	public void GenerateMaze() {
@@ -84,6 +84,7 @@ public class GameManager : MonoBehaviour {
 		BeginGame ();
 		isReborn();
 		player.freezeMovement = false;
+		playerIsDead = false;
 	}
 
     private void destroyLevel() {
@@ -108,7 +109,7 @@ public class GameManager : MonoBehaviour {
 		//RestartGame();
     }
 
-    private void spawnAI(GameObject AIPrefab, int count) {
+    private void spawnAI(GameObject AIPrefab, int count, MazeCell startingCell) {
         List<MazeRoom> roomsLeft = mazeInstance.getRooms();
         // Create as many AIs as specified
         for (int i = 0; i < count; ++i) {
@@ -116,14 +117,19 @@ public class GameManager : MonoBehaviour {
             if (roomsLeft.Count == 0)
                 roomsLeft = mazeInstance.getRooms();
             // Select a random room
-            MazeRoom room = roomsLeft[Random.Range(0, roomsLeft.Count)];
-            // Select a random cell in the room to initialize at
-            MazeCell initCell = room.getCells()[Random.Range(0, room.getCells().Count)];
-            // Remove current room from unoccupied ones
-            roomsLeft.Remove(room); Vector3 initPos = initCell.transform.position;
-            GameObject bot = Instantiate(AIPrefab, initPos, Quaternion.identity) as GameObject;
-            bots.Add(bot);
-            bot.GetComponent<EnemyAI>().initializeAI(mazeInstance, initCell);
+			MazeRoom room = roomsLeft[Random.Range(0, roomsLeft.Count)];
+			while(room == startingCell.room){
+				room = roomsLeft[Random.Range(0, roomsLeft.Count)];
+			}
+
+			// Select a random cell in the room to initialize at
+			MazeCell initCell = room.getCells()[Random.Range(0, room.getCells().Count)];
+			// Remove current room from unoccupied ones
+			roomsLeft.Remove(room); Vector3 initPos = initCell.transform.position;
+			GameObject bot = Instantiate(AIPrefab, initPos, Quaternion.identity) as GameObject;
+			bots.Add(bot);
+			bot.GetComponent<EnemyAI>().initializeAI(mazeInstance, initCell);
+			
         }
     }
 }
