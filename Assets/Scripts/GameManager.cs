@@ -26,7 +26,10 @@ public class GameManager : MonoBehaviour {
 	public static event PlayerState isDead;
 	public static event PlayerState isReborn;
 
+    private AudioSource audioPlayer;
+
 	private void Start () {
+        audioPlayer = GetComponent<AudioSource>();
         bots = new List<GameObject>();
 		goal = Instantiate (goalPrefab);
 		Instantiate(playerPrefab);
@@ -103,9 +106,11 @@ public class GameManager : MonoBehaviour {
 	}
 
     public void LostGame() {
+        audioPlayer.Play();
         isDead();
 		playerIsDead = true;
 		player.freezeMovement = true;
+        
 		//RestartGame();
     }
 
