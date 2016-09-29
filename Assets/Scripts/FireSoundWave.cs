@@ -35,6 +35,18 @@ public class FireSoundWave : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+		if(Time.time - prevTime > .1)
+		{
+			if(Input.GetAxis("SoundLevel") > 0)
+			{
+				volumeSens += 1;
+			}
+			else if(Input.GetAxis("SoundLevel") < 0) {
+				volumeSens -= 1;
+			}
+			prevTime = Time.time;
+		}
+
 		if (Time.time - prevSoundCheck > (1/waveFreq))
         {
             if(audioMeasure.DbValue > volumeSens)
