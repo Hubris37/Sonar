@@ -40,6 +40,7 @@ public class ShaderController : MonoBehaviour {
 
         // Subscribe to SoundBlast onBlastHit function
         FireSoundWave.onBlastHit += addCircle;
+        EnemyAI.onBlastHit += addCircle;
 
         Camera.main.depthTextureMode = DepthTextureMode.Depth;
     }
