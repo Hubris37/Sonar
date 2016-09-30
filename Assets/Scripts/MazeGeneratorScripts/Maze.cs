@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Maze : MonoBehaviour {
 
+	public IntVector2 startSize;
 	public IntVector2 size;
     private MazeCell[,] cells;
 	private List<MazeRoom> rooms = new List<MazeRoom>();
@@ -23,7 +24,9 @@ public class Maze : MonoBehaviour {
 		return cells [coordinates.x, coordinates.z];
 	}
 
-	public void Generate () {
+	public void Generate (int level) {
+		size.x = startSize.x + level;
+		size.z = startSize.z + level;
 		cells = new MazeCell[size.x, size.z];
 		List<MazeCell> activeCells = new List<MazeCell> ();
 		DoFirstGenerationStep (activeCells);
@@ -62,7 +65,7 @@ public class Maze : MonoBehaviour {
                 CreatePassage(currentCell, neighbor, direction);
                 activeCells.Add(neighbor);
             }
-			else if (currentCell.room == neighbor.room) {
+			else if (currentCell.room.settingsIndex == neighbor.room.settingsIndex) {
 				CreatePassageInSameRoom(currentCell, neighbor, direction);
 			}
             else {
@@ -95,6 +98,12 @@ public class Maze : MonoBehaviour {
 		passage.Initialize(cell, otherCell, direction);
 		passage = Instantiate(passagePrefab) as MazePassage;
 		passage.Initialize(otherCell, cell, direction.GetOpposite());
+		if (cell.room != otherCell.room) {
+			MazeRoom roomToAssimilate = otherCell.room;
+			cell.room.Assimilate(roomToAssimilate);
+			rooms.Remove(roomToAssimilate);
+			Destroy(roomToAssimilate);
+		}
 	}
 
     private void CreateWall(MazeCell cell, MazeCell otherCell, MazeDirection direction)

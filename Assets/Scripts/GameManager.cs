@@ -54,11 +54,11 @@ public class GameManager : MonoBehaviour {
 
 	private void BeginGame () {
 		GenerateMaze();
+		IntVector2 startingCoordinates = new IntVector2(0, 0);
+		MazeCell startingCell = mazeInstance.GetCell (startingCoordinates);
+		Vector3 pos = startingCell.transform.position;
 
-		Vector3 pos = mazeInstance.GetCell (new IntVector2 (0, 0)).transform.position;
-		player.transform.position = new Vector3(pos.x, pos.y+1.25f, pos.z);
-		MazeCell startingCell = mazeInstance.GetCell (new IntVector2 (1, 0));
-		pos = startingCell.transform.position;
+		player.transform.position = new Vector3(pos.x, pos.y+1f, pos.z);
 		startingCell.room.Show();
 		//car.transform.position = new Vector3(pos.x, pos.y+1f, pos.z);
 
@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}*/
 		mazeInstance = Instantiate (mazePrefab) as Maze;
-		mazeInstance.Generate();
+		mazeInstance.Generate(level);
 
 	}
 
@@ -119,18 +119,19 @@ public class GameManager : MonoBehaviour {
         // Create as many AIs as specified
         for (int i = 0; i < count; ++i) {
             // If no free rooms left, set all to available
-            if (roomsLeft.Count == 0)
+            if (roomsLeft.Count == 0) {
                 roomsLeft = mazeInstance.getRooms();
-            // Select a random room
-			MazeRoom room = roomsLeft[Random.Range(0, roomsLeft.Count)];
-			while(room == startingCell.room){
-				room = roomsLeft[Random.Range(0, roomsLeft.Count)];
+				if(roomsLeft.Count != 1) {
+					roomsLeft.Remove(startingCell.room);
+				}
 			}
-
+            // Select a random room
+			MazeRoom room = roomsLeft[Random.Range(0, roomsLeft.Count-1)];
 			// Select a random cell in the room to initialize at
-			MazeCell initCell = room.getCells()[Random.Range(0, room.getCells().Count)];
+			MazeCell initCell = room.getCells()[Random.Range(0, room.getCells().Count-1)];
 			// Remove current room from unoccupied ones
-			roomsLeft.Remove(room); Vector3 initPos = initCell.transform.position;
+			roomsLeft.Remove(room);
+			Vector3 initPos = initCell.transform.position;
 			GameObject bot = Instantiate(AIPrefab, initPos, Quaternion.identity) as GameObject;
 			bots.Add(bot);
 			bot.GetComponent<EnemyAI>().initializeAI(mazeInstance, initCell);
