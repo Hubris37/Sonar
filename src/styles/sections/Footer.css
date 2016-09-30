@@ -1,0 +1,33 @@
+.footer-component {
+  text-align: center;
+  color: #777;
+  padding: 1vw;
+  background-color: #444;
+  border-top: 4px solid #666;
+}
+
+.footer-component span{
+  color: #999;
+}
+
+.footer-component ul{
+  display: inline;
+  list-style: none;
+  text-decoration: none;
+}
+
+.footer-component li{
+  display: inline;
+  padding: 0 5px;
+}
+.footer-component p{
+  color: #777;
+}
+
+.footer-component a{
+  text-decoration: none;
+}
+
+.footer-component a:link{
+  color: #fc4;
+}

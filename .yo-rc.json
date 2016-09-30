@@ -1,6 +1,3 @@
 {
-  "generator-react-webpack": {},
-  "generator-threejs": {
-    "coffeescript": false
-  }
+  "generator-react-webpack": {}
 }

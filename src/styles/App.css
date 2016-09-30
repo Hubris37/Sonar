@@ -1,0 +1,31 @@
+/* Font-stack: Open Sans for headings and Lora for content */
+@import 'https://fonts.googleapis.com/css?family=Lora|Open+Sans';
+
+/* Base Application Styles */
+body {
+  /*color: #fff;*/
+  background: #222;
+  font-family: "Open Sans", sans-serif;
+}
+
+.index h1{
+  font-size: 24pt;
+  background: #282828;
+  padding: 10px 5vw;
+  color: #fc4;
+  /*font-weight: normal;*/
+}
+
+.section-content{
+  display: flex;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+
+  align-items: center;
+  justify-content: space-around;
+}
+
+.screenshot{
+  max-width: 80vw;
+}
