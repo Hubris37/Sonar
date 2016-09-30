@@ -5,10 +5,13 @@ public class OverviewCameraScript : MonoBehaviour {
 
 	public GameObject shaderCtrlObj;
 	public ShaderController shaderCtrl;
+	public FirstPersonController player;
 
 	public bool rotate = true;
 	[RangeAttribute(1,100)]
 	public float rotationSpeed = 3;
+	[RangeAttribute(1,100)]
+	public float radius = 5;
 	private Vector3 rotationPoint;
 
 	private const int MAX_CIRCLES = 120; // Maximum circles allowed at once
@@ -23,16 +26,29 @@ public class OverviewCameraScript : MonoBehaviour {
 		camera = GetComponent<Camera>();
 		camera.backgroundColor = new Color(.266f, .486f, .482f, 1);
 
+		player = FindObjectOfType<FirstPersonController> ();
+
 		rotationPoint = new Vector3(-24, 0, -24);
 
 		// for(int i = 0; i < colorsArray.Length; i++) {
 		// 	colorsArray[i] = Color.HSVToRGB(.2f, 0.9f, .8f);;
 		// }
+		transform.position = (transform.position - rotationPoint).normalized * radius + rotationPoint;
+	}
+
+	void Awake() {
+		//transform.position = player.transform.position + new Vector3(0,10f,0);
 	}
 	
+	
 	// Update is called once per frame
-	void Update() {
+	void FixedUpdate() {
+		//
+		rotationPoint = player.transform.position;
 		transform.RotateAround(rotationPoint, Vector3.up, rotationSpeed * Time.deltaTime);
+		//transform.position = (transform.position - rotationPoint).normalized * radius + rotationPoint;
+		Vector3 desiredPosition = (transform.position - rotationPoint).normalized * radius + rotationPoint;
+        transform.position = Vector3.MoveTowards(transform.position, desiredPosition, Time.deltaTime * rotationSpeed);
 	}
 
 	void OnPreRender() {

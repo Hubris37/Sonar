@@ -28,11 +28,15 @@ public class GameManager : MonoBehaviour {
 
     private AudioSource audioPlayer;
 
+	private void Awake () {
+		Instantiate(playerPrefab);
+	}
+
 	private void Start () {
         audioPlayer = GetComponent<AudioSource>();
         bots = new List<GameObject>();
 		goal = Instantiate (goalPrefab);
-		Instantiate(playerPrefab);
+		
 		//Instantiate(carPrefab);
 		player = FindObjectOfType<FirstPersonController> ();
         audioMeasure = GameObject.Find("Audio Source").GetComponent<AudioMeasure>();
