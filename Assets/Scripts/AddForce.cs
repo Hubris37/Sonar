@@ -23,7 +23,7 @@ public class AddForce : MonoBehaviour {
 		float dist = heading.sqrMagnitude;
 		Vector3 dir = heading / dist;
 		//float dist = Vector3.Distance(hitPos, transform.position);
-		rigidbody.AddForce(dir*(1/dist), ForceMode.Impulse);
+		rigidbody.AddForce(dir*(1/(dist+0.1f)), ForceMode.Impulse);
 	}
 
 	void OnDestroy() {
