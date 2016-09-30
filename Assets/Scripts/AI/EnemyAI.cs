@@ -46,14 +46,18 @@ public class EnemyAI : MonoBehaviour {
 	public static event SoundBlastHit onBlastHit;
     private bool makeSound = true;
 
-    private AudioSource audioplayer;
+    private AudioSource audioThump;
+    private AudioSource audioSniff;
 
     // Use this for initialization
     void Start() {
         movementPath = new List<MazeCell>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         anim = GetComponent<Animator>();
-        audioplayer = GetComponent<AudioSource>();
+        AudioSource[] sources = GetComponents<AudioSource>();
+
+        audioThump = sources[0];
+        audioSniff = sources[1];
     }
 
     public void initializeAI(Maze m, MazeCell c = null) {
@@ -123,6 +127,7 @@ public class EnemyAI : MonoBehaviour {
         }
         if (movementPath.Count == 0) {
             anim.SetBool("seek", true);
+            makeSniffingSound();
             List<MazeCell> map;
             if (patrolsRoom) {
                 // Get a random cell in the current room
@@ -279,8 +284,13 @@ public class EnemyAI : MonoBehaviour {
     }
 
     private void makeLandingSound() {
-        audioplayer.Play();
+        audioThump.Play();
 		onBlastHit(transform.position, 750, .2f);
+    }
+
+    private void makeSniffingSound() {
+        audioSniff.Play();
+		onBlastHit(transform.position, 450, .18f);
     }
 
     private List<MazeCell> tryDiagonal(List<MazeCell> path) {
