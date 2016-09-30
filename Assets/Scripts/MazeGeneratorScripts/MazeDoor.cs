@@ -45,7 +45,7 @@ public class MazeDoor : MazePassage {
 			if (child != hinge) {
 				child.GetComponent<Renderer>().material = cell.room.settings.wallMaterial;
 			} else {
-				child.GetChild(0).GetComponent<Renderer>().material = cell.room.settings.wallMaterial;
+				child.GetChild(0).GetComponent<Renderer>().material = cell.room.settings.floorMaterial;
 			}
 		}
 	}
