@@ -60,8 +60,8 @@ ModelImporter:
     400050: Upper Arm.L
     400052: Upper Arm.R
     4300000: Body_M_GeoRndr
-    7400000: Armature|Jump
-    7400002: Armature|Seek
+    7400000: Chesschef Jump
+    7400002: Chesschef Seek
     9500000: //RootNode
     13700000: Body_M_GeoRndr
   materials:
@@ -84,7 +84,171 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Chesschef Jump
+      takeName: Armature|Jump
+      firstFrame: 0
+      lastFrame: 78
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: $$$DUMMY.Group01
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Arm IK.L
+        weight: 1
+      - path: Armature/Arm IK.L/Arm IK.L_end
+        weight: 1
+      - path: Armature/Arm IK.R
+        weight: 1
+      - path: Armature/Arm IK.R/Arm IK.R_end
+        weight: 1
+      - path: Armature/Base
+        weight: 1
+      - path: Armature/Base/Stomach
+        weight: 1
+      - path: Armature/Base/Stomach/Chest
+        weight: 1
+      - path: Armature/Base/Stomach/Chest/Head
+        weight: 1
+      - path: Armature/Base/Stomach/Chest/Head/Head_end
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.L
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.L/Lower Arm.L
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.L/Lower Arm.L/Lower Arm.L_end
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.R
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.R/Lower Arm.R
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.R/Lower Arm.R/Lower Arm.R_end
+        weight: 1
+      - path: Armature/Elbow.L
+        weight: 1
+      - path: Armature/Elbow.L/Elbow.L_end
+        weight: 1
+      - path: Armature/Elbow.R
+        weight: 1
+      - path: Armature/Elbow.R/Elbow.R_end
+        weight: 1
+      - path: Body_M_GeoRndr
+        weight: 1
+      - path: Camera_Perspective10
+        weight: 1
+      - path: ChefsHat_NULL
+        weight: 1
+      - path: ChefsHat_NULL/Null
+        weight: 1
+      - path: ChefsHat_NULL/Null/ChefsHat_SS
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Chesschef Seek
+      takeName: Armature|Seek
+      firstFrame: 0
+      lastFrame: 240
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: $$$DUMMY.Group01
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Arm IK.L
+        weight: 1
+      - path: Armature/Arm IK.L/Arm IK.L_end
+        weight: 1
+      - path: Armature/Arm IK.R
+        weight: 1
+      - path: Armature/Arm IK.R/Arm IK.R_end
+        weight: 1
+      - path: Armature/Base
+        weight: 1
+      - path: Armature/Base/Stomach
+        weight: 1
+      - path: Armature/Base/Stomach/Chest
+        weight: 1
+      - path: Armature/Base/Stomach/Chest/Head
+        weight: 1
+      - path: Armature/Base/Stomach/Chest/Head/Head_end
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.L
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.L/Lower Arm.L
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.L/Lower Arm.L/Lower Arm.L_end
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.R
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.R/Lower Arm.R
+        weight: 1
+      - path: Armature/Base/Stomach/Upper Arm.R/Lower Arm.R/Lower Arm.R_end
+        weight: 1
+      - path: Armature/Elbow.L
+        weight: 1
+      - path: Armature/Elbow.L/Elbow.L_end
+        weight: 1
+      - path: Armature/Elbow.R
+        weight: 1
+      - path: Armature/Elbow.R/Elbow.R_end
+        weight: 1
+      - path: Body_M_GeoRndr
+        weight: 1
+      - path: Camera_Perspective10
+        weight: 1
+      - path: ChefsHat_NULL
+        weight: 1
+      - path: ChefsHat_NULL/Null
+        weight: 1
+      - path: ChefsHat_NULL/Null/ChefsHat_SS
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []

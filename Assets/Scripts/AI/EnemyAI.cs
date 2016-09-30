@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour {
     private bool moving = false;
     private List<MazeCell> movementPath;
     private MazeCell startCell;
+    private MazeCell currentPositionCell;
 
     [Header("Behaviour modifiers")]
     public float aggroRange = 1.0f;
@@ -17,20 +18,20 @@ public class EnemyAI : MonoBehaviour {
     public int patrolMinRoomSize = 4;
     public bool patrolsRoom = true;
 
+    /*
     [Header("Running modifiers")]
-    public MazeCell currentPositionCell;
     public float movementSpeed = 1.4f;
     public float chasingSpeedMultiplier = 1.2f;
-
+    */
 
     [Header("Jumping modifiers")]
     public float jumpDistance = 0.5f;
     public float jumpChaseMultiplier = 1.5f;
     public float jumpHeight = 0.4f;
-    public int jumpCooldown = 30;
-    private int jumpCounter = 0;
-    public int jumpOffset = 10;
-    private int jumpOffsetCounter = 0;
+    //public int jumpCooldown = 30;
+    //private int jumpCounter = 0;
+    //public int jumpOffset = 10;
+    private float jumpOffsetCounter = 0;
     private Vector3 jumpStartPos;
 
     private Vector3 playerPos;
@@ -96,9 +97,11 @@ public class EnemyAI : MonoBehaviour {
             Vector3 dif = (playerPos - transform.position);
             dif.y = 0;
             isChasing = (dif.magnitude < detectionRadius) ? true : false;
+            anim.speed = 1.0f;
         }
         // Check if in line of sight
         if (isChasing) {
+            anim.speed = jumpChaseMultiplier;
             Vector3 pos = transform.position;
             pos.y += 0.5f;
             Vector3 dir = pos - playerPos;
@@ -242,31 +245,37 @@ public class EnemyAI : MonoBehaviour {
 
     private void jumpHandler(Vector3 movePoint, float dist) {
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
-            if (jumpCounter == 0) {
-                jumpCounter = (isChasing) ? 0 : jumpCooldown;
-                jumpOffsetCounter = jumpOffset;
-                jumpStartPos = transform.position;
-                anim.SetBool("jump", true);
-            } else {
-                jumpCounter--;
-                if(makeSound) {
-                    makeLandingSound();
-                    makeSound = false;
-                }
+            jumpStartPos = transform.position;
+            anim.SetBool("jump", true);
+            jumpOffsetCounter = getAnimationLength("Chesschef Jump")/(3*anim.speed);
+            if (makeSound) {
+                makeLandingSound();
+                makeSound = false;
             }
         } 
         // If has landed
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jump")) {
-            if (jumpOffsetCounter == 0) {                
+            if (jumpOffsetCounter <= 0) {                
                 anim.SetBool("jump", false);
                 Vector3 dir = movePoint - jumpStartPos;
                 float distance = Mathf.Min(dir.magnitude, dist);
                 transform.Translate(dir.normalized * distance * Time.deltaTime, Space.World);
                 makeSound = true;
             } else {
-                jumpOffsetCounter--;
+                jumpOffsetCounter-= Time.deltaTime;
             }
         }
+    }
+
+    private float getAnimationLength(string name) {
+        RuntimeAnimatorController rac = anim.runtimeAnimatorController;
+        foreach (AnimationClip ac in rac.animationClips) {
+            if (ac.name == name) {
+                return ac.length;
+            }
+        }
+        Debug.LogError("getAnimationLength: Could not find animation with name " + name + ".");
+        return 0;
     }
 
     private void makeLandingSound() {

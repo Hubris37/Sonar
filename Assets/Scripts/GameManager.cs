@@ -119,18 +119,18 @@ public class GameManager : MonoBehaviour {
     }
 
     private void spawnAI(GameObject AIPrefab, int count, MazeCell startingCell) {
-        List<MazeRoom> roomsLeft = mazeInstance.getRooms();
+        List<MazeRoom> spawnableRooms = mazeInstance.getRooms();
+        spawnableRooms.Remove(startingCell.room);
+        List<MazeRoom> roomsLeft = new List<MazeRoom>(spawnableRooms);
         // Create as many AIs as specified
         for (int i = 0; i < count; ++i) {
             // If no free rooms left, set all to available
             if (roomsLeft.Count == 0) {
-                roomsLeft = mazeInstance.getRooms();
-				if(roomsLeft.Count != 1) {
-					roomsLeft.Remove(startingCell.room);
-				}
+                roomsLeft = new List<MazeRoom>(spawnableRooms);
 			}
             // Select a random room
-			MazeRoom room = roomsLeft[Random.Range(0, roomsLeft.Count-1)];
+            int rand = Random.Range(0, roomsLeft.Count - 1);
+            MazeRoom room = roomsLeft[rand];
 			// Select a random cell in the room to initialize at
 			MazeCell initCell = room.getCells()[Random.Range(0, room.getCells().Count-1)];
 			// Remove current room from unoccupied ones
