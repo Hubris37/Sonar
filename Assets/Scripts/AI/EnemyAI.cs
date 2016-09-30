@@ -48,6 +48,7 @@ public class EnemyAI : MonoBehaviour {
 
     private AudioSource audioThump;
     private AudioSource audioSniff;
+    private AudioSource audioGrunt;
 
     // Use this for initialization
     void Start() {
@@ -58,6 +59,7 @@ public class EnemyAI : MonoBehaviour {
 
         audioThump = sources[0];
         audioSniff = sources[1];
+        audioGrunt = sources[2];
     }
 
     public void initializeAI(Maze m, MazeCell c = null) {
@@ -100,25 +102,39 @@ public class EnemyAI : MonoBehaviour {
             float detectionRadius = aggroRange + Mathf.Max(0, playerNoise);
             Vector3 dif = (playerPos - transform.position);
             dif.y = 0;
-            isChasing = (dif.magnitude < detectionRadius) ? true : false;
+            if (dif.magnitude < detectionRadius && !wallBetweenPlayer()) {
+                onAggro();
+            }
             anim.speed = 1.0f;
         }
         // Check if in line of sight
         if (isChasing) {
             anim.speed = jumpChaseMultiplier;
-            Vector3 pos = transform.position;
-            pos.y += 0.5f;
-            Vector3 dir = pos - playerPos;
-            RaycastHit hit;
-            if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.magnitude)) {
-                if (!hit.transform.name.Contains("Body") && !hit.transform.name.Contains("Door")) {
-                    isChasing = false;
-                    findCurrentCell();
-                    movementPath = aStar(startCell, mazeNodes);
-                }
+           if (wallBetweenPlayer()) {
+                isChasing = false;
+                findCurrentCell();
+                movementPath = aStar(startCell, mazeNodes);
             }
         }
         anim.SetBool("chasing", isChasing);
+    }
+
+    private bool wallBetweenPlayer() {
+        Vector3 pos = transform.position;
+        pos.y += 0.5f;
+        Vector3 dir = pos - playerPos;
+        RaycastHit hit;
+        if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.magnitude)) {
+            if (!hit.transform.name.Contains("Body") && !hit.transform.name.Contains("Door")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void onAggro() {
+        isChasing = true;
+        makeDetectionSound();
     }
 
     private void findPath() {
@@ -258,7 +274,6 @@ public class EnemyAI : MonoBehaviour {
                 makeSound = false;
             }
         } 
-        // If has landed
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jump")) {
             if (jumpOffsetCounter <= 0) {                
                 anim.SetBool("jump", false);
@@ -291,6 +306,11 @@ public class EnemyAI : MonoBehaviour {
     private void makeSniffingSound() {
         audioSniff.Play();
 		onBlastHit(transform.position, 450, .18f);
+    }
+
+    private void makeDetectionSound() {
+        audioGrunt.Play();
+        onBlastHit(transform.position, 1000, .25f);
     }
 
     private List<MazeCell> tryDiagonal(List<MazeCell> path) {
