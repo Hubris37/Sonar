@@ -54,7 +54,7 @@ public class OverviewCameraScript : MonoBehaviour {
 	void OnPreRender() {
 		for(int i = 0; i < shaderCtrl.r.sharedMaterials.Length; ++i)
         {
-			shaderCtrl.r.sharedMaterials[i].SetColor("_DefaultColor", new Color(.75f, .21f, .4f, 1));
+			shaderCtrl.r.sharedMaterials[i].SetColor("_DefaultColor", new Color(.75f, .21f*i, .4f, 1));
 			shaderCtrl.r.sharedMaterials[i].SetFloat("_WallO", .7f);
 			shaderCtrl.r.sharedMaterials[i].SetFloat("_UseDepth", 0);
 			// shaderCtrl.r.sharedMaterials[i].SetColorArray("_Color", colorsArray); // Sets all circle colors, IS NOT REVERSED
