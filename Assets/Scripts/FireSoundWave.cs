@@ -10,7 +10,7 @@ public class FireSoundWave : MonoBehaviour {
     public float waveFreq = 10; // Number of waves per sec
     [RangeAttribute(-60,0)]
     public float volumeSens;
-	private float volumeMax = 120f;
+	private float volumeMax = 80f;
 	public float soundSpeed = 340f;
 
 	private GameObject soundBlastList;
