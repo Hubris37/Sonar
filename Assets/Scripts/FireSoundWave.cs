@@ -10,7 +10,7 @@ public class FireSoundWave : MonoBehaviour {
     public float waveFreq = 10; // Number of waves per sec
     [RangeAttribute(-60,0)]
     public float volumeSens;
-	private float volumeMax = 80f;
+	private float volumeMax = 30f;
 	public float soundSpeed = 340f;
 
 	private GameObject soundBlastList;
@@ -60,7 +60,8 @@ public class FireSoundWave : MonoBehaviour {
 	void FireSoundBlast()
 	{
 		float temp = audioMeasure.DbValue - volumeSens;
-		float percent_Db = temp / volumeMax;
+		float percent_Db = Mathf.Clamp01(temp / volumeMax);
+		Debug.Log(percent_Db);
 		//Raycast
 		Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
 		RaycastHit hit;
