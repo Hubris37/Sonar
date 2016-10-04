@@ -39,7 +39,7 @@ public class AudioMeasure : MonoBehaviour {
 			maxFreq = 44100;
 		}
 
-		aud.clip = Microphone.Start("", true, 10, maxFreq);
+		aud.clip = Microphone.Start("", true, 1, maxFreq);
 		aud.loop = true;
 
 		//don't do anything until the microphone started up
@@ -57,13 +57,15 @@ public class AudioMeasure : MonoBehaviour {
 	void OnApplicationFocus( bool focusStatus )
 	{
         // To not run before Start()
+		print(focusStatus);
         if (maxFreq > 0) {
             if (focusStatus == false) {
                 Microphone.End("");
                 aud.Stop();
+				aud.time = 0;
             }
             else {
-                aud.clip = Microphone.Start("", true, 10, maxFreq);
+                aud.clip = Microphone.Start("", true, 1, maxFreq);
                 aud.Play();
             }
         }
@@ -72,13 +74,15 @@ public class AudioMeasure : MonoBehaviour {
 	void OnApplicationPause( bool pauseStatus )
 	{
 		// To not run before Start()
+		print(pauseStatus);
 		if(maxFreq > 0) {
-            if (pauseStatus == false) {
+            if (pauseStatus == true) {
                 Microphone.End("");
                 aud.Stop();
+				aud.time = 0;
             }
             else {
-                aud.clip = Microphone.Start("", true, 10, maxFreq);
+                aud.clip = Microphone.Start("", true, 1, maxFreq);
                 aud.Play();
             }
 		}

@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour {
 		
 		//Instantiate(carPrefab);
 		player = FindObjectOfType<FirstPersonController> ();
-        audioMeasure = GameObject.Find("Audio Source").GetComponent<AudioMeasure>();
+        audioMeasure = GameObject.Find("AudioMeasure source").GetComponent<AudioMeasure>();
         //car = FindObjectOfType<CarController> ();
         player.OnGoalTouch += WonGame;
 		player.goal = goal;

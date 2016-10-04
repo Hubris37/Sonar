@@ -6,9 +6,11 @@ public class WiiMoteController : MonoBehaviour {
 	 bool[] leds = new bool[] {true, false, false, false};
 	 int count = 0;
 	 float prevTime = 0;
+	 Camera cam;
 
 	// Use this for initialization
 	void Start () {
+		cam = Camera.main;
 		InitWiimotes();
 	}
 	
@@ -22,11 +24,14 @@ public class WiiMoteController : MonoBehaviour {
 									// update the Wiimote until it is "up to date."
 			float[] pointer = remote.Ir.GetPointingPosition();
 			if(pointer[0] > 0 && pointer[1] > 0) {
-				transform.position = new Vector3(
-					Mathf.Clamp(transform.position.x + (pointer[0]-.5f), -5, 5),
-					transform.position.y,
-					Mathf.Clamp(transform.position.z + (pointer[1]-.5f), -5, 5)
-					);
+				float distance = transform.position.y - cam.transform.position.y;
+				Vector3 pos = new Vector3(pointer[0]*Screen.width, distance, pointer[1]*Screen.height);
+				transform.position = cam.ScreenToWorldPoint(pos);
+				// transform.position = new Vector3(
+				// 	Mathf.Clamp(transform.position.x + (pointer[0]-.5f), -5, 5),
+				// 	transform.position.y,
+				// 	Mathf.Clamp(transform.position.z + (pointer[1]-.5f), -5, 5)
+				// 	);
 			}
 		}
 
