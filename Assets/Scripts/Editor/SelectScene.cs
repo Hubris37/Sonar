@@ -11,6 +11,12 @@ public class SelectScene : MonoBehaviour
         OpenScene("movementTest");
     }
 
+    [MenuItem("Open Scene/Training Arena")]
+    public static void OpenTraining()
+    {
+        OpenScene("TrainingArena");
+    }
+
     [MenuItem("Open Scene/Pitch Color Light")]
     public static void OpenPitchColor()
     {
