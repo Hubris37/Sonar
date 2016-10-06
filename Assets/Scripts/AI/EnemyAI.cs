@@ -18,12 +18,6 @@ public abstract class EnemyAI : MonoBehaviour {
     public int patrolMinRoomSize = 4;
     public bool patrolsRoom = true;
 
-    /*
-    [Header("Running modifiers")]
-    public float movementSpeed = 1.4f;
-    public float chasingSpeedMultiplier = 1.2f;
-    */
-
     protected Vector3 playerPos;
     protected float playerNoise;
 
@@ -36,7 +30,7 @@ public abstract class EnemyAI : MonoBehaviour {
 	public static event SoundBlastHit onBlastHit;
     protected bool makeSound = true;
 
-    protected AudioSource audioGrunt;
+    protected AudioSource audioStartle;
 
     // Use this for initialization
     void Start() {
@@ -91,7 +85,6 @@ public abstract class EnemyAI : MonoBehaviour {
                 movementPath = aStar(startCell, mazeNodes);
             }
         }
-        anim.SetBool("chasing", isChasing);
     }
 
     protected bool wallBetweenPlayer() {
@@ -109,7 +102,7 @@ public abstract class EnemyAI : MonoBehaviour {
 
     private void onAggro() {
         isChasing = true;
-        makeDetectionSound();
+      //  makeDetectionSound();
     }
 
     protected void findPath() {
@@ -117,7 +110,6 @@ public abstract class EnemyAI : MonoBehaviour {
             anim.SetBool("seek", false);
         }
         if (movementPath.Count == 0) {
-            print("lul");
             anim.SetBool("seek", true);
             //makeSniffingSound();
             List<MazeCell> map;
@@ -224,7 +216,7 @@ public abstract class EnemyAI : MonoBehaviour {
 
 
     private void makeDetectionSound() {
-        audioGrunt.Play();
+        audioStartle.Play();
         onBlastHit(transform.position, 1000, .25f);
     }
 

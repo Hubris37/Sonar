@@ -24,7 +24,7 @@ public class ChefAI : EnemyAI {
 
         audioThump = sources[0];
         audioSniff = sources[1];
-        audioGrunt = sources[2];
+        audioStartle = sources[2];
     }
 
     // Update is called once per frame
@@ -32,6 +32,7 @@ public class ChefAI : EnemyAI {
         findPath();
         move();
         checkAggro();
+        anim.SetBool("chasing", isChasing);
     }
 
     public override void move() {

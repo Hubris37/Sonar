@@ -3,11 +3,13 @@ using System.Collections;
 
 public class StaticSoundSource : MonoBehaviour {
 
-    public float audioLevel;
-    public float interval;
+    public float audioPitch = 0f;
+    public float audiodB = 0f;
+    public float interval = 1.0f;
     private float intervalCounter;
 
     public bool directionalSound;
+    private AudioSource soundSource;
 
     public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
     public static event SoundBlastHit onBlastHit;
@@ -15,6 +17,7 @@ public class StaticSoundSource : MonoBehaviour {
     // Use this for initialization
     void Start () {
         intervalCounter = interval;
+        soundSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -22,13 +25,17 @@ public class StaticSoundSource : MonoBehaviour {
         intervalCounter -= Time.deltaTime;
         if (intervalCounter <= 0) {
             intervalCounter = interval;
-            onBlastHit(transform.position, audioLevel, .18f);
+            onBlastHit(transform.position, audioPitch, audiodB);
             if (directionalSound) {
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, transform.forward, out hit, 20.0f)) {
-                    onBlastHit(hit.transform.position, audioLevel, 0.18f);
+                    onBlastHit(hit.transform.position, audioPitch, audiodB);
                 }
             }
         }
 	}
+
+    public AudioSource getAudio() {
+        return soundSource;
+    }
 }

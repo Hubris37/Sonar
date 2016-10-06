@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
 
     private List<GameObject> bots;
     public GameObject Chef;
+    public GameObject Gramophone;
     public int startChefAmount = 3;
     private int chefAmount;
 	private bool playerIsDead = false;
@@ -69,6 +70,7 @@ public class GameManager : MonoBehaviour {
 		pos = mazeInstance.GetCell (new IntVector2 (mazeInstance.size.x - 1, mazeInstance.size.z - 1)).transform.position;
 		goal.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
         spawnAI(Chef, chefAmount, startingCell);
+        spawnAI(Gramophone, 1, startingCell);
     }
 
 	public void GenerateMaze() {
