@@ -2,15 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EnemyAI : MonoBehaviour {
+public abstract class EnemyAI : MonoBehaviour {
 
     private Maze maze;
     private List<MazeCell> mazeNodes;
 
-    private bool moving = false;
-    private List<MazeCell> movementPath;
-    private MazeCell startCell;
-    private MazeCell currentPositionCell;
+    protected bool moving = false;
+    protected List<MazeCell> movementPath;
+    protected MazeCell startCell;
+    protected MazeCell currentPositionCell;
 
     [Header("Behaviour modifiers")]
     public float aggroRange = 1.0f;
@@ -24,42 +24,22 @@ public class EnemyAI : MonoBehaviour {
     public float chasingSpeedMultiplier = 1.2f;
     */
 
-    [Header("Jumping modifiers")]
-    public float jumpDistance = 0.5f;
-    public float jumpChaseMultiplier = 1.5f;
-    public float jumpHeight = 0.4f;
-    //public int jumpCooldown = 30;
-    //private int jumpCounter = 0;
-    //public int jumpOffset = 10;
-    private float jumpOffsetCounter = 0;
-    private Vector3 jumpStartPos;
+    protected Vector3 playerPos;
+    protected float playerNoise;
 
-    private Vector3 playerPos;
-    private float playerNoise;
+    protected GameManager gameManager;
 
-    private GameManager gameManager;
-
-    private bool isChasing = false;
-    private Animator anim;
+    protected bool isChasing = false;
+    protected Animator anim;
 
     public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
 	public static event SoundBlastHit onBlastHit;
-    private bool makeSound = true;
+    protected bool makeSound = true;
 
-    private AudioSource audioThump;
-    private AudioSource audioSniff;
-    private AudioSource audioGrunt;
+    protected AudioSource audioGrunt;
 
     // Use this for initialization
     void Start() {
-        movementPath = new List<MazeCell>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        anim = GetComponent<Animator>();
-        AudioSource[] sources = GetComponents<AudioSource>();
-
-        audioThump = sources[0];
-        audioSniff = sources[1];
-        audioGrunt = sources[2];
     }
 
     public void initializeAI(Maze m, MazeCell c = null) {
@@ -86,9 +66,6 @@ public class EnemyAI : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        findPath();
-        move();
-        checkAggro();
     }
 
     public void getPlayerInformation() {
@@ -96,7 +73,7 @@ public class EnemyAI : MonoBehaviour {
         playerNoise = gameManager.audioMeasure.DbValue;
     }
 
-    private void checkAggro() {
+    protected void checkAggro() {
         getPlayerInformation();
         if (!isChasing) {
             float detectionRadius = aggroRange + Mathf.Max(0, playerNoise);
@@ -105,11 +82,9 @@ public class EnemyAI : MonoBehaviour {
             if (dif.magnitude < detectionRadius && !wallBetweenPlayer()) {
                 onAggro();
             }
-            anim.speed = 1.0f;
         }
         // Check if in line of sight
         if (isChasing) {
-            anim.speed = jumpChaseMultiplier;
            if (wallBetweenPlayer()) {
                 isChasing = false;
                 findCurrentCell();
@@ -119,7 +94,7 @@ public class EnemyAI : MonoBehaviour {
         anim.SetBool("chasing", isChasing);
     }
 
-    private bool wallBetweenPlayer() {
+    protected bool wallBetweenPlayer() {
         Vector3 pos = transform.position;
         pos.y += 0.5f;
         Vector3 dir = pos - playerPos;
@@ -137,13 +112,14 @@ public class EnemyAI : MonoBehaviour {
         makeDetectionSound();
     }
 
-    private void findPath() {
+    protected void findPath() {
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Seek")) {
             anim.SetBool("seek", false);
         }
         if (movementPath.Count == 0) {
+            print("lul");
             anim.SetBool("seek", true);
-            makeSniffingSound();
+            //makeSniffingSound();
             List<MazeCell> map;
             if (patrolsRoom) {
                 // Get a random cell in the current room
@@ -153,10 +129,11 @@ public class EnemyAI : MonoBehaviour {
                 map = mazeNodes;
             }
             movementPath = aStar(findTargetPosition(map), mazeNodes);
+            print(movementPath);
         }
     }
 
-    private MazeCell findTargetPosition(List<MazeCell> map) {
+    protected MazeCell findTargetPosition(List<MazeCell> map) {
         return map[Random.Range(0, map.Count)];
         MazeCell target = currentPositionCell;
         float maxDist = 0;
@@ -166,7 +143,7 @@ public class EnemyAI : MonoBehaviour {
         return target;
     }
 
-    private List<MazeCell> aStar(MazeCell targetCell, List<MazeCell> map) {
+    protected List<MazeCell> aStar(MazeCell targetCell, List<MazeCell> map) {
         List<MazeCell> closedSet = new List<MazeCell>();
         List<MazeCell> openSet = new List<MazeCell>();
         openSet.Add(currentPositionCell);
@@ -231,63 +208,9 @@ public class EnemyAI : MonoBehaviour {
         return path;
     }
 
-    private void move() {
-        Vector3 dif, movePoint;
-        float jumpDist = jumpDistance;
-        // If chasing player, move towards him/her
-        if (isChasing) {
-            dif = playerPos - transform.position;
-            dif.y = 0;
-            movePoint = playerPos;
-            //movementMultiplier = chasingSpeedMultiplier;
-            jumpDist *= jumpChaseMultiplier;
-            tryGrabPlayer();
-        }
-        else {
-            // Else, move on calculated path
-            int tilesLeft = movementPath.Count;
-            if (tilesLeft == 0) return;
-            float thresh = 0.5f;
-            dif = movementPath[0].transform.position - transform.position;
-            dif.y = 0;
-            movePoint = movementPath[0].transform.position;
-            if (dif.magnitude < thresh) {
-                currentPositionCell = movementPath[0];
-                movementPath.RemoveAt(0);
-                if (movementPath.Count == 0) return;
-                // movementPath = tryDiagonal(movementPath);
-            }
-        }
-        movePoint.y = transform.position.y;
-        transform.LookAt(movePoint);
-        //transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
-        jumpHandler(movePoint, jumpDist);
-    }
+    public abstract void move();
 
-    private void jumpHandler(Vector3 movePoint, float dist) {
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
-            jumpStartPos = transform.position;
-            anim.SetBool("jump", true);
-            jumpOffsetCounter = getAnimationLength("Chesschef Jump")/(3*anim.speed);
-            if (makeSound) {
-                makeLandingSound();
-                makeSound = false;
-            }
-        } 
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jump")) {
-            if (jumpOffsetCounter <= 0) {                
-                anim.SetBool("jump", false);
-                Vector3 dir = movePoint - jumpStartPos;
-                float distance = Mathf.Min(dir.magnitude, dist);
-                transform.Translate(dir.normalized * distance * Time.deltaTime, Space.World);
-                makeSound = true;
-            } else {
-                jumpOffsetCounter-= Time.deltaTime;
-            }
-        }
-    }
-
-    private float getAnimationLength(string name) {
+    protected float getAnimationLength(string name) {
         RuntimeAnimatorController rac = anim.runtimeAnimatorController;
         foreach (AnimationClip ac in rac.animationClips) {
             if (ac.name == name) {
@@ -298,15 +221,7 @@ public class EnemyAI : MonoBehaviour {
         return 0;
     }
 
-    private void makeLandingSound() {
-        audioThump.Play();
-		onBlastHit(transform.position, 750, .2f);
-    }
 
-    private void makeSniffingSound() {
-        audioSniff.Play();
-		onBlastHit(transform.position, 450, .18f);
-    }
 
     private void makeDetectionSound() {
         audioGrunt.Play();
@@ -334,12 +249,20 @@ public class EnemyAI : MonoBehaviour {
         return path;
     }
 
-    private void tryGrabPlayer() {
+    protected void tryGrabPlayer() {
         Vector3 dif = playerPos - transform.position;
         dif.y = 0;
         if (dif.magnitude <= grabRange) {
             gameManager.player.transform.position += new Vector3(40, 0, 40);
             gameManager.LostGame();
         }
+    }
+
+    protected void blasHit(Vector3 pos, float p, float db) {
+        onBlastHit(pos, p, db);
+    }
+
+    protected void setCurrentPositionCell(MazeCell c) {
+        currentPositionCell = c;
     }
 }
