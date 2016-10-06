@@ -15,6 +15,11 @@ public class TutorialController : MonoBehaviour
 
 	private void ChangeScene()
 	{
-		SceneManager.LoadScene(nextLvlName);
+		if(NiceSceneTransition.instance != null)
+		{
+			NiceSceneTransition.instance.LoadScene(nextLvlName);
+		} else {
+			SceneManager.LoadScene(nextLvlName);
+		}
 	}
 }
