@@ -10,6 +10,9 @@ public class Maze : MonoBehaviour {
 	private List<MazeRoom> rooms = new List<MazeRoom>();
 	public MazeRoomSettings[] roomSettings;
 
+	public IntVector2 playerCoordinates;
+	//public IntVector2 goalCoordinates;
+
     public MazeCell cellPrefab;
     public MazePassage passagePrefab;
 	public MazeDoor doorPrefab;
@@ -78,6 +81,9 @@ public class Maze : MonoBehaviour {
 
     private void CreatePassage(MazeCell cell, MazeCell otherCell, MazeDirection direction) {
 		bool createDecor = Random.value < decorProbability ? true : false;
+		if(otherCell.coordinates.x == playerCoordinates.x && otherCell.coordinates.z == playerCoordinates.z) {
+			createDecor = false;
+		}
 
 		MazePassage prefab = Random.value < doorProbability ? doorPrefab : passagePrefab;
 		MazePassage passage = Instantiate(prefab,cell.transform.position,direction.ToRotation()) as MazePassage;
