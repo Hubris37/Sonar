@@ -7,18 +7,22 @@ public class TutorialController : MonoBehaviour
 {
 	public TutorialGoal tutGoal;
 	public string nextLvlName;
-
 	[Header("Lights")] 	
 	public Light dirLight;
 	public float lowestIntensity = 0f;
 	public float highestIntensity = 1f;
 	public LightTrigger lightTrigger;
+	public AudioClip switchOn;
+	public AudioClip switchOff;
+
+	private AudioSource aud;
 
 	void Start()
 	{
 		tutGoal.OnGoalEnter += ChangeScene;
 		lightTrigger.DarkZoneEnter += DarkZone;
 		lightTrigger.LightZoneEnter += LightZone;
+		aud = GetComponent<AudioSource>();
 	}
 
 
@@ -27,6 +31,9 @@ public class TutorialController : MonoBehaviour
 /*		StopCoroutine(DimLight(0));
 		StartCoroutine(DimLight(highestIntensity));*/
 		dirLight.intensity = highestIntensity;
+		aud.clip = switchOn;
+		aud.Play();
+		
 	}
 
 	void DarkZone()
@@ -34,6 +41,8 @@ public class TutorialController : MonoBehaviour
 		/*StopCoroutine(DimLight(0));
 		StartCoroutine(DimLight(lowestIntensity));*/
 		dirLight.intensity = lowestIntensity;
+		aud.clip = switchOff;
+		aud.Play();
 	}
 
 	private void ChangeScene()
