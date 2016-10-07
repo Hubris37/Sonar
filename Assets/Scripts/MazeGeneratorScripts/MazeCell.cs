@@ -31,7 +31,7 @@ public class MazeCell : MonoBehaviour {
     public void Initialize(MazeRoom room, bool decoration) {
         room.Add(this);
         if (decoration && room.settings.Decor.Length > 0){
-            decor = Instantiate(room.settings.Decor[Random.Range(0,room.settings.Decor.Length-1)],transform.position,Quaternion.identity) as GameObject;
+            decor = Instantiate(room.settings.Decor[Random.Range(0,room.settings.Decor.Length)],transform.position,Quaternion.identity) as GameObject;
             decor.transform.parent = transform;
             //decor.transform.position = transform.position;
         }
