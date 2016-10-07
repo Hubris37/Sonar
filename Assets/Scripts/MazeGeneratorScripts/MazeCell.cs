@@ -33,7 +33,6 @@ public class MazeCell : MonoBehaviour {
         if (decoration && room.settings.Decor.Length > 0){
             decor = Instantiate(room.settings.Decor[Random.Range(0,room.settings.Decor.Length)],transform.position,Quaternion.identity) as GameObject;
             decor.transform.parent = transform;
-            //decor.transform.position = transform.position;
         }
         transform.GetChild(0).GetComponent<Renderer>().material = room.settings.floorMaterial;
     }
@@ -69,7 +68,21 @@ public class MazeCell : MonoBehaviour {
             gameObject.SetActive(true);
             foreach(MazeCellEdge edge in edges) {
                 if(edge is MazeDoor && edge.otherCell.isActiveAndEnabled) {
-                    edge.gameObject.SetActive(false);
+                    //edge.gameObject.SetActive(false);
+                    MazeDoor door = edge as MazeDoor;
+
+                    for (int i = 0; i < door.transform.childCount; i++) {
+                        Transform child = door.transform.GetChild(i);
+                        if (child == door.hinge) {
+                            child.gameObject.SetActive(false);
+                        }
+                    }
+                }
+                if(edge is MazeWall && wallBetween.Contains(edge.otherCell)){
+                    //edge.otherCell.gameObject.SetActive(true);
+                    MazeCellEdge e = edge.otherCell.GetEdge(MazeDirections.GetOpposite(edge.direction));
+                    
+                    //e.gameObject.SetActive(false);
                 }
             }
         }
