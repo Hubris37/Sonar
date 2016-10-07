@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour {
 	private bool playerIsDead = false;
 
     public int level = 1;
+	private IntVector2 startingCoordinates;
 
 	public delegate void PlayerState();
 	public static event PlayerState isDead;
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void Start () {
+		startingCoordinates = new IntVector2(0, 0);
         audioPlayer = GetComponent<AudioSource>();
         bots = new List<GameObject>();
 		goal = Instantiate (goalPrefab);
@@ -59,7 +61,6 @@ public class GameManager : MonoBehaviour {
 
 	private void BeginGame () {
 		GenerateMaze();
-		IntVector2 startingCoordinates = new IntVector2(0, 0);
 		MazeCell startingCell = mazeInstance.GetCell (startingCoordinates);
 		Vector3 pos = startingCell.transform.position;
 
@@ -82,6 +83,7 @@ public class GameManager : MonoBehaviour {
 			}
 		}*/
 		mazeInstance = Instantiate (mazePrefab) as Maze;
+		mazeInstance.playerCoordinates = startingCoordinates;
 		mazeInstance.Generate(level);
 
 	}
