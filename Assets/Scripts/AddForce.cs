@@ -30,12 +30,14 @@ public class AddForce : MonoBehaviour {
 	}
 
 	void RecieveForce(Vector3 hitPos, float pitchVal, float dbVal) {
-		Vector3 myPos = relativeOffset;// + relativeOffset;// + (transform.localPosition + offset);
+		Vector3 myPos = transform.TransformPoint(offset);// + relativeOffset;// + (transform.localPosition + offset);
 		Vector3 heading = (myPos - hitPos);
-		float dist = heading.sqrMagnitude;
+		Vector2 xz = new Vector2(heading.x,heading.z);
+		float dist = xz.sqrMagnitude;
+
 		Vector3 dir = heading / dist;
 		//float dist = Vector3.Distance(hitPos, transform.position);
-		rigidbody.AddForce(dir*(1/(dist+0.1f)), ForceMode.Impulse);
+		rigidbody.AddForce(dir*(dbVal*250/(dist+20f)), ForceMode.Impulse);
 	}
 
 	void OnDestroy() {

@@ -61,7 +61,7 @@ public class FireSoundWave : MonoBehaviour {
 	{
 		float temp = audioMeasure.DbValue - volumeSens;
 		float percent_Db = Mathf.Clamp01(temp / volumeMax);
-		Debug.Log(percent_Db);
+		//Debug.Log(percent_Db);
 		//Raycast
 		Vector3 fwd = cameraT.TransformDirection(Vector3.forward);
 		RaycastHit hit;
