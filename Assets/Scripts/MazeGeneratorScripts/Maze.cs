@@ -15,7 +15,7 @@ public class Maze : MonoBehaviour {
 
     public MazeCell cellPrefab;
     public MazePassage passagePrefab;
-	public MazeDoor doorPrefab;
+	public MazeDoor[] doorPrefab;
     public MazeWall wallPrefab;
 
 	[Range(0f, 1f)]
@@ -85,7 +85,7 @@ public class Maze : MonoBehaviour {
 			createDecor = false;
 		}
 
-		MazePassage prefab = Random.value < doorProbability ? doorPrefab : passagePrefab;
+		MazePassage prefab = Random.value < doorProbability ? doorPrefab[Random.Range(0,doorPrefab.Length)] : passagePrefab;
 		MazePassage passage = Instantiate(prefab,cell.transform.position,direction.ToRotation()) as MazePassage;
 
         passage.Initialize(cell, otherCell, direction);
