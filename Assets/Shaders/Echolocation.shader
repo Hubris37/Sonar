@@ -21,6 +21,7 @@ Shader "Custom/Echolocation" {
 			ColorMask 0
 		}
 
+		// Show depth in gray scale
 		// Pass {
 		// 	Blend SrcAlpha OneMinusSrcAlpha
 		// 	ZWrite Off
@@ -158,25 +159,33 @@ Shader "Custom/Echolocation" {
 				
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
-					float val = step(dist, _Radius[j]) * step(_Radius[j] - _EdgeWidth, dist); // Hollow circle
+					float val;
 
-					i.uv.x += val * sin((i.uv.x+i.uv.y)*dist + _Time.g*4)*_DistortScale;
+					// Used for wavy effect
+					val = step(dist, _Radius[j]) * step(_Radius[j] - _EdgeWidth*2, dist); // Hollow circle
+					i.uv.x += val * sin((i.uv.x+i.uv.y)*dist + _Time.g*2)*_DistortScale;
 					i.uv.y += val * sin((i.uv.x-i.uv.y)*dist + _Time.g*_Frequency[j]*.2)*_DistortScale*2;
-					tnormal = UnpackNormal(tex2D(_NormalMap, i.uv)); // sample the normal map, and decode from the Unity encoding
+					// END Used for wavy effect
+
+					// sample the normal map, and decode from the Unity encoding
+					tnormal = UnpackNormal(tex2D(_NormalMap, i.uv));
 					// transform normal from tangent to world space
 					worldNormal.x = dot(i.tspace0, tnormal);
 					worldNormal.y = dot(i.tspace1, tnormal);
 					worldNormal.z = dot(i.tspace2, tnormal);
 
-					// Circle with edge
-					val += (1 - step(dist, _Radius[j] - _EdgeWidth) * 0.5) * step(dist, _Radius[j]);
-					//max(lerp(_Radius[j]*.5, 0, dist/_Radius[j]*2)*.5, lerp(0, _Radius[j], dist/_Radius[j])) *
+					// Create circle
+					// val += (1 - step(dist, _Radius[j] - _EdgeWidth) * 0.5) * step(dist, _Radius[j]);
+					float weight = clamp(dist/_Radius[j], 0, 1);
+					val = step(dist - _EdgeWidth*2, _Radius[j]) * lerp(3, 0, weight) * step(_Radius[j] - _EdgeWidth*2, dist);
+					val += step(dist - _EdgeWidth*2, _Radius[j]) * lerp(0, 3, weight) * step(dist, _Radius[j] - _EdgeWidth*2);
+
+					// val = step(dist, _Radius[j]) * lerp(5, 0, dist/_Radius[j]);
 
 					float bump = (_UseNormalMap==1) ? max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) : 1;
 
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val *  _Color[j].rgb * bump;
-					
-					finalColor.a += max(0, (1 - _Radius[j]/_MaxRadius[j]) * val);
+					finalColor.a += (1 - _Radius[j]/_MaxRadius[j]) * val;
 				}
 
 				//finalColor.a *= 0.7;

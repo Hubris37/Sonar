@@ -77,7 +77,7 @@ public class WiiMoteController : MonoBehaviour {
 
 					// Create spheres
 					// GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-					// sphere.transform.position = transform.position;
+					// sphere.transform.position = faces[i].transform.position;
 					// sphere.transform.localScale = new Vector3(0.7f,0.7f,0.7f);
 					// Rigidbody sphereRB = sphere.AddComponent<Rigidbody>();
 					// sphereRB.mass = 15;
