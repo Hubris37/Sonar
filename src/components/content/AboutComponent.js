@@ -34,7 +34,15 @@ class AboutComponent extends React.Component {
   render() {
     return (
       <div className="about-component">
-        {groupMembers.map(member=> <img src={member.image} key={member.name}  alt={member.name} className="member-image"/>)}
+        {
+          groupMembers.map(member=> <div className="member" key={member.name}>
+            <img src={member.image} alt={member.name} className="member-image"/>
+            <p className='name'>{member.name}</p>
+            <p className='email'>{member.email}</p>
+            </div>
+          )
+
+      }
       </div>
     );
   }

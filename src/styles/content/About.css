@@ -5,3 +5,17 @@
 .member-image{
   height: 15vw;
 }
+
+.member {
+    display: inline-block;
+}
+
+.member .name, .member .email{
+  text-align: center;
+}
+.member .name{
+  color: #fc4;
+}
+.member .email{
+  color: #c39c34;
+}
