@@ -185,7 +185,8 @@ Shader "Custom/Echolocation" {
 					float bump = (_UseNormalMap==1) ? max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) : 1;
 
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val *  _Color[j].rgb * bump;
-					finalColor.a += (1 - _Radius[j]/_MaxRadius[j]) * val;
+					//finalColor.a = 0;
+					finalColor.a += _MaxRadius[j]/20 * (1 - _Radius[j]/_MaxRadius[j]) * val;
 				}
 
 				//finalColor.a *= 0.7;

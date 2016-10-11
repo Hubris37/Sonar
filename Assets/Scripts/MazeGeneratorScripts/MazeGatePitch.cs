@@ -12,7 +12,7 @@ public class MazeGatePitch : MazeDoor {
 	float percentBetweenPoints;
 	float speed = 0.5f;
 	float pitchPoint;
-	float pitchThreshold = 80;
+	float pitchThreshold = 100;
 	float pitchMultiplier = 0.001f;
 	float percentTowardsGoal;
 	int lowestPoint = 300;
@@ -28,7 +28,7 @@ public class MazeGatePitch : MazeDoor {
 	// Use this for initialization
 	void Start () {
 		FireSoundWave.onBlastHit += RecieveForce;
-		pitchPoint = Random.Range(lowestPoint,900);
+		pitchPoint = Random.Range(lowestPoint,800);
 		keyGoal.localPosition += new Vector3(0f,pitchPoint*pitchMultiplier,0f);
 		keyStandardPos = key.localPosition;
 		keyTargetPos = keyStandardPos;
