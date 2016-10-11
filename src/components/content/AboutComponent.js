@@ -1,8 +1,9 @@
 'use strict';
 
 import React from 'react';
+import Slider from 'react-slick'
 
-require('styles/content/About.css');
+require('styles/content/About.css')
 
 let groupMembers = [{
   name: 'Fredrik Berglund',
@@ -30,21 +31,36 @@ let groupMembers = [{
   image:require('../../images/staffan-sanberg.jpg')
 }]
 
+const memberTemplate = member => <div className="member" key={member.name}>
+  <img src={member.image} alt={member.name} className="member-image"/>
+  <p className='name'>{member.name}</p>
+  <p className='email'>{member.email}</p>
+  </div>
+
 class AboutComponent extends React.Component {
+
   render() {
+    let settings = {
+      dots: true,
+      adaptiveHeight: true,
+      swipeToSlide: true,
+      speed: 500,
+      slidesToShow: 3,
+      slidesToScroll: 1
+    }
     return (
       <div className="about-component">
-        {
-          groupMembers.map(member=> <div className="member" key={member.name}>
-            <img src={member.image} alt={member.name} className="member-image"/>
-            <p className='name'>{member.name}</p>
-            <p className='email'>{member.email}</p>
-            </div>
-          )
-
-      }
+          <div className="carousel-wrapper">
+            <Slider {...settings}>
+            {groupMembers.map(memberTemplate)}
+            </Slider>
+          </div>
       </div>
     );
+    // return (
+    //   <div className="about-component">
+    //   </div>
+    // );
   }
 }
 

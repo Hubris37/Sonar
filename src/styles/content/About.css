@@ -1,9 +1,16 @@
 .about-component {
   /*border: 1px dashed #f00;*/
+  min-width:0;
+}
+
+.carousel-wrapper {
+  width: 80%;
+  margin: 30px auto;
 }
 
 .member-image{
   height: 15vw;
+  margin: 0 auto;
 }
 
 .member {
