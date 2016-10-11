@@ -11,17 +11,16 @@ public class FirstPersonController : MonoBehaviour {
 	public float mouseSensitivityY = 3.5f;
 	public float walkSpeed = 0.5f;
 	public float turnSpeed = 2f;
+	public GameObject goal;
+	public bool freezeMovement = false;
+	public bool lockUpDownMovement = true;
 
 	Transform cameraT;
 	Camera cam;
 	Rigidbody myRigidBody;
 	float verticalLookRotation;
-	public GameObject goal;
-
 	Vector3 moveAmount;
 	Vector3 smoothMoveVelocity;
-
-	public bool freezeMovement = false;
 
 	// Use this for initialization
 	void Start () {
@@ -74,11 +73,11 @@ public class FirstPersonController : MonoBehaviour {
 			//myRigidBody.AddRelativeForce (moveAmount, ForceMode.Impulse);
 			myRigidBody.MovePosition(myRigidBody.position + transform.TransformDirection(moveAmount));
 			
-			if (Input.GetButton ("Fire1")) {
+			if (Input.GetButton ("Fire1") && !lockUpDownMovement) {
 				myRigidBody.AddRelativeForce (Vector3.up * 5f);
 			}
 
-			if (Input.GetButton ("Fire2")) {
+			if (Input.GetButton ("Fire2") && !lockUpDownMovement) {
 				myRigidBody.AddRelativeForce (Vector3.up * -5f);
 			}
 		}
