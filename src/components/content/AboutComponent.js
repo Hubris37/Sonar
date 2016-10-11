@@ -22,7 +22,7 @@ let groupMembers = [{
   image:require('../../images/marcus-ahlstroem.jpg')
 }, {
   name: 'Rodrigo Roa Rodríguez',
-  email: 'rorrkth.se',
+  email: 'rorr@kth.se',
   image:require('../../images/rodrigo-roa-rodriguez.jpg')
 }, {
   name: 'Staffan Sandberg',
