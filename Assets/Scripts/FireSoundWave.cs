@@ -68,7 +68,7 @@ public class FireSoundWave : MonoBehaviour {
 		if(Physics.Raycast(transform.position,fwd, out hit, 1000))
 		{
 			//onBlastHit(hit.point, audioMeasure.PitchValue, audioMeasure.DbValue);
-			StartCoroutine(hitDelay(hit.point, audioMeasure.PitchValue, percent_Db));
+			StartCoroutine(hitDelay(transform.position, audioMeasure.PitchValue, percent_Db));
 			//OnSoundMade ();
 		}
 	}
