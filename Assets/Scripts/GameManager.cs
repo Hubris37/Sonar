@@ -65,11 +65,14 @@ public class GameManager : MonoBehaviour {
 		Vector3 pos = startingCell.transform.position;
 
 		player.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
+		
 		startingCell.room.Show();
 		//car.transform.position = new Vector3(pos.x, pos.y+1f, pos.z);
 
 		pos = mazeInstance.GetCell (new IntVector2 (mazeInstance.size.x - 1, mazeInstance.size.z - 1)).transform.position;
 		goal.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
+		player.transform.LookAt(pos);
+
         spawnAI(Chef, chefAmount, startingCell);
         spawnAI(Gramophone, 1, startingCell);
     }
@@ -141,6 +144,7 @@ public class GameManager : MonoBehaviour {
 			roomsLeft.Remove(room);
 			Vector3 initPos = initCell.transform.position;
 			GameObject bot = Instantiate(AIPrefab, initPos, Quaternion.identity) as GameObject;
+			bot.transform.parent = initCell.transform;
 			bots.Add(bot);
 			bot.GetComponent<EnemyAI>().initializeAI(mazeInstance, initCell);
 			
