@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class ChefAI : EnemyAI {
 
@@ -10,6 +11,7 @@ public class ChefAI : EnemyAI {
     public float jumpHeight = 0.4f;
     private float jumpOffsetCounter = 0;
     private Vector3 jumpStartPos;
+    private bool makeSound = false;
 
     public AudioSource audioThump;
     public AudioSource audioSniff;
@@ -32,29 +34,40 @@ public class ChefAI : EnemyAI {
         findPath();
         move();
         checkAggro();
-        anim.SetBool("chasing", isChasing);
+    }
+
+    protected override void onAggro() {
+        anim.speed = jumpChaseMultiplier;
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Seek")) {
+            anim.SetTrigger("chasing");
+        }
+        makeDetectionSound();
+    }
+
+    protected override void onLoseAggro() {
+        anim.speed = 1.0f;
     }
 
     public override void move() {
         Vector3 dif, movePoint;
+        Vector3 curPos = transform.position;
         float jumpDist = jumpDistance;
         // If chasing player, move towards him/her
-        if (isChasing) {
-            dif = playerPos - transform.position;
+        if (isAggroed) {
+            dif = playerPos - curPos;
             dif.y = 0;
             movePoint = playerPos;
             //movementMultiplier = chasingSpeedMultiplier;
             jumpDist *= jumpChaseMultiplier;
-            tryGrabPlayer();
         }
         else {
             // Else, move on calculated path
-            int tilesLeft = movementPath.Count;            
+            int tilesLeft = movementPath.Count;
             if (tilesLeft == 0) return;
             float thresh = 0.5f;
-            dif = movementPath[0].transform.position - transform.position;
-            dif.y = 0;
             movePoint = movementPath[0].transform.position;
+            dif = movePoint - curPos;
+            dif.y = 0;
             if (dif.magnitude < thresh) {
                 currentPositionCell = movementPath[0];
                 movementPath.RemoveAt(0);
@@ -62,22 +75,19 @@ public class ChefAI : EnemyAI {
                 // movementPath = tryDiagonal(movementPath);
             }
         }
-        movePoint.y = transform.position.y;
-        transform.LookAt(movePoint);
+        tryGrabPlayer();
+        movePoint.y = curPos.y;
+        if (dif.normalized != transform.forward) {
+            transform.LookAt(movePoint);
+        }
         //transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
         jumpHandler(movePoint, jumpDist);
-
     }
 
     private void jumpHandler(Vector3 movePoint, float dist) {
-        if (isChasing) {
-            anim.speed = jumpChaseMultiplier;
-        } else {
-            anim.speed = 1.0f;
-        }
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
             jumpStartPos = transform.position;
-            anim.SetBool("jump", true);
+            anim.SetTrigger("jump");
             jumpOffsetCounter = getAnimationLength("Chesschef Jump") / (3 * anim.speed);
             if (makeSound) {
                 makeLandingSound();
@@ -86,9 +96,9 @@ public class ChefAI : EnemyAI {
         }
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jump")) {
             if (jumpOffsetCounter <= 0) {
-                anim.SetBool("jump", false);
                 Vector3 dir = movePoint - jumpStartPos;
                 float distance = Mathf.Min(dir.magnitude, dist);
+                
                 transform.Translate(dir.normalized * distance * Time.deltaTime, Space.World);
                 makeSound = true;
             }
@@ -100,12 +110,12 @@ public class ChefAI : EnemyAI {
 
     private void makeLandingSound() {
         audioThump.Play();
-        blasHit(transform.position, 750, .2f);
+        blastHit(transform.position, 750, .2f);
     }
 
     private void makeSniffingSound() {
         audioSniff.Play();
-        blasHit(transform.position, 450, .18f);
+        blastHit(transform.position, 450, .18f);
     }
 
 }

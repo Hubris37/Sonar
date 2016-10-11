@@ -23,14 +23,17 @@ public abstract class EnemyAI : MonoBehaviour {
 
     protected GameManager gameManager;
 
-    protected bool isChasing = false;
+    protected bool isAggroed = false;
     protected Animator anim;
 
     public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
 	public static event SoundBlastHit onBlastHit;
-    protected bool makeSound = true;
 
     protected AudioSource audioStartle;
+
+    protected abstract void onAggro();
+    protected abstract void onLoseAggro();
+    public abstract void move();
 
     // Use this for initialization
     void Start() {
@@ -69,20 +72,20 @@ public abstract class EnemyAI : MonoBehaviour {
 
     protected void checkAggro() {
         getPlayerInformation();
-        if (!isChasing) {
+        if (!isAggroed) {
             float detectionRadius = aggroRange + Mathf.Max(0, playerNoise);
             Vector3 dif = (playerPos - transform.position);
             dif.y = 0;
             if (dif.magnitude < detectionRadius && !wallBetweenPlayer()) {
+                isAggroed = true;
                 onAggro();
             }
-        }   
-        else {  
-            if (wallBetweenPlayer()) {
-                isChasing = false;
-                findCurrentCell();
-                movementPath = aStar(startCell, mazeNodes);
-            }
+        }
+        else if (wallBetweenPlayer()) {
+            isAggroed = false;
+            onLoseAggro();
+            findCurrentCell();
+            movementPath = aStar(startCell, mazeNodes);
         }
     }
     
@@ -101,17 +104,10 @@ public abstract class EnemyAI : MonoBehaviour {
         return true;
     }
 
-    private void onAggro() {
-        isChasing = true;
-      //  makeDetectionSound();
-    }
-
     protected void findPath() {
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Seek")) {
-            anim.SetBool("seek", false);
-        }
         if (movementPath.Count == 0) {
-            anim.SetBool("seek", true);
+            if (!isAggroed)
+                anim.SetTrigger("seek");
             //makeSniffingSound();
             List<MazeCell> map;
             if (patrolsRoom) {
@@ -126,13 +122,18 @@ public abstract class EnemyAI : MonoBehaviour {
     }
 
     protected MazeCell findTargetPosition(List<MazeCell> map) {
-        return map[Random.Range(0, map.Count)];
-        MazeCell target = currentPositionCell;
-        float maxDist = 0;
+        if (!patrolsRoom)
+            return map[Random.Range(0, map.Count)];
+        
+        return findMaxCostCell(currentPositionCell,map);
+    }
+
+    protected MazeCell findMaxCostCell(MazeCell start, List<MazeCell> map) {
+        MazeCell furthest = start;
         foreach (MazeCell m in map) {
-            target = (heuristicCost(currentPositionCell, target) < heuristicCost(currentPositionCell, m)) ? m : target;
+            furthest = (heuristicCost(start, furthest) < heuristicCost(start, m)) ? m : furthest;
         }
-        return target;
+        return furthest;
     }
 
     protected List<MazeCell> aStar(MazeCell targetCell, List<MazeCell> map) {
@@ -166,7 +167,7 @@ public abstract class EnemyAI : MonoBehaviour {
             openSet.Remove(c);
             closedSet.Add(c);
             foreach (MazeCell n in c.getNeighbours()) {
-                if (closedSet.Contains(n) || !map.Contains(n)) continue;
+                if (closedSet.Contains(n) || !map.Contains(n) || !n.AIWalkable) continue;
 
                 int tentGScore = gScore[c] + 1;
                 if (!openSet.Contains(n))
@@ -200,8 +201,6 @@ public abstract class EnemyAI : MonoBehaviour {
         return path;
     }
 
-    public abstract void move();
-
     protected float getAnimationLength(string name) {
         RuntimeAnimatorController rac = anim.runtimeAnimatorController;
         foreach (AnimationClip ac in rac.animationClips) {
@@ -215,7 +214,7 @@ public abstract class EnemyAI : MonoBehaviour {
 
 
 
-    private void makeDetectionSound() {
+    protected void makeDetectionSound() {
         audioStartle.Play();
         onBlastHit(transform.position, 1000, .25f);
     }
@@ -250,7 +249,7 @@ public abstract class EnemyAI : MonoBehaviour {
         }
     }
 
-    protected void blasHit(Vector3 pos, float p, float db) {
+    protected void blastHit(Vector3 pos, float p, float db) {
         onBlastHit(pos, p, db);
     }
 

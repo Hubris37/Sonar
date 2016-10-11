@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class GramophoneAI : EnemyAI {
 
     [Header("Walking modifiers")]
     public float movementSpeed = 1.4f;
     public float chasingSpeedMultiplier = 1.2f;
-    public float chaseStopRange = 1.0f;
 
     private bool hasStartled = false;
     private AudioSource music;
@@ -32,7 +32,7 @@ public class GramophoneAI : EnemyAI {
     }
 
     void Update() {
-        handleStartle();
+   //     handleStartle();
         findPath();
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Walking")) {
             move();
@@ -68,10 +68,10 @@ public class GramophoneAI : EnemyAI {
     }
 
     private void handleStartle() {
-        if (isChasing && !hasStartled) {
+        if (isAggroed && !hasStartled) {
             anim.SetBool("startled", true);
             hasStartled = true;
-        } else if (!isChasing) {
+        } else if (!isAggroed) {
             hasStartled = false;
         }
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Startled")) {
@@ -79,32 +79,35 @@ public class GramophoneAI : EnemyAI {
         }
     }
 
+    protected override void onAggro() {
+        List<MazeCell> map = currentPositionCell.room.getCells();
+        movementPath = aStar(findMaxCostCell(currentPositionCell, map),map);
+        anim.SetTrigger("startled");
+        anim.speed = chasingSpeedMultiplier;
+    }
+
+    protected override void onLoseAggro() {
+        anim.speed = 1.0f;
+    }
+
     public override void move() {
         Vector3 dif, movePoint;
-        float movementMultiplier = 1.0f;
-        // If chasing player, move towards him/her
-        if (isChasing) {
-            dif = playerPos - transform.position;
-            dif.y = 0;
-            movePoint = playerPos;
-            // movementMultiplier = (dif.magnitude <= chaseStopRange) ? 0.01f : chasingSpeedMultiplier;
-            movementMultiplier = chasingSpeedMultiplier;
+        float movementMultiplier = (isAggroed) ? chasingSpeedMultiplier : 1.0f;
+        
+        // Move on calculated path
+        int tilesLeft = movementPath.Count;
+        if (tilesLeft == 0) return;
+        float thresh = 0.5f;
+        dif = movementPath[0].transform.position - transform.position;
+        dif.y = 0;
+        movePoint = movementPath[0].transform.position;
+        if (dif.magnitude < thresh) {
+            currentPositionCell = movementPath[0];
+            movementPath.RemoveAt(0);
+            if (movementPath.Count == 0) return;
+            // movementPath = tryDiagonal(movementPath);
         }
-        else {
-            // Else, move on calculated path
-            int tilesLeft = movementPath.Count;
-            if (tilesLeft == 0) return;
-            float thresh = 0.5f;
-            dif = movementPath[0].transform.position - transform.position;
-            dif.y = 0;
-            movePoint = movementPath[0].transform.position;
-            if (dif.magnitude < thresh) {
-                currentPositionCell = movementPath[0];
-                movementPath.RemoveAt(0);
-                if (movementPath.Count == 0) return;
-                // movementPath = tryDiagonal(movementPath);
-            }
-        }
+        
         movePoint.y = transform.position.y;
         transform.LookAt(movePoint);
         transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
