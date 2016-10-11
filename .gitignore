@@ -33,3 +33,6 @@ bower_components/
 
 # Mac meta-files
 .DS_Store
+
+# Dist folder
+dist
