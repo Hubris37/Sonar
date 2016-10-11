@@ -20,8 +20,6 @@ public class Maze : MonoBehaviour {
 
 	[Range(0f, 1f)]
 	public float doorProbability;
-	[Range(0f, 1f)]
-	public float decorProbability;
 
 	public MazeCell GetCell (IntVector2 coordinates) {
 		return cells [coordinates.x, coordinates.z];
@@ -80,7 +78,7 @@ public class Maze : MonoBehaviour {
 	}
 
     private void CreatePassage(MazeCell cell, MazeCell otherCell, MazeDirection direction) {
-		bool createDecor = Random.value < decorProbability ? true : false;
+		bool createDecor = Random.value < cell.room.settings.decorProbability ? true : false;
 		if(otherCell.coordinates.x == playerCoordinates.x && otherCell.coordinates.z == playerCoordinates.z) {
 			createDecor = false;
 		}
@@ -117,7 +115,7 @@ public class Maze : MonoBehaviour {
 		MazeWall wall = Instantiate(wallPrefab) as MazeWall;
         wall.Initialize(cell, otherCell, direction);
 		
-		bool createDecor = Random.value < decorProbability ? true : false;
+		bool createDecor = Random.value < cell.room.settings.decorProbability ? true : false;
 		if (createDecor && cell.room.settings.WallDecor.Length > 0){
 			GameObject decor = Instantiate(cell.room.settings.WallDecor[Random.Range(0,cell.room.settings.WallDecor.Length-1)],wall.transform.position,wall.transform.rotation) as GameObject;
 			decor.transform.parent = wall.transform;
