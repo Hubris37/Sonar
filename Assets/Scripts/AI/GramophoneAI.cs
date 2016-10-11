@@ -15,6 +15,8 @@ public class GramophoneAI : EnemyAI {
     private float[] musicSampleData;
     private int musicSampleAmount = 1024;
 
+    private StaticSoundSource soundEmitter;
+
     public Transform head;
 
     void Start() {
@@ -24,6 +26,7 @@ public class GramophoneAI : EnemyAI {
         AudioSource[] sources = GetComponents<AudioSource>();
         musicSampleData = new float[musicSampleAmount];
         head = searchForBone(transform, "Bone.002");
+        soundEmitter = GetComponent<StaticSoundSource>();
     }
 
     void Update() {
@@ -37,6 +40,7 @@ public class GramophoneAI : EnemyAI {
 
     void LateUpdate() {
         volumeScale();
+        soundEmitter.multAudioParameters(musicLoudness, musicLoudness);
     }
 
     private void volumeScale() {
@@ -50,9 +54,9 @@ public class GramophoneAI : EnemyAI {
                 musicLoudness += Mathf.Abs(s);
             }
             musicLoudness /= musicSampleAmount;
-            musicLoudness *= 100;
+            musicLoudness = Mathf.Clamp(musicLoudness * 100, 1, 1.9f);
         //    float scaleLimit = 0.05f;
-            Vector3 newScale = Vector3.one * Mathf.Clamp(musicLoudness, 1, 1.9f);
+            Vector3 newScale = Vector3.one * musicLoudness;
           //  if (Mathf.Abs(newScale.magnitude - head.localScale.magnitude) > scaleLimit) {
             //    newScale = (newScale.magnitude > head.localScale.magnitude) ? head.localScale + (Vector3.one * scaleLimit) : head.localScale - (Vector3.one * scaleLimit);
            // }
@@ -81,7 +85,8 @@ public class GramophoneAI : EnemyAI {
             dif = playerPos - transform.position;
             dif.y = 0;
             movePoint = playerPos;
-            movementMultiplier = (dif.magnitude <= chaseStopRange) ? 0.01f : chasingSpeedMultiplier;
+            // movementMultiplier = (dif.magnitude <= chaseStopRange) ? 0.01f : chasingSpeedMultiplier;
+            movementMultiplier = chasingSpeedMultiplier;
         }
         else {
             // Else, move on calculated path

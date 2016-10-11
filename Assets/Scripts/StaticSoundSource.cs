@@ -5,8 +5,11 @@ public class StaticSoundSource : MonoBehaviour {
 
     public float audioPitch = 0f;
     public float audiodB = 0f;
+    public float soundRange = 8.0f;
     public float interval = 1.0f;
     private float intervalCounter;
+    private float cPitch;
+    private float cdB;
 
     public bool directionalSound;
     private AudioSource soundSource;
@@ -16,6 +19,8 @@ public class StaticSoundSource : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        cPitch = audioPitch;
+        cdB = audiodB;
         intervalCounter = interval;
         soundSource = GetComponent<AudioSource>();
 	}
@@ -25,15 +30,20 @@ public class StaticSoundSource : MonoBehaviour {
         intervalCounter -= Time.deltaTime;
         if (intervalCounter <= 0) {
             intervalCounter = interval;
-            onBlastHit(transform.position, audioPitch, audiodB);
+            onBlastHit(transform.position, cPitch, cdB);
             if (directionalSound) {
                 RaycastHit hit;
-                if (Physics.Raycast(transform.position, transform.forward, out hit, 20.0f)) {
-                    onBlastHit(hit.transform.position, audioPitch, audiodB);
+                if (Physics.Raycast(transform.position, transform.forward, out hit, soundRange)) {
+                    onBlastHit(hit.transform.position, cPitch, cdB);
                 }
             }
         }
 	}
+
+    public void multAudioParameters(float pitch, float dB) {
+        cPitch = audioPitch * pitch;
+        cdB = audiodB * dB;
+    }
 
     public AudioSource getAudio() {
         return soundSource;
