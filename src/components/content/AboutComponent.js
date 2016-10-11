@@ -6,7 +6,7 @@ require('styles/content/About.css');
 
 let groupMembers = [{
   name: 'Fredrik Berglund',
-  email: 'mahlst@kth.se',
+  email: 'fberglund@kth.se',
   image:require('../../images/fredrik-berglund.jpg')
 }, {
   name: 'Karl Andersson',
@@ -18,7 +18,7 @@ let groupMembers = [{
   image:require('../../images/karl-gylleus.jpg')
 }, {
   name: 'Marcus Ahlström',
-  email: 'fberglund@kth.se',
+  email: 'mahlst@kth.se',
   image:require('../../images/marcus-ahlstroem.jpg')
 }, {
   name: 'Rodrigo Roa Rodríguez',
