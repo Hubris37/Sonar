@@ -2,7 +2,9 @@
 /*#fc4*/
 
 .header-component {
-  background: #444;
+  background: rgba(0, 0, 0, 0.8);
+  /*width: 70vw;*/
+  /*margin: auto;*/
 }
 
 
@@ -39,9 +41,10 @@
 .header-component ul li a {
   color: #fc4;
   text-decoration: none;
+  font-size: 1.12em;
 }
 .header-component ul li:first-child{
-  background-color: #333;
+  background-color: #222;
 }
 
 .header-component ul li:not(:first-child):hover {

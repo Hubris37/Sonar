@@ -3,17 +3,39 @@
 
 /* Base Application Styles */
 body {
-  /*color: #fff;*/
   background: #222;
   font-family: "Open Sans", sans-serif;
+  /*background-image: url('../images/waves.png');*/
+  background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('../images/waves.png');
+  background-size: 20vw;
+  color: #ddd
 }
 
+h1 { font-size: 2em; }
+h2 { font-size: 1.5em; }
+h3 { font-size: 1.17em; }
+h4 { font-size: 1.12em; }
+h5 { font-size: .83em; }
+h6 { font-size: .75em; }
+h1, h2, h3, h4, h5, h6{
+  font-family: "Lora", serif;
+}
+
+a:visited{
+  color: #f84;
+}
+
+main{
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 5vw;
+  width: 60%;
+  margin: 0 auto;
+}
 .index h1{
-  font-size: 24pt;
-  background: #282828;
-  padding: 10px 5vw;
+  margin-top: 2em;
+  margin-bottom: .25em;
   color: #fc4;
-  /*font-weight: normal;*/
+  font-weight: normal;
 }
 
 .section-content{
@@ -27,5 +49,5 @@ body {
 }
 
 .screenshot{
-  max-width: 80vw;
+  max-width: 100%;
 }
