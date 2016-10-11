@@ -39,7 +39,7 @@ class AppComponent extends React.Component {
       <div className="index">
         <HeaderComponent items={[].concat(brand,sections)}/>
         {sections.map(section=><div className='section'>
-          <h1 key={sections.id}>{section.content}</h1>
+          <h1 key={sections.id}><a  name={section.content}>{section.content}</a></h1>
           <div className='section-content'>
             {components[section.content]}
           </div>
