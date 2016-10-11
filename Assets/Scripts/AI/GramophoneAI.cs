@@ -19,6 +19,8 @@ public class GramophoneAI : EnemyAI {
 
     public Transform head;
 
+    // Fixa inte opera i alla rum
+
     void Start() {
         movementPath = new List<MazeCell>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -113,7 +115,6 @@ public class GramophoneAI : EnemyAI {
             return current;
         }
         foreach (Transform c in current) {
-            print(c.name);
             Transform found = searchForBone(c, name);
             if (found != null) {
                 return found;

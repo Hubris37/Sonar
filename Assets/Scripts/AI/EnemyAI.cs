@@ -76,28 +76,29 @@ public abstract class EnemyAI : MonoBehaviour {
             if (dif.magnitude < detectionRadius && !wallBetweenPlayer()) {
                 onAggro();
             }
-        }
-        // Check if in line of sight
-        if (isChasing) {
-           if (wallBetweenPlayer()) {
+        }   
+        else {  
+            if (wallBetweenPlayer()) {
                 isChasing = false;
                 findCurrentCell();
                 movementPath = aStar(startCell, mazeNodes);
             }
         }
     }
+    
 
     protected bool wallBetweenPlayer() {
         Vector3 pos = transform.position;
         pos.y += 0.5f;
         Vector3 dir = pos - playerPos;
         RaycastHit hit;
-        if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.magnitude)) {
-            if (!hit.transform.name.Contains("Body") && !hit.transform.name.Contains("Door")) {
-                return true;
+        if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.sqrMagnitude)) {
+            // Funkar inte för grandchildren
+            if (hit.transform == transform || hit.transform.IsChildOf(transform)) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private void onAggro() {
@@ -121,7 +122,6 @@ public abstract class EnemyAI : MonoBehaviour {
                 map = mazeNodes;
             }
             movementPath = aStar(findTargetPosition(map), mazeNodes);
-            print(movementPath);
         }
     }
 
