@@ -24,7 +24,7 @@ class FooterComponent extends React.Component {
           <ul>
             {repos.map(repo => <li key={repo.name}> <a href={repo.url}> {repo.name}</a></li>)}
           </ul>
-        <p id='lastModified'>This page was last modified: {document.lastModified}</p>
+        <p id='last-modified'>This page was last modified: {document.lastModified}</p>
         </div>
       </div>
     );
