@@ -189,6 +189,7 @@ Shader "Custom/Echolocation" {
 					finalColor.a += _MaxRadius[j]/30 * (1 - _Radius[j]/_MaxRadius[j]) * val;
 				}
 
+				finalColor.a *= 0.5;
 				if(_UseDepth)
 					return fixed4(finalColor.rgb * invDepth, finalColor.a);
 				else
