@@ -156,7 +156,7 @@ Shader "Custom/Echolocation" {
 				// half3 refractDir = -refract(normalize(i.worldPos-_WorldSpaceCameraPos), worldNormal, .5);
 
 				fixed4 finalColor = fixed4(_DefaultColor.rgb, _WallO);
-				
+				//finalColor.a = 0;
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
 					float val;
@@ -185,11 +185,11 @@ Shader "Custom/Echolocation" {
 					float bump = (_UseNormalMap==1) ? max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) : 1;
 
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val *  _Color[j].rgb * bump;
-					//finalColor.a = 0;
-					finalColor.a += _MaxRadius[j]/20 * (1 - _Radius[j]/_MaxRadius[j]) * val;
+					
+					finalColor.a += _MaxRadius[j]/30 * (1 - _Radius[j]/_MaxRadius[j]) * val;
 				}
 
-				//finalColor.a *= 0.7;
+				finalColor.a *= 0.5;
 				if(_UseDepth)
 					return fixed4(finalColor.rgb * invDepth, finalColor.a);
 				else
