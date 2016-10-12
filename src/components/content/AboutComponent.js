@@ -8,27 +8,27 @@ require('styles/content/About.css')
 let groupMembers = [{
   name: 'Fredrik Berglund',
   email: 'fberglund@kth.se',
-  image:require('../../images/members/fredrik-berglund.jpg')
+  image:require('../../images/member-photos/fredrik-berglund.jpg')
 }, {
   name: 'Karl Andersson',
   email: 'karl9@kth.se',
-  image:require('../../images/members/karl-andersson.jpg')
+  image:require('../../images/member-photos/karl-andersson.jpg')
 }, {
   name: 'Karl Gylleus',
   email: 'gylleus@kth.se',
-  image:require('../../images/members/karl-gylleus.jpg')
+  image:require('../../images/member-photos/karl-gylleus.jpg')
 }, {
   name: 'Marcus Ahlström',
   email: 'mahlst@kth.se',
-  image:require('../../images/members/marcus-ahlstroem.jpg')
+  image:require('../../images/member-photos/marcus-ahlstroem.jpg')
 }, {
   name: 'Rodrigo Roa Rodríguez',
   email: 'rorr@kth.se',
-  image:require('../../images/members/rodrigo-roa-rodriguez.jpg')
+  image:require('../../images/member-photos/rodrigo-roa-rodriguez.jpg')
 }, {
   name: 'Staffan Sandberg',
   email: 'stsand@kth.se',
-  image:require('../../images/members/staffan-sanberg.jpg')
+  image:require('../../images/member-photos/staffan-sanberg.jpg')
 }]
 
 const memberTemplate = member => <div className="member" key={member.name}>
