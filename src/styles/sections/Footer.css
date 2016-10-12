@@ -9,21 +9,23 @@
   border-top: 4px solid #666;
 }
 
-.footer-component span{
+.footer-component h3{
   color: #999;
 }
 
 .footer-component ul{
-  display: inline;
+  display: block;
   list-style: none;
   text-decoration: none;
 }
 
 .footer-component li{
-  display: inline;
-  padding: 0 5px;
+  padding: 2px;
 }
+
+
 .footer-component p{
+  font-style: italic;
   color: #777;
 }
 
@@ -33,4 +35,11 @@
 
 .footer-component a:link{
   color: #fc4;
+}
+
+@media (min-width: 600px) {
+  .footer-component li{
+    display: inline;
+    padding: 0 5px;
+  }
 }

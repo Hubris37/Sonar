@@ -9,12 +9,13 @@
 }
 
 .member-image{
-  height: 15vw;
+  height: 50vh;
   margin: 0 auto;
 }
 
 .member {
-    display: inline-block;
+    display: block;
+    width: 100%;
 }
 
 .member .name, .member .email{

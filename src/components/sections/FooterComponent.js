@@ -20,12 +20,11 @@ class FooterComponent extends React.Component {
     return (
       <div className="footer-component" id="footer">
         <div>
-        <span>Source code available at GitHub:
+        <h3>Source code available at GitHub:</h3>
           <ul>
             {repos.map(repo => <li key={repo.name}> <a href={repo.url}> {repo.name}</a></li>)}
           </ul>
-        </span>
-        <p>This page was last modified on 30 September 2016.</p>
+        <p id='lastModified'>This page was last modified: {document.lastModified}</p>
         </div>
       </div>
     );

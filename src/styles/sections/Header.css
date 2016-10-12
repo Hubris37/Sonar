@@ -1,12 +1,12 @@
 /*#9E8E5C*/
 /*#fc4*/
 
+/*TODO: Add at media queries*/
 .header-component {
   background: rgba(0, 0, 0, 0.8);
   /*width: 70vw;*/
   /*margin: auto;*/
 }
-
 
 .header-component ul{
   padding: 0;
