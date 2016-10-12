@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TableScript : MonoBehaviour {
+public class ChairSpawner : MonoBehaviour {
 
 	public GameObject chairPrefab;
 
