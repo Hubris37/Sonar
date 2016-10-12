@@ -7,6 +7,8 @@ public class TutorialController : MonoBehaviour
 {
 	public TutorialGoal tutGoal;
 	public string nextLvlName;
+	[Header("UI")]
+	public UIManager UIManager;
 	[Header("Lights")] 	
 	public Light dirLight;
 	public float lowestIntensity = 0f;
@@ -28,8 +30,6 @@ public class TutorialController : MonoBehaviour
 
 	void LightZone()
 	{
-/*		StopCoroutine(DimLight(0));
-		StartCoroutine(DimLight(highestIntensity));*/
 		dirLight.intensity = highestIntensity;
 		aud.clip = switchOn;
 		aud.Play();
@@ -38,8 +38,6 @@ public class TutorialController : MonoBehaviour
 
 	void DarkZone()
 	{
-		/*StopCoroutine(DimLight(0));
-		StartCoroutine(DimLight(lowestIntensity));*/
 		dirLight.intensity = lowestIntensity;
 		aud.clip = switchOff;
 		aud.Play();
@@ -52,16 +50,6 @@ public class TutorialController : MonoBehaviour
 			NiceSceneTransition.instance.LoadScene(nextLvlName);
 		} else {
 			SceneManager.LoadScene(nextLvlName);
-		}
-	}
-
-	IEnumerator DimLight(float dimTo)
-	{
-		while(dirLight.intensity != dimTo)
-		{
-			float curIntens = dirLight.intensity;
-			dirLight.intensity = Mathf.Lerp(curIntens, dimTo, Time.deltaTime);
-			yield return null;
 		}
 	}
 }

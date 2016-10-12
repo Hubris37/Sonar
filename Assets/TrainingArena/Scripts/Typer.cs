@@ -7,38 +7,44 @@ public class Typer : MonoBehaviour
 {
 
 	public string[] messages;
+	public string[] titles;
 	public float typeDelay = 0.01f;
 	public AudioClip typeSound;
+	public Text titleText;
+	public Text fillerText;
 	public GameObject continueIndic;
 
-	private Text textComp;
 	private AudioSource aud;
 	private bool isTyping;
 	private int currentMessage;
 
 	void Awake()
 	{
-		textComp = GetComponent<Text>();
+		aud = GetComponent<AudioSource>();
 	}
 
 	// Use this for initialization
 	void Start () 
 	{
 		currentMessage = 0;
-		aud = GetComponent<AudioSource>();
 		continueIndic.SetActive(false);
-		StartCoroutine(TypeIn());
 	}
 	
+	void OnEnable()
+	{
+		StartCoroutine(TypeIn());
+	}
+
 	public IEnumerator TypeIn()
 	{
 		isTyping = true;
-		textComp.text = "";
+		fillerText.text = "";
 		continueIndic.SetActive(false);
+		titleText.text = titles[currentMessage];
 
 		for(int i = 0; i < messages[currentMessage].Length+1; i++)
 		{
-			textComp.text = messages[currentMessage].Substring(0,i);
+			fillerText.text = messages[currentMessage].Substring(0,i);
 			aud.PlayOneShot(typeSound);
 			yield return new WaitForSeconds(typeDelay);
 		}
