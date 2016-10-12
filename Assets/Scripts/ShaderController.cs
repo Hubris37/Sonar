@@ -59,6 +59,7 @@ public class ShaderController : MonoBehaviour {
 
             float rad = 0; // Expand this
             Vector3 hitPoint = hitPos;
+            float expSpeed = pitchVal*0.07f + 68f; // Quick fix for too small/slow values
             float freq = pitchVal;
 
             ++numCircles;
