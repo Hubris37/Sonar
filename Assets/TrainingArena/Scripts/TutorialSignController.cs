@@ -9,10 +9,14 @@ public class TutorialSignController : MonoBehaviour
 
 	public Typer typer;
 	public Animator anim;
+	public AudioClip accept;
+
+	private AudioSource aud;
 
 	void Awake()
 	{
-		typer = GetComponent<Typer>();		
+		typer = GetComponent<Typer>();
+		aud = GetComponent<AudioSource>();		
 	}
 	
 	// Update is called once per frame
@@ -24,11 +28,13 @@ public class TutorialSignController : MonoBehaviour
 
 	void IntroAdvancer()
 	{
+		if(typer.IsTyping)
+			return;
+
 		if(Input.GetButtonDown("Fire1") || Input.GetButtonDown("Fire2") ||
 			Input.GetButtonDown("Fire3") || Input.GetButtonDown("Gamepad Y"))
 		{
-			if(typer.IsTyping)
-				return;
+			aud.PlayOneShot(accept);
 
 			if(typer.HasNextMessage)
 				StartCoroutine(typer.TypeIn());

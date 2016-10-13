@@ -45,7 +45,7 @@ public class Typer : MonoBehaviour
 		for(int i = 0; i < messages[currentMessage].Length+1; i++)
 		{
 			fillerText.text = messages[currentMessage].Substring(0,i);
-			aud.PlayOneShot(typeSound);
+			//aud.PlayOneShot(typeSound);
 			yield return new WaitForSeconds(typeDelay);
 		}
 

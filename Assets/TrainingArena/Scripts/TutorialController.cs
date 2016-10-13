@@ -9,38 +9,10 @@ public class TutorialController : MonoBehaviour
 	public string nextLvlName;
 	[Header("UI")]
 	public UIManager UIManager;
-	[Header("Lights")] 	
-	public Light dirLight;
-	public float lowestIntensity = 0f;
-	public float highestIntensity = 1f;
-	public LightTrigger lightTrigger;
-	public AudioClip switchOn;
-	public AudioClip switchOff;
-
-	private AudioSource aud;
 
 	void Start()
 	{
 		tutGoal.OnGoalEnter += ChangeScene;
-		lightTrigger.DarkZoneEnter += DarkZone;
-		lightTrigger.LightZoneEnter += LightZone;
-		aud = GetComponent<AudioSource>();
-	}
-
-
-	void LightZone()
-	{
-		dirLight.intensity = highestIntensity;
-		aud.clip = switchOn;
-		aud.Play();
-		
-	}
-
-	void DarkZone()
-	{
-		dirLight.intensity = lowestIntensity;
-		aud.clip = switchOff;
-		aud.Play();
 	}
 
 	private void ChangeScene()

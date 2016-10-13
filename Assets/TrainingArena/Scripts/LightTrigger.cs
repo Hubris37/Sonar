@@ -4,18 +4,58 @@ using System.Collections;
 
 public class LightTrigger : MonoBehaviour 
 {
-	public event Action LightZoneEnter;
-	public event Action DarkZoneEnter;
+	public event Action LightsAreOut;
+	
+	public Light dirLight;
+
+	private AudioSource aud;
+	private float lightIntens = 1;
+
+	void Awake()
+	{
+		aud = GetComponent<AudioSource>();		
+	}
+
+	void Start()
+	{
+		RenderSettings.skybox.SetFloat("_Exposure", 1);RenderSettings.skybox.SetFloat("_Exposure", 1);
+	}
 
 	void OnTriggerEnter(Collider other)
 	{
 		if(other.tag == "Player")
-			DarkZoneEnter();		
+		{
+			StartCoroutine(FadeOut());
+		}
 	}
 
 	void OnTriggerExit(Collider other)
 	{
 		if(other.tag == "Player")
-			LightZoneEnter();
+		{
+			StopAllCoroutines();
+			dirLight.intensity = 1;
+			RenderSettings.skybox.SetFloat("_Exposure", 1);
+			lightIntens = 1f;
+		}
 	}
+
+	IEnumerator FadeOut()
+	{
+		while(lightIntens > 0)
+		{
+			lightIntens -= 0.005f;
+			RenderSettings.skybox.SetFloat("_Exposure", lightIntens);
+			dirLight.intensity = lightIntens;
+			yield return new WaitForSeconds(0.01f);
+		}
+		LightsAreOut();
+		yield return null;
+	}
+
+	// Prevent skybox from having exposure 0 when exiting playmode
+	void OnApplicationQuit()
+	{
+		RenderSettings.skybox.SetFloat("_Exposure", 1);		
+	}	
 }
