@@ -127,7 +127,7 @@ public class IntroTutorial : MonoBehaviour
 	{
 		bool hasTurned = false;
 
-		moveAroundImg.SetActive(true);
+		turnAroundImg.SetActive(true);
 
 		while(!hasTurned)
 		{
@@ -144,6 +144,6 @@ public class IntroTutorial : MonoBehaviour
 			}
 			yield return null;
 		}
-		moveAroundImg.SetActive(false);
+		turnAroundImg.SetActive(false);
 	}
 }

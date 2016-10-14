@@ -29,7 +29,7 @@ public class Typer : MonoBehaviour
 		fillerText.text = "";
 		titleText.text = titles[messageNum];
 
-		for(int i = 0; i < messages[messageNum].Length; i++)
+		for(int i = 0; i < messages[messageNum].Length+1; i++)
 		{
 			fillerText.text = messages[messageNum].Substring(0,i);
 			yield return new WaitForSeconds(typeDelay);

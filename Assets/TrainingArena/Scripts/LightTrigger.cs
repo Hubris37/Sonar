@@ -40,7 +40,7 @@ public class LightTrigger : MonoBehaviour
 		}
 	}
 
-	IEnumerator FadeOut()
+	public IEnumerator FadeOut()
 	{
 		while(lightIntens > 0)
 		{
