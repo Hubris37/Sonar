@@ -31,8 +31,8 @@ public class AudioMeasure : MonoBehaviour {
 		//Check frequency capabilities of device.
 		//deviceName = "" is the default microphone
 		Microphone.GetDeviceCaps("", out minFreq, out maxFreq);
-		Debug.Log("Min: " + minFreq);
-		Debug.Log("Max: " + maxFreq);
+		//Debug.Log("Min: " + minFreq);
+		//Debug.Log("Max: " + maxFreq);
 
 		// According to the documentation, if minFreq and maxFreq are zero, the microphone supports any frequency
 		if(minFreq == 0 && maxFreq == 0) {
@@ -57,7 +57,7 @@ public class AudioMeasure : MonoBehaviour {
 	void OnApplicationFocus( bool focusStatus )
 	{
         // To not run before Start()
-		print(focusStatus);
+		//print(focusStatus);
         if (maxFreq > 0) {
             if (focusStatus == false) {
                 Microphone.End("");
@@ -74,7 +74,7 @@ public class AudioMeasure : MonoBehaviour {
 	void OnApplicationPause( bool pauseStatus )
 	{
 		// To not run before Start()
-		print(pauseStatus);
+//		print(pauseStatus);
 		if(maxFreq > 0) {
             if (pauseStatus == true) {
                 Microphone.End("");

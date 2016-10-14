@@ -3,33 +3,13 @@ using System.Collections;
 
 public class UIManager : MonoBehaviour {
 
-	public GameObject[] tutorialSigns;
-
-	private int currentSign = 0;
+	public IntroTutorial tutorialSign1;
+	public SoundTutorial tutorialSign2;
 
 	// Use this for initialization
-	void Start () 
+	private IEnumerator Start() 
 	{
-		DeactivateSigns();
-		TutorialSignController.signFinished += NextSign;
-		NextSign();
+		yield return StartCoroutine(tutorialSign1.StartTutorial());
+		//yield return StartCoroutine(tutorialSign2.StartTutorial());
 	}
-
-	private void NextSign()
-	{
-		if(currentSign >= tutorialSigns.Length) return;
-
-		DeactivateSigns();
-		tutorialSigns[currentSign].SetActive(true);
-		currentSign++;
-	}
-
-	private void DeactivateSigns()
-	{
-		for(int i = 0; i < tutorialSigns.Length; i++)
-		{
-			tutorialSigns[i].SetActive(false);
-		}
-	}
-
 }
