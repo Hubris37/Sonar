@@ -15,8 +15,8 @@ public class FirstPersonController : MonoBehaviour {
 	public bool freezeMovement = false;
 	public bool lockUpDownMovement = true;
 
-	Transform cameraT;
-	Camera cam;
+	//Transform cameraT; // never used
+	//Camera cam; // Never used
 	Rigidbody myRigidBody;
 	float verticalLookRotation;
 	Vector3 moveAmount;
@@ -24,8 +24,8 @@ public class FirstPersonController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		cam = Camera.main;
-		cameraT = Camera.main.transform;
+		//cam = Camera.main;
+		//cameraT = Camera.main.transform;
 		myRigidBody = GetComponent<Rigidbody>();
 		myRigidBody.constraints = RigidbodyConstraints.FreezeRotation;
 

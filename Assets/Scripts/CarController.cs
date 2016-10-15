@@ -6,10 +6,10 @@ public class CarController : MonoBehaviour {
     public List<AxleInfo> axleInfos; // the information about each individual axle
     public float maxMotorTorque; // maximum torque the motor can apply to wheel
     public float maxSteeringAngle; // maximum steer angle the wheel can have
-    Transform cameraT;
+    //Transform cameraT; // never used
 
     void Start() {
-        cameraT = Camera.main.transform;
+        //cameraT = Camera.main.transform;
     }
     
     void FixedUpdate()

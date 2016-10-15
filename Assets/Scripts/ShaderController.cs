@@ -11,7 +11,7 @@ public class ShaderController : MonoBehaviour {
     private int numCircles = 0;
     private float prevTime, prevSoundCheck;
 	private GameObject soundBlastList;
-    private float colorCounter = 0;
+//    private float colorCounter = 0;
 
     // Variable size lists used to be able to add and remove circles easily
     private List<float> radius = new List<float>();

@@ -13,13 +13,13 @@ public class Typer : MonoBehaviour
 	public Text titleText;
 	public Text fillerText;
 
-	private AudioSource aud;
+//	private AudioSource aud;
 	private bool isTyping;
 	private int messageNum = 0;
 
 	void Awake()
 	{
-		aud = GetComponent<AudioSource>();
+		//aud = GetComponent<AudioSource>();
 	}
 
 	// Type out the message and show apropriate images

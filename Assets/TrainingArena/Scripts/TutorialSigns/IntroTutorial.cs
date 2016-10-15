@@ -4,9 +4,6 @@ using System.Collections;
 
 public class IntroTutorial : MonoBehaviour 
 {
-	public delegate void SignFinished();
-	public static event SignFinished signFinished;
-
 	public Animator anim;
 	public AudioClip accept;
 

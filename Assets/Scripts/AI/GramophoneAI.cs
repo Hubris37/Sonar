@@ -25,7 +25,7 @@ public class GramophoneAI : EnemyAI {
         movementPath = new List<MazeCell>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         anim = GetComponent<Animator>();
-        AudioSource[] sources = GetComponents<AudioSource>();
+        //AudioSource[] sources = GetComponents<AudioSource>(); never used
         musicSampleData = new float[musicSampleAmount];
         head = searchForBone(transform, "Bone.002");
         soundEmitter = GetComponent<StaticSoundSource>();

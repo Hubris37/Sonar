@@ -17,14 +17,14 @@ public class OverviewCameraScript : MonoBehaviour {
 	private const int MAX_CIRCLES = 120; // Maximum circles allowed at once
 	// private Color[] colorsArray = new Color[MAX_CIRCLES];
 
-	Camera camera;
+	private Camera m_camera;
 	
 	void Start() {
 		shaderCtrlObj = GameObject.FindGameObjectWithTag("ShaderController");
 		shaderCtrl = (ShaderController) shaderCtrlObj.GetComponent(typeof(ShaderController));
 
-		camera = GetComponent<Camera>();
-		camera.backgroundColor = new Color(.266f, .486f, .482f, 1);
+		m_camera = GetComponent<Camera>();
+		m_camera.backgroundColor = new Color(.266f, .486f, .482f, 1);
 
 		player = FindObjectOfType<FirstPersonController> ();
 

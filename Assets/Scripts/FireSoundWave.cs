@@ -13,7 +13,7 @@ public class FireSoundWave : MonoBehaviour {
 	private float volumeMax = 30f;
 	public float soundSpeed = 340f;
 
-	private GameObject soundBlastList;
+	//private GameObject soundBlastList; // never used
     private AudioMeasure audioMeasure;
     private Transform cameraT;
     private float prevTime, prevSoundCheck;
@@ -29,7 +29,7 @@ public class FireSoundWave : MonoBehaviour {
 		cameraT = Camera.main.transform;
 		audioSrc = GameObject.FindGameObjectWithTag("AudioSource");
 		audioMeasure = audioSrc.GetComponent<AudioMeasure>();
-		soundBlastList = GameObject.FindGameObjectWithTag("SoundBlastsList");
+		//soundBlastList = GameObject.FindGameObjectWithTag("SoundBlastsList");
 	}
 	
 	// Update is called once per frame

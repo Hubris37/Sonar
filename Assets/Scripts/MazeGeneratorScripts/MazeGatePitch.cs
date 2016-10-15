@@ -75,7 +75,7 @@ public class MazeGatePitch : MazeDoor {
 		Vector3 myPos = transform.position;
 		Vector3 heading = (myPos - hitPos);
 		float dist = heading.sqrMagnitude;
-		Vector3 dir = heading / dist;
+		//Vector3 dir = heading / dist; never used
 		if(percentTowardsGoal != 1){
 			//if(!move){
 			if(dist < 20) {

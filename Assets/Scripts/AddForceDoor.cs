@@ -6,13 +6,13 @@ public class AddForceDoor : MonoBehaviour {
 	Rigidbody myRigidbody;
 	FireSoundWave blaster;
 	public Vector3 offset;
-	private Vector3 relativeOffset;
+	//private Vector3 relativeOffset; // never used
 
 	// Use this for initialization
 	void Start () {
 		myRigidbody = GetComponent<Rigidbody>();
 		FireSoundWave.onBlastHit += RecieveForce;
-		relativeOffset = transform.TransformPoint(offset);
+		//relativeOffset = transform.TransformPoint(offset);
 	}
 
 	/*

@@ -5,16 +5,9 @@ using System.Collections;
 public class LightTrigger : MonoBehaviour 
 {
 	public event Action LightsAreOut;
-	
 	public Light dirLight;
 
-	private AudioSource aud;
 	private float lightIntens = 1;
-
-	void Awake()
-	{
-		aud = GetComponent<AudioSource>();		
-	}
 
 	void Start()
 	{
@@ -57,5 +50,12 @@ public class LightTrigger : MonoBehaviour
 	void OnApplicationQuit()
 	{
 		RenderSettings.skybox.SetFloat("_Exposure", 1);		
-	}	
+	}
+
+	// When the scene is changed to movementTest
+	void OnDestroy()
+	{
+		RenderSettings.skybox.SetFloat("_Exposure", 1);		
+	}
+
 }

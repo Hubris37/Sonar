@@ -10,17 +10,18 @@ public class NiceSceneTransition : MonoBehaviour {
     public static NiceSceneTransition instance;
 
     public float transitionTime = 1.0f;
-
     public bool fadeIn;
     public bool fadeOut;
-
     public Image fadeImg;
-
-    float time = 0f;
+    
+    private Transform playerTrans;
+    private float time = 0f;
 
     // Use this for initialization
     void Awake()
     {
+        playerTrans = GameObject.FindWithTag("Player").transform;
+
         if (instance == null) {
             DontDestroyOnLoad(transform.gameObject);
             instance = this;
@@ -34,6 +35,8 @@ public class NiceSceneTransition : MonoBehaviour {
 
     void OnEnable()
     {
+        playerTrans = GameObject.FindWithTag("Player").transform;
+        
         if (fadeIn)
         {
             StartCoroutine(StartScene());
@@ -47,6 +50,9 @@ public class NiceSceneTransition : MonoBehaviour {
 
     IEnumerator StartScene()
     {
+        playerTrans = GameObject.FindWithTag("Player").transform;
+        MoveInfrontOfPlayer();
+
         time = 1.0f;
         yield return null;
         while (time >= 0.0f)
@@ -60,6 +66,9 @@ public class NiceSceneTransition : MonoBehaviour {
 
     IEnumerator EndScene(string nextScene)
     {
+        playerTrans = GameObject.FindWithTag("Player").transform;
+        MoveInfrontOfPlayer();
+
         fadeImg.gameObject.SetActive(true);
         time = 0.0f;
         yield return null;
@@ -71,5 +80,12 @@ public class NiceSceneTransition : MonoBehaviour {
         }
         SceneManager.LoadScene(nextScene, LoadSceneMode.Single);
         StartCoroutine(StartScene());
+    }
+
+    void MoveInfrontOfPlayer()
+    {   
+        Vector3 f = playerTrans.forward;
+        transform.position = playerTrans.position + (new Vector3(f.x, f.y, f.z) * 0.5f);
+        transform.rotation = playerTrans.rotation;
     }
 }

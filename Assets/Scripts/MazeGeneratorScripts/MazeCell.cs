@@ -82,7 +82,7 @@ public class MazeCell : MonoBehaviour {
                 }
                 if(edge is MazeWall && wallBetween.Contains(edge.otherCell)){
                     //edge.otherCell.gameObject.SetActive(true);
-                    MazeCellEdge e = edge.otherCell.GetEdge(MazeDirections.GetOpposite(edge.direction));
+                    //MazeCellEdge e = edge.otherCell.GetEdge(MazeDirections.GetOpposite(edge.direction)); // never used
                     
                     //e.gameObject.SetActive(false);
                 }

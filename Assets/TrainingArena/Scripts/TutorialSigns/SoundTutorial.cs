@@ -4,19 +4,18 @@ using System.Collections;
 
 public class SoundTutorial : MonoBehaviour 
 {
-	public delegate void SignFinished();
-	public static event SignFinished signFinished;
-
+	public GameObject goal;
 	public AudioClip accept;
-
+	public LightTrigger lights;
 	public GameObject anyButtonImg;
 	public GameObject gramophonePillar;
-	public LightTrigger lights;
+	public GameObject pathForward;
+	public GameObject walkOverEdgeCollider;
 
-	private AudioSource aud;
 	private Typer typer;
+	private AudioSource aud;
+	private int numHitReq = 3;
 	private int numberOfSoundHits = 0;
-	private int numHitReq = 5;
 
 	void Awake()
 	{
@@ -40,6 +39,7 @@ public class SoundTutorial : MonoBehaviour
 		yield return StartCoroutine(typer.TypeMessage(2));
 		yield return StartCoroutine(lights.FadeOut());
 		yield return new WaitForSeconds(1);
+		aud.PlayOneShot(accept);
 		yield return StartCoroutine(typer.TypeMessage(3));
 		yield return StartCoroutine(WaitForButtonPress());
 
@@ -47,13 +47,19 @@ public class SoundTutorial : MonoBehaviour
 		yield return StartCoroutine(typer.TypeMessage(4));
 		yield return StartCoroutine(WaitForUserToMakeNoice());
 		yield return StartCoroutine(typer.TypeMessage(5));
+		yield return StartCoroutine(WaitForButtonPress());
 
 		// Find goal
+		yield return StartCoroutine(typer.TypeMessage(6));
+		goal.SetActive(true);
+		yield return StartCoroutine(WaitForButtonPress());
 
-		// Open doors
-
-		// Avoid chefs
-
+		// Open door
+		yield return StartCoroutine(typer.TypeMessage(7));
+		yield return StartCoroutine(WaitForButtonPress());
+		yield return StartCoroutine(typer.TypeMessage(8));
+		pathForward.SetActive(true);
+		walkOverEdgeCollider.SetActive(false);
 	}
 
 	// Waits for user to press a button 
