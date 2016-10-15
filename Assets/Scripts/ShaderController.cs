@@ -46,6 +46,10 @@ public class ShaderController : MonoBehaviour {
         GameManager.isReborn += ClearCircles;
 
         Camera.main.depthTextureMode = DepthTextureMode.Depth;
+
+        // rTexture = new RenderTexture(Mathf.RoundToInt(Screen.width), Mathf.RoundToInt(Screen.height), 16, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
+        // texture = new Texture2D(Mathf.RoundToInt(Screen.width), Mathf.RoundToInt(Screen.height), TextureFormat.ARGB32, false);
+        // Graphics.SetRenderTarget(rTexture);
     }
 
     void addCircle(Vector3 hitPos, float pitchVal, float dbVal)
@@ -139,5 +143,15 @@ public class ShaderController : MonoBehaviour {
                 r.sharedMaterials[i].SetFloatArray("_Frequency", frequenciesArray);
             }
         }
+        
+        // StartCoroutine(imageEffects());
 	}
+
+    // IEnumerator imageEffects() {
+    //     yield return new WaitForEndOfFrame();
+    //     texture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0, false);
+    //     texture.Apply();
+    //     imgEffectMat.mainTexture = texture;
+    //     Graphics.Blit(texture, null, imgEffectMat);
+    // }
 }

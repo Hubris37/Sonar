@@ -17,11 +17,12 @@ Shader "Custom/Echolocation" {
 		// https://docs.unity3d.com/Manual/SL-CullAndDepth.html
 		// extra pass that renders to depth buffer only
 		Pass {
+			Tags { "RenderType"="Opaque" }
+			Name "ShadowCaster"
 			ZWrite On
 			ColorMask 0
 		}
 
-		// Show depth in gray scale
 		// Pass {
 		// 	Blend SrcAlpha OneMinusSrcAlpha
 		// 	ZWrite Off
@@ -53,8 +54,10 @@ Shader "Custom/Echolocation" {
         //     ENDCG
         // }
 
+		// Show depth in gray scale
 		// Pass {
 		// 	Blend SrcAlpha OneMinusSrcAlpha
+		// 	ZWrite Off
 
 		// 	CGPROGRAM
 		// 	#pragma vertex vert
@@ -197,6 +200,7 @@ Shader "Custom/Echolocation" {
 			}
 			ENDCG
 		}
+		
 		// Pass {
 
 		// }
