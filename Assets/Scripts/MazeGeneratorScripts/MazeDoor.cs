@@ -23,9 +23,9 @@ public class MazeDoor : MazePassage {
 	}
 	
 	void OnTriggerEnter(Collider triggerCollider) {
-		//print (triggerCollider.gameObject.name);
+	//	print (triggerCollider.gameObject.name);
 
-		if (triggerCollider.gameObject.name == "Player(Clone)") {
+		if (triggerCollider.gameObject.name == "Player(Clone)" || triggerCollider.gameObject.name == "Bird(Clone)") {
 
 			cell.room.Show();
 			otherCell.room.Show();

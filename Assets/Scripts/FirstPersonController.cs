@@ -21,6 +21,7 @@ public class FirstPersonController : MonoBehaviour {
 	float verticalLookRotation;
 	Vector3 moveAmount;
 	Vector3 smoothMoveVelocity;
+    private Animator anim;
 
 	// Use this for initialization
 	void Start () {
@@ -28,6 +29,7 @@ public class FirstPersonController : MonoBehaviour {
 		//cameraT = Camera.main.transform;
 		myRigidBody = GetComponent<Rigidbody>();
 		myRigidBody.constraints = RigidbodyConstraints.FreezeRotation;
+        anim = GetComponent<Animator>();
 
 		VRSettings.enabled = true;
 	}
@@ -70,7 +72,10 @@ public class FirstPersonController : MonoBehaviour {
 		
 		if(!freezeMovement)
 		{
-			//myRigidBody.AddRelativeForce (moveAmount, ForceMode.Impulse);
+            //myRigidBody.AddRelativeForce (moveAmount, ForceMode.Impulse);
+            if (anim != null) {
+                anim.SetBool("walking", (moveAmount.magnitude > 0.001f));
+            }
 			myRigidBody.MovePosition(myRigidBody.position + transform.TransformDirection(moveAmount));
 			
 			if (Input.GetButton ("Fire1") && !lockUpDownMovement) {

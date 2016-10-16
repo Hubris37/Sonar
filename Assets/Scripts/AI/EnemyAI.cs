@@ -24,6 +24,7 @@ public abstract class EnemyAI : MonoBehaviour {
     protected GameManager gameManager;
 
     protected bool isAggroed = false;
+    protected bool isInvestigating = true;
     protected Animator anim;
 
     public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);

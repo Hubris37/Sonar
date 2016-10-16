@@ -65,7 +65,7 @@ public class MazeGatePitch : MazeDoor {
 
 	void OnTriggerEnter(Collider triggerCollider) {
 
-		if (triggerCollider.gameObject.name == "Player(Clone)") {
+		if (triggerCollider.gameObject.name == "Player(Clone)" || triggerCollider.gameObject.name == "Bird(Clone)") {
 			cell.room.Show();
 			otherCell.room.Show();
 		}
