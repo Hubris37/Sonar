@@ -36,22 +36,34 @@
 				float2 uv : TEXCOORD0;
 			};
 
+			float4 _MainTex_TexelSize;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				
 				o.uv = v.uv;
-				#if defined (UNITY_UV_STARTS_AT_BOTTOM)
+
+				/*#if defined (UNITY_UV_STARTS_AT_BOTTOM)
 					o.uv.y = 1 - o.uv.y;
+				#endif*/
+
+				// On non-GL when AA is used, the main Texture and scene depth Texture
+				// will come out in different vertical orientations.
+				// So flip sampling of the Texture when that is the case (main Texture
+				// texel size will have negative Y).
+				// https://docs.unity3d.com/Manual/SL-PlatformDifferences.html
+				#if UNITY_UV_STARTS_AT_TOP
+					if (_MainTex_TexelSize.y < 0)
+        			o.uv.y = 1-o.uv.y;
 				#endif
 
 				return o;
 			}
 			
 			sampler2D _MainTex;
-			float4 _MainTex_TexelSize;
-
+		
 			#define NUM_STEPS 7
 			// float offset[3] = { 0.0, 1.3846153846, 3.2307692308 };
 			// float weight[3] = { 0.2270270270, 0.3162162162, 0.0702702703 };
