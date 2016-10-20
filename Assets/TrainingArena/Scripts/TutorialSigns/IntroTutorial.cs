@@ -4,13 +4,14 @@ using System.Collections;
 
 public class IntroTutorial : MonoBehaviour 
 {
-	public Animator anim;
+	//public Animator anim;
 	public AudioClip accept;
 
-	public GameObject lookAroundImg;
-	public GameObject moveAroundImg;
-	public GameObject turnAroundImg;
-	public GameObject anyButtonImg;
+	public GameObject lookAroundExp;
+	public GameObject lookAroundTargets;
+	public GameObject moveAroundExp;
+	public GameObject turnAroundExp;
+	public GameObject anyButtonExp;
 
 	private AudioSource aud;
 	private Typer typer;
@@ -18,7 +19,7 @@ public class IntroTutorial : MonoBehaviour
 	void Awake()
 	{
 		typer = GetComponent<Typer>();
-		aud = GetComponent<AudioSource>();		
+		aud = GetComponent<AudioSource>();
 	}
 	
 	// Plays the turorial in the right order.
@@ -49,7 +50,7 @@ public class IntroTutorial : MonoBehaviour
 	IEnumerator WaitForButtonPress()
 	{
 		bool hasPressed = false;
-		anyButtonImg.SetActive(true);
+		anyButtonExp.SetActive(true);
 
 		while(!hasPressed)
 		{
@@ -62,7 +63,7 @@ public class IntroTutorial : MonoBehaviour
 			}
 			yield return null;
 		}
-		anyButtonImg.SetActive(false);
+		anyButtonExp.SetActive(false);
 	}
 
 	// Look at both boats to continue
@@ -71,8 +72,16 @@ public class IntroTutorial : MonoBehaviour
 		bool hasLookedLeft = false;
 		bool hasLookedRight = false;
 
-		lookAroundImg.SetActive(true);
-		lookAroundImg.GetComponent<Animator>().SetTrigger("FadeIn");
+		lookAroundExp.SetActive(true);
+		lookAroundTargets.SetActive(true);
+		
+		lookAroundExp.GetComponent<Animator>().SetTrigger("FadeIn");
+		
+		// Using legacy animation for being able to check if animation is playing.
+		// Don't know how to do it with state-of-the-art Animator
+		Animation animTarg = lookAroundTargets.GetComponent<Animation>(); 
+		animTarg["LookAtTargetsMoveIn"].speed = 0.6f;
+		animTarg.Play("LookAtTargetsMoveIn");
 
 		while(!hasLookedLeft || !hasLookedRight)
 		{
@@ -82,13 +91,13 @@ public class IntroTutorial : MonoBehaviour
 			if(Physics.Raycast(origin,fwd, out hit, 1000))
 			{
 				// Clean this, not pretty with two lookalikes
-				if(hit.collider.gameObject.name == "NotBoatLeft" && !hasLookedLeft)
+				if(hit.collider.gameObject.transform.parent.name == "LeftLookAt" && !hasLookedLeft)
 				{
 					hit.collider.gameObject.GetComponent<ChangeWhenLookedAt>().ChangeColor();
 					aud.PlayOneShot(accept);
 					hasLookedLeft = true;
 				}
-				if(hit.collider.gameObject.name == "NotBoatRight" && !hasLookedRight)
+				if(hit.collider.gameObject.transform.parent.name == "RightLookAt" && !hasLookedRight)
 				{
 					hit.collider.gameObject.GetComponent<ChangeWhenLookedAt>().ChangeColor();
 					aud.PlayOneShot(accept);
@@ -97,7 +106,15 @@ public class IntroTutorial : MonoBehaviour
 			}
 			yield return null;
 		}
-		lookAroundImg.SetActive(false);
+		lookAroundExp.GetComponent<Animator>().SetTrigger("FadeOut");
+
+		animTarg["LookAtTargetsMoveOut"].speed = 0.6f;
+		animTarg.Play("LookAtTargetsMoveOut");
+
+		while(animTarg.isPlaying) yield return null;
+
+		lookAroundExp.SetActive(false);
+		lookAroundTargets.SetActive(false);
 	}
 
 	// Move a smal distance to continue
@@ -106,7 +123,7 @@ public class IntroTutorial : MonoBehaviour
 		Vector3 startPos = Camera.main.transform.position;
 		float moveDistance = 0f;
 
-		moveAroundImg.SetActive(true);
+		moveAroundExp.SetActive(true);
 
 		while(moveDistance < .5f)
 		{
@@ -116,7 +133,7 @@ public class IntroTutorial : MonoBehaviour
 			yield return null;
 		}
 		aud.PlayOneShot(accept);
-		moveAroundImg.SetActive(false);
+		moveAroundExp.SetActive(false);
 	}
 
 	// Checks if user has turned 180 degrees
@@ -124,7 +141,7 @@ public class IntroTutorial : MonoBehaviour
 	{
 		bool hasTurned = false;
 
-		turnAroundImg.SetActive(true);
+		turnAroundExp.SetActive(true);
 
 		while(!hasTurned)
 		{
@@ -132,7 +149,6 @@ public class IntroTutorial : MonoBehaviour
 			RaycastHit hit;
 			if(Physics.Raycast(transform.position,fwd, out hit, 1000))
 			{
-				Debug.Log(hit.collider.gameObject.name);
 				if(hit.collider.gameObject.name == "StartSoundTutorialPlane")
 				{
 					aud.PlayOneShot(accept);
@@ -141,6 +157,6 @@ public class IntroTutorial : MonoBehaviour
 			}
 			yield return null;
 		}
-		turnAroundImg.SetActive(false);
+		turnAroundExp.SetActive(false);
 	}
 }

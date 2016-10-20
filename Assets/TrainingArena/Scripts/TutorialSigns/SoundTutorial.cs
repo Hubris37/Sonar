@@ -11,6 +11,7 @@ public class SoundTutorial : MonoBehaviour
 	public GameObject gramophonePillar;
 	public GameObject pathForward;
 	public GameObject walkOverEdgeCollider;
+	public AudioSource backgroundBirds;
 
 	private Typer typer;
 	private AudioSource aud;
@@ -31,13 +32,14 @@ public class SoundTutorial : MonoBehaviour
 		yield return StartCoroutine(WaitForButtonPress());
 
 		// Spawn Gramophone
-		gramophonePillar.SetActive(true);
+		MoveInGramophones();
 		yield return StartCoroutine(typer.TypeMessage(1));
 		yield return StartCoroutine(WaitForButtonPress());
 
 		// Turn down lights
 		yield return StartCoroutine(typer.TypeMessage(2));
 		yield return StartCoroutine(lights.FadeOut());
+		backgroundBirds.Stop();
 		yield return new WaitForSeconds(1);
 		aud.PlayOneShot(accept);
 		yield return StartCoroutine(typer.TypeMessage(3));
@@ -95,5 +97,13 @@ public class SoundTutorial : MonoBehaviour
 	void MeasureNoiceMade(Vector3 hitPos, float pitchVal, float dbVal)
 	{
 		numberOfSoundHits++;
+	}
+
+	void MoveInGramophones()
+	{
+		gramophonePillar.SetActive(true);
+		Animation anim = gramophonePillar.GetComponent<Animation>();
+		anim["GramophonePillarMoveUp"].speed = 0.6f;
+		anim.Play("GramophonePillarMoveUp");
 	}
 }	
