@@ -34,6 +34,7 @@
 			{
 				float4 vertex : SV_POSITION;
 				float2 uv : TEXCOORD0;
+				float2 uvd : TEXCOORD1; // For depth texture
 			};
 
 			float4 _MainTex_TexelSize;
@@ -44,10 +45,7 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				
 				o.uv = v.uv;
-
-				/*#if defined (UNITY_UV_STARTS_AT_BOTTOM)
-					o.uv.y = 1 - o.uv.y;
-				#endif*/
+				o.uvd = v.uv;
 
 				// On non-GL when AA is used, the main Texture and scene depth Texture
 				// will come out in different vertical orientations.
@@ -56,57 +54,67 @@
 				// https://docs.unity3d.com/Manual/SL-PlatformDifferences.html
 				#if UNITY_UV_STARTS_AT_TOP
 					if (_MainTex_TexelSize.y < 0)
-        			o.uv.y = 1-o.uv.y;
+        				o.uvd.y = 1 - o.uvd.y;
 				#endif
 
 				return o;
 			}
 			
 			sampler2D _MainTex;
-		
-			#define NUM_STEPS 7
-			// float offset[3] = { 0.0, 1.3846153846, 3.2307692308 };
-			// float weight[3] = { 0.2270270270, 0.3162162162, 0.0702702703 };
+
+			// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+			// https://github.com/Jam3/glsl-fast-gaussian-blur
+			// 9 tap gaussian blur
+			float4 blur(sampler2D image, float2 uv, float2 resolution, float2 direction) {
+				float4 color = float4(0, 0, 0, 0);
+
+				float2 off1 = float2(1.3846153846, 1.3846153846) * direction;
+				float2 off2 = float2(3.2307692308, 3.2307692308) * direction;
+
+				color += tex2D(image, uv) * 0.2270270270;
+				color += tex2D(image, uv + (off1 / resolution)) * 0.3162162162;
+				color += tex2D(image, uv - (off1 / resolution)) * 0.3162162162;
+				color += tex2D(image, uv + (off2 / resolution)) * 0.0702702703;
+				color += tex2D(image, uv - (off2 / resolution)) * 0.0702702703;
+				return color;
+			}
+
+			// 13 tap gaussian blur
+			// float4 blur(sampler2D image, float2 uv, float2 resolution, float2 direction) {
+			// 	float4 color = float4(0, 0, 0, 0);
+			// 	float2 off1 = float2(1.411764705882353, 1.411764705882353) * direction;
+			// 	float2 off2 = float2(3.2941176470588234, 3.2941176470588234) * direction;
+			// 	float2 off3 = float2(5.176470588235294, 5.176470588235294) * direction;
+			// 	color += tex2D(image, uv) * 0.1964825501511404;
+			// 	color += tex2D(image, uv + (off1 / resolution)) * 0.2969069646728344;
+			// 	color += tex2D(image, uv - (off1 / resolution)) * 0.2969069646728344;
+			// 	color += tex2D(image, uv + (off2 / resolution)) * 0.09447039785044732;
+			// 	color += tex2D(image, uv - (off2 / resolution)) * 0.09447039785044732;
+			// 	color += tex2D(image, uv + (off3 / resolution)) * 0.010381362401148057;
+			// 	color += tex2D(image, uv - (off3 / resolution)) * 0.010381362401148057;
+			// 	return color;
+			// }
 
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float _Offset[NUM_STEPS] = { 0, 1, 2, 4, 6, 8, 10 };
-				float _Weight[NUM_STEPS] = { 0.15, 0.17, 0.05, 0.01, 0.005, 0.005, 0.005 };
-				float2 tSize = _MainTex_TexelSize.xy * 2;
 				
 				fixed4 fragColor = tex2D(_MainTex, i.uv);
 
-				fixed4 blurColor = tex2D(_MainTex, i.uv) * _Weight[0];
-				blurColor += tex2D(_MainTex, i.uv) * _Weight[0];
+				fixed4 blurColor = fixed4(0, 0, 0, 0);
+				blurColor += blur( _MainTex, i.uv, _ScreenParams.xy, float2(0, 1.2) ) * .5;
+				blurColor += blur( _MainTex, i.uv, _ScreenParams.xy, float2(1.2, 0) ) * .5;
 
-				for (int j = 1; j < NUM_STEPS; ++j) {
-					blurColor += tex2D( _MainTex, i.uv + float2(0, _Offset[j] * tSize.y) ) * _Weight[j];
-					blurColor += tex2D( _MainTex, i.uv + float2(_Offset[j] * tSize.x, 0) ) * _Weight[j];
-
-					// blurColor += texture2D( _MainTex, ( vec2(gl_FragCoord)+vec2(0.0, _Offset[j]) )/1024.0 )
-					// 		* _Weight[j];
-
-					blurColor += tex2D( _MainTex, i.uv - float2(0, _Offset[j] * tSize.y) ) * _Weight[j];
-					blurColor += tex2D( _MainTex, i.uv - float2(_Offset[j] * tSize.x, 0) ) * _Weight[j];
-
-					// blurColor += texture2D( _MainTex, ( vec2(gl_FragCoord)-vec2(0.0, _Offset[j]) )/1024.0 )
-					// 		* _Weight[j];
-				}
-
-				// just invert the colors
-				// fragColor = 1 - fragColor;
-
-				float3 normalValues;
-				half4 depth = tex2D(_CameraDepthTexture, i.uv);
-				float depthValue = 1 - Linear01Depth(depth);
-
+				half4 depth = tex2D(_CameraDepthTexture, i.uvd);
+				float depthValue = Linear01Depth(depth);
 				depth.r = depthValue;
 				depth.g = depthValue;
 				depth.b = depthValue;
 				depth.a = 1;
 
-				return depth;
-				// return lerp(fragColor, blurColor, depthValue);
+				// return depth;
+				return lerp(fragColor, blurColor, pow(depthValue,2));
+				// return blurColor;
+				// return fragColor;
 			}
 			ENDCG
 		}
