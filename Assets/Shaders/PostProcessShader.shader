@@ -9,12 +9,10 @@
 		Tags { "RenderType"="Opaque" }
 		// No culling or depth
 		Cull Off ZWrite Off ZTest Always
-		
-		UsePass "Custom/DepthShader/SHADOWCASTER"
 
 		Pass
 		{
-			name "DoF"
+			name "PostEffects"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -22,7 +20,8 @@
 			#include "UnityCG.cginc"
 
 			sampler2D _CameraDepthTexture;
-			sampler2D _LastCameraDepthTexture;
+			sampler2D _MainTex;
+			float4 _MainTex_TexelSize;
 
 			struct appdata
 			{
@@ -36,8 +35,6 @@
 				float2 uv : TEXCOORD0;
 				float2 uvd : TEXCOORD1; // For depth texture
 			};
-
-			float4 _MainTex_TexelSize;
 
 			v2f vert (appdata v)
 			{
@@ -59,8 +56,6 @@
 
 				return o;
 			}
-			
-			sampler2D _MainTex;
 
 			// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
 			// https://github.com/Jam3/glsl-fast-gaussian-blur
@@ -98,7 +93,7 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				
-				fixed4 fragColor = tex2D(_MainTex, i.uv);
+				fixed4 fragColor = fixed4(0, 0, 0, 0); //tex2D(_MainTex, i.uv);
 
 				fixed4 blurColor = fixed4(0, 0, 0, 0);
 				blurColor += blur( _MainTex, i.uv, _ScreenParams.xy, float2(0, 1.2) ) * .5;
@@ -110,6 +105,17 @@
 				depth.g = depthValue;
 				depth.b = depthValue;
 				depth.a = 1;
+
+				// Start: Chromatic Aberration
+				fixed2 varyingOffset = fixed2(sin(_Time.g*0.4), cos(_Time.g*0.04)); // Moves in a circle
+				// Offset the different colors in x and y
+				fixed2 rOffset = fixed2(0.007 * depthValue, -0.005 * depthValue) * varyingOffset;
+				fixed2 gOffset = fixed2(-0.005 * depthValue, 0.007 * depthValue);
+				fixed2 bOffset = fixed2(-0.01 * depthValue, -0.01 * depthValue) * varyingOffset * 2;
+				fragColor.r = tex2D(_MainTex, i.uv + rOffset).r;
+				fragColor.g = tex2D(_MainTex, i.uv + gOffset).g;
+				fragColor.b = tex2D(_MainTex, i.uv + bOffset).b;
+				// End: Chromatic Aberration
 
 				// return depth;
 				return lerp(fragColor, blurColor, pow(depthValue,2));
