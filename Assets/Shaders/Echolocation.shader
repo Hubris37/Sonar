@@ -12,16 +12,16 @@ Shader "Custom/Echolocation" {
 	}
 
 	SubShader {
-		Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+		Tags { "RenderType"="Opaque" "IgnoreProjector"="True" }
 
 		// https://docs.unity3d.com/Manual/SL-CullAndDepth.html
 		// extra pass that renders to depth buffer only
 		Pass {
+			Name "ShadowCaster"
 			ZWrite On
 			ColorMask 0
 		}
 
-		// Show depth in gray scale
 		// Pass {
 		// 	Blend SrcAlpha OneMinusSrcAlpha
 		// 	ZWrite Off
@@ -53,8 +53,10 @@ Shader "Custom/Echolocation" {
         //     ENDCG
         // }
 
+		// Show depth in gray scale
 		// Pass {
 		// 	Blend SrcAlpha OneMinusSrcAlpha
+		// 	ZWrite Off
 
 		// 	CGPROGRAM
 		// 	#pragma vertex vert
@@ -86,8 +88,8 @@ Shader "Custom/Echolocation" {
 
 		Pass {
 			Blend SrcAlpha OneMinusSrcAlpha
-			//Cull Back 	// Don’t render polygons facing away from the viewer. Performance stuff?
-			ZWrite Off
+			// Cull Back 	// Don’t render polygons facing away from the viewer. Performance stuff?
+			// ZWrite On
 
 			CGPROGRAM
 			#pragma vertex vert
@@ -197,9 +199,10 @@ Shader "Custom/Echolocation" {
 			}
 			ENDCG
 		}
+		
 		// Pass {
 
 		// }
 	}
-	Fallback "Transparent/VertexLit"
+	FallBack "Diffuse"
 }
