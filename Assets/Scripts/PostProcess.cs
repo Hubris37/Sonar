@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PostProcess : MonoBehaviour {
 
-	public Shader depth, echolocation;
+	public Shader echolocation;
 	public Material imgEffectMat;
 
 	private Camera cam;
@@ -11,7 +11,6 @@ public class PostProcess : MonoBehaviour {
 	void Start () {
 		cam = GetComponent<Camera>();
 		// cam.depthTextureMode = DepthTextureMode.Depth;
-		// cam.SetReplacementShader(depth, "");
 	}
 
 	void Update() {
