@@ -158,6 +158,7 @@ Shader "Custom/Echolocation" {
 				// half3 refractDir = -refract(normalize(i.worldPos-_WorldSpaceCameraPos), worldNormal, .5);
 
 				fixed4 finalColor = fixed4(_DefaultColor.rgb, _WallO);
+				float bestAlpha = 0.1;
 				//finalColor.a = 0;
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
@@ -165,8 +166,9 @@ Shader "Custom/Echolocation" {
 
 					// Used for wavy effect
 					val = step(dist, _Radius[j]) * step(_Radius[j] - _EdgeWidth*2, dist); // Hollow circle
-					i.uv.x += val * sin((i.uv.x+i.uv.y)*dist + _Time.g*2)*_DistortScale;
-					i.uv.y += val * sin((i.uv.x-i.uv.y)*dist + _Time.g*_Frequency[j]*.2)*_DistortScale*2;
+					//i.uv.x += _Radius[j]*1/dist*_DistortScale;
+					i.uv.x += sin(10*(i.uv.x+i.uv.y)*dist*1/_Radius[j] + _Time.g)*_DistortScale;
+					//i.uv.y += val * sin((i.uv.x-i.uv.y)*dist + _Time.g*_Frequency[j]*.2)*_DistortScale*2;
 					// END Used for wavy effect
 
 					// sample the normal map, and decode from the Unity encoding
@@ -175,6 +177,7 @@ Shader "Custom/Echolocation" {
 					worldNormal.x = dot(i.tspace0, tnormal);
 					worldNormal.y = dot(i.tspace1, tnormal);
 					worldNormal.z = dot(i.tspace2, tnormal);
+
 
 					// Create circle
 					// val += (1 - step(dist, _Radius[j] - _EdgeWidth) * 0.5) * step(dist, _Radius[j]);
@@ -186,12 +189,18 @@ Shader "Custom/Echolocation" {
 
 					float bump = (_UseNormalMap==1) ? max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) : 1;
 
-					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val *  _Color[j].rgb * bump;
+					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val * _Color[j].rgb * bump;
+
 					
-					finalColor.a += _MaxRadius[j]/30 * (1 - _Radius[j]/_MaxRadius[j]) * val;
+					//finalColor.a += 0.05 + _MaxRadius[j]/200 * (1 - _Radius[j]/_MaxRadius[j]) * val;
+
+					float curAlpha = 0.1 + _MaxRadius[j]/60 * (1 - _Radius[j]/_MaxRadius[j]) * val;
+					if(curAlpha > bestAlpha)
+						bestAlpha = curAlpha;
 				}
 
-				finalColor.a *= 0.5;
+				finalColor.a = bestAlpha;
+				
 				if(_UseDepth)
 					return fixed4(finalColor.rgb * invDepth, finalColor.a);
 				else
