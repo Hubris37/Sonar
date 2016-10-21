@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UIManager : MonoBehaviour {
+public class TutorialManager : MonoBehaviour {
 
 	public IntroTutorial tutorialSign1;
 	public bool playTutorial1 = true;

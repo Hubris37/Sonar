@@ -6,7 +6,7 @@ public class SoundTutorial : MonoBehaviour
 {
 	public GameObject goal;
 	public AudioClip accept;
-	public LightTrigger lights;
+	public LightController lightController;
 	public GameObject anyButtonImg;
 	public GameObject gramophonePillar;
 	public GameObject pathForward;
@@ -38,7 +38,7 @@ public class SoundTutorial : MonoBehaviour
 
 		// Turn down lights
 		yield return StartCoroutine(typer.TypeMessage(2));
-		yield return StartCoroutine(lights.FadeOut());
+		yield return StartCoroutine(lightController.FadeOut());
 		backgroundBirds.Stop();
 		yield return new WaitForSeconds(1);
 		aud.PlayOneShot(accept);

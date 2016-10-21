@@ -2,7 +2,8 @@
 using System;
 using System.Collections;
 
-public class LightTrigger : MonoBehaviour 
+// Controlls the directional light and skybox.
+public class LightController : MonoBehaviour 
 {
 	public event Action LightsAreOut;
 	public Light dirLight;
@@ -11,7 +12,7 @@ public class LightTrigger : MonoBehaviour
 
 	void Start()
 	{
-		RenderSettings.skybox.SetFloat("_Exposure", 1);RenderSettings.skybox.SetFloat("_Exposure", 1);
+		RenderSettings.skybox.SetFloat("_Exposure", 1);
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -21,7 +22,6 @@ public class LightTrigger : MonoBehaviour
 			StartCoroutine(FadeOut());
 		}
 	}
-
 	void OnTriggerExit(Collider other)
 	{
 		if(other.tag == "Player")
@@ -33,6 +33,7 @@ public class LightTrigger : MonoBehaviour
 		}
 	}
 
+	// Fade out DirLight and skybox
 	public IEnumerator FadeOut()
 	{
 		while(lightIntens > 0)

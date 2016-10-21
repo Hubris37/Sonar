@@ -3,14 +3,14 @@ using System.Collections;
 
 public class ChangeMaterial : MonoBehaviour 
 {
-	public LightTrigger lights;
+	public LightController lightController;
 	public Material echoMaterial;
 	public Renderer[] objects;
 
 	// Use this for initialization
 	void Start () 
 	{
-		lights.LightsAreOut += SwapMaterial;		
+		lightController.LightsAreOut += SwapMaterial;		
 	}
 	
 	private void SwapMaterial()
