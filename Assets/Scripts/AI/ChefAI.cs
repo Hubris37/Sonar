@@ -10,7 +10,7 @@ public class ChefAI : EnemyAI {
     public float jumpChaseMultiplier = 1.5f;
     public float jumpHeight = 0.4f;
     private float jumpOffsetCounter = 0;
-    private Vector3 jumpStartPos;
+    //private Vector3 jumpStartPos;
     private bool makeSound = false;
 
     public AudioSource audioThump;
@@ -92,7 +92,7 @@ public class ChefAI : EnemyAI {
     private void jumpHandler(Vector3 movePoint, float dist) {
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
             rigid.velocity = Vector3.zero;
-            jumpStartPos = transform.position;
+      //      jumpStartPos = transform.position;
             anim.SetTrigger("jump");
             jumpOffsetCounter = getAnimationLength("Chesschef Jump") / (3 * anim.speed);
             if (makeSound) {
@@ -102,8 +102,8 @@ public class ChefAI : EnemyAI {
         }
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jump")) {
             if (jumpOffsetCounter <= 0) {
-                Vector3 dir = movePoint - jumpStartPos;
-                float distance = Mathf.Min(Math.Abs(dir.magnitude), dist);
+            //    Vector3 dir = movePoint - jumpStartPos;
+        //        float distance = Mathf.Min(Math.Abs(dir.magnitude), dist);
                // jumpOffsetCounter = 1000000;
 
                 rigid.velocity = transform.forward * dist;

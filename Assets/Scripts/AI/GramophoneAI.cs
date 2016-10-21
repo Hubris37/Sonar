@@ -97,6 +97,7 @@ public class GramophoneAI : EnemyAI {
 
     public override void move() {
         Vector3 dif, movePoint;
+        Vector3 curPos = transform.position;
         float movementMultiplier = (isAggroed) ? chasingSpeedMultiplier : 1.0f;
         rigid.drag = (isAggroed) ? 2 : 10;
         
@@ -104,19 +105,21 @@ public class GramophoneAI : EnemyAI {
         int tilesLeft = movementPath.Count;
         if (tilesLeft == 0) return;
         float thresh = 0.5f;
-        dif = movementPath[0].transform.position - transform.position;
-        dif.y = 0;
         movePoint = movementPath[0].transform.position;
+        dif = movePoint - curPos;
+        dif.y = 0;
         if (dif.magnitude < thresh) {
             currentPositionCell = movementPath[0];
             movementPath.RemoveAt(0);
             if (movementPath.Count == 0) return;
             // movementPath = tryDiagonal(movementPath);
         }
-        
-        movePoint.y = transform.position.y;
+
+        curPos.y = 0;
+       // transform.Translate(curPos);
+        movePoint.y = curPos.y;
         transform.LookAt(movePoint);
-        rigid.AddForce( transform.forward * movementSpeed * movementMultiplier);
+        rigid.AddForce( dif.normalized * movementSpeed * movementMultiplier);
        // transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
     }
 

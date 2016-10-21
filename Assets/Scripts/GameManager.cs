@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour {
 
     private void spawnAI(GameObject AIPrefab, int count, MazeCell startingCell) {
         List<MazeRoom> spawnableRooms = mazeInstance.getRooms();
-      //  spawnableRooms.Remove(startingCell.room);
+        spawnableRooms.Remove(startingCell.room);
         List<MazeRoom> roomsLeft = new List<MazeRoom>(spawnableRooms);
         // Create as many AIs as specified
         for (int i = 0; i < count; ++i) {
@@ -162,7 +162,6 @@ public class GameManager : MonoBehaviour {
     }
 
     private MazeCell getSpawnableCell(MazeRoom room) {
-        List<MazeCell> roomCells = room.getCells();
         // Select a random cell in the room to initialize at
         foreach (MazeCell c in room.getCells()) {
             if (c.AISpawnable)

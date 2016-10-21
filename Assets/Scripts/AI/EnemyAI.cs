@@ -126,12 +126,10 @@ public abstract class EnemyAI : MonoBehaviour {
         RaycastHit hit;
         if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.sqrMagnitude)) {
             // Funkar inte för grandchildren
-     //       print(hit.transform.name);
             if (hit.transform == transform || hit.transform.IsChildOf(transform)) {
                 return true;
             }
         }
-   //     print(hit.transform.name);
         return false;
     }
 
@@ -198,7 +196,7 @@ public abstract class EnemyAI : MonoBehaviour {
             openSet.Remove(c);
             closedSet.Add(c);
             foreach (MazeCell n in c.getNeighbours()) {
-                if (closedSet.Contains(n) || !map.Contains(n) || !n.AISpawnable) continue;
+                if (closedSet.Contains(n) || !map.Contains(n)) continue;
 
                 int tentGScore = gScore[c] + 1;
                 if (!openSet.Contains(n))
