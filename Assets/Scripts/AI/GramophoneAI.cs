@@ -7,6 +7,7 @@ public class GramophoneAI : EnemyAI {
     [Header("Walking modifiers")]
     public float movementSpeed = 1.4f;
     public float chasingSpeedMultiplier = 1.2f;
+    public float runAnimSpeed = 2.0f;
 
     private bool hasStartled = false;
     private AudioSource music;
@@ -28,14 +29,18 @@ public class GramophoneAI : EnemyAI {
         //AudioSource[] sources = GetComponents<AudioSource>(); never used
         musicSampleData = new float[musicSampleAmount];
         head = searchForBone(transform, "Bone.002");
+        rigid = GetComponent<Rigidbody>();
+
         soundEmitter = GetComponent<StaticSoundSource>();
     }
 
-    void Update() {
+    void FixedUpdate() {
    //     handleStartle();
         findPath();
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Walking")) {
             move();
+        } else {
+            rigid.velocity = Vector3.zero;
         }
         checkAggro();
     }
@@ -83,7 +88,7 @@ public class GramophoneAI : EnemyAI {
         List<MazeCell> map = currentPositionCell.room.getCells();
         movementPath = aStar(findMaxCostCell(currentPositionCell, map),map);
         anim.SetTrigger("startled");
-        anim.speed = chasingSpeedMultiplier;
+        anim.speed = runAnimSpeed;
     }
 
     protected override void onLoseAggro() {
@@ -93,6 +98,7 @@ public class GramophoneAI : EnemyAI {
     public override void move() {
         Vector3 dif, movePoint;
         float movementMultiplier = (isAggroed) ? chasingSpeedMultiplier : 1.0f;
+        rigid.drag = (isAggroed) ? 2 : 10;
         
         // Move on calculated path
         int tilesLeft = movementPath.Count;
@@ -110,7 +116,8 @@ public class GramophoneAI : EnemyAI {
         
         movePoint.y = transform.position.y;
         transform.LookAt(movePoint);
-        transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
+        rigid.AddForce( transform.forward * movementSpeed * movementMultiplier);
+       // transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
     }
 
     private Transform searchForBone(Transform current, string name) {

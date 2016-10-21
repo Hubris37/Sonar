@@ -23,6 +23,7 @@ public class ChefAI : EnemyAI {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         anim = GetComponent<Animator>();
         AudioSource[] sources = GetComponents<AudioSource>();
+        rigid = GetComponent<Rigidbody>();
 
         audioThump = sources[0];
         audioSniff = sources[1];
@@ -49,6 +50,7 @@ public class ChefAI : EnemyAI {
     }
 
     public override void move() {
+   //     chasingAround = isAggroed && !straightLineToPlayer();
         Vector3 dif, movePoint;
         Vector3 curPos = transform.position;
         float jumpDist = jumpDistance;
@@ -61,6 +63,9 @@ public class ChefAI : EnemyAI {
             jumpDist *= jumpChaseMultiplier;
         }
         else {
+         /*   if (chasingAround) {
+                movementPath = pathToPlayer();
+            }*/
             // Else, move on calculated path
             int tilesLeft = movementPath.Count;
             if (tilesLeft == 0) return;
@@ -86,6 +91,7 @@ public class ChefAI : EnemyAI {
 
     private void jumpHandler(Vector3 movePoint, float dist) {
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
+            rigid.velocity = Vector3.zero;
             jumpStartPos = transform.position;
             anim.SetTrigger("jump");
             jumpOffsetCounter = getAnimationLength("Chesschef Jump") / (3 * anim.speed);
@@ -97,9 +103,15 @@ public class ChefAI : EnemyAI {
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jump")) {
             if (jumpOffsetCounter <= 0) {
                 Vector3 dir = movePoint - jumpStartPos;
-                float distance = Mathf.Min(dir.magnitude, dist);
+                float distance = Mathf.Min(Math.Abs(dir.magnitude), dist);
+               // jumpOffsetCounter = 1000000;
+
+                rigid.velocity = transform.forward * dist;
+                //rigid.velocity = transform.TransformDirection(dir.normalized * 1.0f);
+                // transform.Translate(dir.normalized * distance * Time.deltaTime, Space.World);
+                //rigid.MovePosition(transform.TransformDirection(dir.normalized * distance * Time.deltaTime));
+                // transform.Move(dir.normalized * distance * Time.deltaTime, Space.World);
                 
-                transform.Translate(dir.normalized * distance * Time.deltaTime, Space.World);
                 makeSound = true;
             }
             else {

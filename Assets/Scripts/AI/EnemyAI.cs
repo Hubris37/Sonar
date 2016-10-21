@@ -8,9 +8,9 @@ public abstract class EnemyAI : MonoBehaviour {
     private List<MazeCell> mazeNodes;
 
     protected bool moving = false;
-    protected List<MazeCell> movementPath;
-    protected MazeCell startCell;
-    protected MazeCell currentPositionCell;
+    public List<MazeCell> movementPath;
+    public MazeCell startCell;
+    public MazeCell currentPositionCell;
 
     [Header("Behaviour modifiers")]
     public float aggroRange = 1.0f;
@@ -18,13 +18,15 @@ public abstract class EnemyAI : MonoBehaviour {
     public int patrolMinRoomSize = 4;
     public bool patrolsRoom = true;
 
-    protected Vector3 playerPos;
+    public Vector3 playerPos;
     protected float playerNoise;
+    protected Rigidbody rigid;
 
     protected GameManager gameManager;
 
-    protected bool isAggroed = false;
-    protected bool isInvestigating = true;
+    public bool isAggroed = false;
+    public bool isInvestigating = false;
+    public bool chasingAround = false;
     protected Animator anim;
 
     public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
@@ -52,14 +54,26 @@ public abstract class EnemyAI : MonoBehaviour {
         }
     }
 
-    private void findCurrentCell() {
+    void OnCollisionEnter(Collision other) {
+        rigid.velocity = Vector3.zero;
+    }
+
+    protected void findCurrentCell() {
+        currentPositionCell = maze.GetCell(transform.position);
+        /*
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -Vector3.up, out hit)) {
             currentPositionCell = hit.transform.parent.transform.gameObject.GetComponent<MazeCell>();
         }
         else {
             Debug.LogWarning("Error: Could not find current MazeCell of AI.", transform);
-        }
+        }*/
+    }
+
+    protected List<MazeCell> pathToPlayer() {
+            findCurrentCell();
+        getPlayerInformation();
+            return aStar(maze.GetCell(playerPos), mazeNodes);
     }
 
     // Update is called once per frame
@@ -96,18 +110,34 @@ public abstract class EnemyAI : MonoBehaviour {
         pos.y += 0.5f;
         Vector3 dir = pos - playerPos;
         RaycastHit hit;
-        if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.sqrMagnitude)) {
+        int layerMask = 1 << 9;
+        if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.magnitude, layerMask)) {
             // Funkar inte för grandchildren
-            if (hit.transform == transform || hit.transform.IsChildOf(transform)) {
-                return false;
+            if (hit.transform.name == "Quad" || hit.transform.name.Contains("Door") || hit.transform.name.Contains("Gate")) {
+                return true;
             }
         }
-        return true;
+        return false;
+    }
+
+    protected bool straightLineToPlayer() {
+        Vector3 pos = transform.position;
+        Vector3 dir = pos - playerPos;
+        RaycastHit hit;
+        if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.sqrMagnitude)) {
+            // Funkar inte för grandchildren
+     //       print(hit.transform.name);
+            if (hit.transform == transform || hit.transform.IsChildOf(transform)) {
+                return true;
+            }
+        }
+   //     print(hit.transform.name);
+        return false;
     }
 
     protected void findPath() {
         if (movementPath.Count == 0) {
-            if (!isAggroed)
+            if (!isAggroed && Random.Range(0,1) > 0.9f)
                 anim.SetTrigger("seek");
             //makeSniffingSound();
             List<MazeCell> map;
@@ -168,7 +198,7 @@ public abstract class EnemyAI : MonoBehaviour {
             openSet.Remove(c);
             closedSet.Add(c);
             foreach (MazeCell n in c.getNeighbours()) {
-                if (closedSet.Contains(n) || !map.Contains(n) || !n.AIWalkable) continue;
+                if (closedSet.Contains(n) || !map.Contains(n) || !n.AISpawnable) continue;
 
                 int tentGScore = gScore[c] + 1;
                 if (!openSet.Contains(n))

@@ -25,7 +25,14 @@ public class Maze : MonoBehaviour {
 		return cells [coordinates.x, coordinates.z];
 	}
 
-	public void Generate (int level) {
+    public MazeCell GetCell(Vector3 coordinates) {
+        // Maze scale = 4
+        int xC = Mathf.FloorToInt(coordinates.x / 4) + size.x;
+        int zC = Mathf.FloorToInt(coordinates.z / 4) + size.z;
+        return cells[xC, zC];
+    }
+
+    public void Generate (int level) {
 		size.x = startSize.x + level;
 		size.z = startSize.z + level;
 		cells = new MazeCell[size.x, size.z];

@@ -10,7 +10,7 @@ public class MazeCell : MonoBehaviour {
     private GameObject decor;
     public MazeCellEdge[] edges = new MazeCellEdge[MazeDirections.Count];
     public List<MazeCell> wallBetween = new List<MazeCell>();
-    public bool AIWalkable = true;
+    public bool AISpawnable = true;
 
     public MazeCellEdge GetEdge(MazeDirection direction) {
         return edges[(int)direction];
@@ -34,7 +34,7 @@ public class MazeCell : MonoBehaviour {
         if (decoration && room.settings.Decor.Length > 0){
             decor = Instantiate(room.settings.Decor[Random.Range(0,room.settings.Decor.Length)],transform.position,Quaternion.identity) as GameObject;
             decor.transform.parent = transform;
-            AIWalkable = false;
+            AISpawnable = false;
         }
         transform.GetChild(0).GetComponent<Renderer>().material = room.settings.floorMaterial;
     }

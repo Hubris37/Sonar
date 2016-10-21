@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour {
     public GameObject Chef;
     public GameObject Gramophone;
     public int startChefAmount = 3;
-    private int chefAmount;
+    public int startGramophoneAmount = 1;
+    private int chefAmount, gramophoneAmount;
 	private bool playerIsDead = false;
 
     public int level = 1;
@@ -47,11 +48,12 @@ public class GameManager : MonoBehaviour {
         player.OnGoalTouch += WonGame;
 		player.goal = goal;
         chefAmount = startChefAmount;
+        gramophoneAmount = startGramophoneAmount;
 		BeginGame();
     }
 
 	private void Update () {
-		if (Input.GetKeyDown("z")) {
+    	if (Input.GetKeyDown("z")) {
 			RestartGame();
 		}
 		if(playerIsDead)
@@ -74,7 +76,7 @@ public class GameManager : MonoBehaviour {
 		player.transform.LookAt(pos);
 
         spawnAI(Chef, chefAmount, startingCell);
-        spawnAI(Gramophone, 1, startingCell);
+        spawnAI(Gramophone, gramophoneAmount, startingCell);
     }
 
 	public void GenerateMaze() {
@@ -127,27 +129,46 @@ public class GameManager : MonoBehaviour {
 
     private void spawnAI(GameObject AIPrefab, int count, MazeCell startingCell) {
         List<MazeRoom> spawnableRooms = mazeInstance.getRooms();
-        spawnableRooms.Remove(startingCell.room);
+      //  spawnableRooms.Remove(startingCell.room);
         List<MazeRoom> roomsLeft = new List<MazeRoom>(spawnableRooms);
         // Create as many AIs as specified
         for (int i = 0; i < count; ++i) {
+            MazeCell initCell = null;
+            MazeRoom room = null;
             // If no free rooms left, set all to available
             if (roomsLeft.Count == 0) {
                 roomsLeft = new List<MazeRoom>(spawnableRooms);
-			}
+                break;
+            }
             // Select a random room
             int rand = Random.Range(0, roomsLeft.Count - 1);
-            MazeRoom room = roomsLeft[rand];
-			// Select a random cell in the room to initialize at
-			MazeCell initCell = room.getCells()[Random.Range(0, room.getCells().Count-1)];
+            room = roomsLeft[rand];
+            initCell = getSpawnableCell(room);
+            
 			// Remove current room from unoccupied ones
+            if (initCell == null) {
+                //i--;
+                roomsLeft.Remove(room);
+                continue;   
+            }
 			roomsLeft.Remove(room);
 			Vector3 initPos = initCell.transform.position;
 			GameObject bot = Instantiate(AIPrefab, initPos, Quaternion.identity) as GameObject;
 			bot.transform.parent = initCell.transform;
 			bots.Add(bot);
 			bot.GetComponent<EnemyAI>().initializeAI(mazeInstance, initCell);
-			
+            initCell.AISpawnable = false;
         }
+    }
+
+    private MazeCell getSpawnableCell(MazeRoom room) {
+        List<MazeCell> roomCells = room.getCells();
+        // Select a random cell in the room to initialize at
+        foreach (MazeCell c in room.getCells()) {
+            if (c.AISpawnable)
+                return c;
+        }
+        return null;
+
     }
 }
