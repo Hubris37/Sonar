@@ -6,21 +6,24 @@ using UnityEngine.VR;
 public class FirstPersonController : MonoBehaviour {
 
 	public event Action OnGoalTouch;
-
+	
+	public enum ControllMode {FPSControlls, CarControlls};
+	public ControllMode inputMode;
 	public float mouseSensitivityX = 3.5f;
 	public float mouseSensitivityY = 3.5f;
 	public float walkSpeed = 0.5f;
 	public float turnSpeed = 2f;
 	public GameObject goal;
+
 	public bool freezeMovement = false;
 	public bool lockUpDownMovement = true;
-
+	
 	//Transform cameraT; // never used
 	//Camera cam; // Never used
-	Rigidbody myRigidBody;
-	float verticalLookRotation;
-	Vector3 moveAmount;
-	Vector3 smoothMoveVelocity;
+	private Rigidbody myRigidBody;
+	private float verticalLookRotation;
+	private Vector3 moveAmount;
+	private Vector3 smoothMoveVelocity;
     private Animator anim;
 
 	// Use this for initialization
@@ -57,14 +60,28 @@ public class FirstPersonController : MonoBehaviour {
 		
 		*/
 
-		float h = Input.GetAxis("Horizontal") * Time.fixedDeltaTime * turnSpeed;
-		float v = -Input.GetAxis("Accelerate") * Time.fixedDeltaTime;
+
+		float h = 0, vH = 0, vV = 0;
+
+		if(inputMode == ControllMode.FPSControlls)
+		{
+			h = Input.GetAxis("RJoystickHorizontal") * Time.fixedDeltaTime * turnSpeed;
+			vH = Input.GetAxis("LJoystickHorizontal") * Time.fixedDeltaTime; // Positiv joystick ner??
+			vV = Input.GetAxis("LJoystickVertical") * Time.fixedDeltaTime;
+		}
+		else if(inputMode == ControllMode.CarControlls)
+		{
+			h = Input.GetAxis("Horizontal") * Time.fixedDeltaTime * turnSpeed;
+			vV = Input.GetAxis("Accelerate") * Time.fixedDeltaTime;
+			vH = 0;
+		}
+
 		transform.Rotate (h * Vector3.up);
 		//transform.Rotate (v * Vector3.right);
 		//myRigidBody.AddRelativeTorque (h * Vector3.back );
 		//myRigidBody.AddRelativeTorque (v * Vector3.right);
 
-		Vector3 targetMoveAmount = v * Vector3.forward * walkSpeed;
+		Vector3 targetMoveAmount = ((vV * Vector3.back) + (vH * Vector3.right)) * walkSpeed;
 		moveAmount = Vector3.SmoothDamp(moveAmount, targetMoveAmount, ref smoothMoveVelocity, .15f);
 	}
 
@@ -76,6 +93,8 @@ public class FirstPersonController : MonoBehaviour {
             if (anim != null) {
                 anim.SetBool("walking", (moveAmount.magnitude > 0.001f));
             }
+
+			// Move Player
 			myRigidBody.MovePosition(myRigidBody.position + transform.TransformDirection(moveAmount));
 			
 			if (Input.GetButton ("Fire1") && !lockUpDownMovement) {
