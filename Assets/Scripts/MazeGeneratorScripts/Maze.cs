@@ -8,6 +8,7 @@ public class Maze : MonoBehaviour {
 	public IntVector2 size;
 	[Range(1f,4f)]
 	public float cellScale;
+	public bool hideRooms = true;
 
     private MazeCell[,] cells;
 	private List<MazeRoom> rooms = new List<MazeRoom>();
@@ -28,10 +29,12 @@ public class Maze : MonoBehaviour {
 		return cells [coordinates.x, coordinates.z];
 	}
 
-        // Maze scale = 4
-        int xC = Mathf.FloorToInt(coordinates.x / 4) + size.x;
-        int zC = Mathf.FloorToInt(coordinates.z / 4) + size.z;
-        return cells[xC, zC];
+    public MazeCell GetCell(Vector3 worldPosition) {
+		int xCell = Mathf.FloorToInt(worldPosition.x / cellScale + size.x/2f - 0.5f);
+		int zCell = Mathf.FloorToInt(worldPosition.z / cellScale + size.z/2f - 0.5f);
+        //int xC = Mathf.FloorToInt(worldPosition.x / 4) + size.x;
+        //int zC = Mathf.FloorToInt(worldPosition.z / 4) + size.z;
+        return cells[xCell, zCell];
     }
 
     public void Generate (int level) {
@@ -49,12 +52,17 @@ public class Maze : MonoBehaviour {
 		size.z = startSize.z + level;
 		cells = new MazeCell[size.x, size.z];
 		List<MazeCell> activeCells = new List<MazeCell> ();
+		rooms = new List<MazeRoom>();
+		
 		DoFirstGenerationStep (activeCells, mapHolder);
 		while (activeCells.Count > 0) {
 			DoNextGenerationStep (activeCells, mapHolder);
 		}
-		for (int i = 0; i < rooms.Count; i++) {
-			rooms[i].Hide();
+
+		if(hideRooms) {
+			for (int i = 0; i < rooms.Count; i++) {
+				rooms[i].Hide();
+			}
 		}
 		
 	}
@@ -155,6 +163,7 @@ public class Maze : MonoBehaviour {
 		newCell.coordinates = coordinates;
 		newCell.name = "Maze Cell" + coordinates.x + ", " + coordinates.z;
 		newCell.transform.parent = mapHolder.transform;
+		newCell.transform.localScale *= cellScale;
 		//newCell.transform.localPosition = new Vector3(coordinates.x - size.x + 0.5f, 0f, coordinates.z - size.z + 0.5f);
 		newCell.transform.localPosition = 
 			new Vector3(coordinates.x - size.x / 2f + 0.5f, 0f, coordinates.z - size.z / 2f + 0.5f);
