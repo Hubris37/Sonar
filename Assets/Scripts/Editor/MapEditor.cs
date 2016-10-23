@@ -3,16 +3,19 @@ using System.Collections;
 #if UNITY_EDITOR
 using UnityEditor;
 
-[CustomEditor (typeof (GameManager))]
+[CustomEditor (typeof (Maze))]
 public class MapEditor : Editor {
 
-	public override void OnInspectorGUI() {
-		GameManager gameMan = (GameManager)target;
+	public override void OnInspectorGUI() 
+	{
+		Maze MazeGenerator = target as Maze;
+		
+		if (DrawDefaultInspector ()) {
+			MazeGenerator.Generate(0);
+		}
 
-		DrawDefaultInspector();
-
-		if(GUILayout.Button ("Generate")) {
-			gameMan.GenerateMaze();
+		if(GUILayout.Button ("Generate Maze")) {
+			MazeGenerator.Generate(0);
 		}
 
 	}

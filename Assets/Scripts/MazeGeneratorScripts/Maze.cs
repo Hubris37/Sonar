@@ -6,6 +6,9 @@ public class Maze : MonoBehaviour {
 
 	public IntVector2 startSize;
 	public IntVector2 size;
+	[Range(1f,4f)]
+	public float cellScale;
+
     private MazeCell[,] cells;
 	private List<MazeRoom> rooms = new List<MazeRoom>();
 	public MazeRoomSettings[] roomSettings;
@@ -15,8 +18,8 @@ public class Maze : MonoBehaviour {
 
     public MazeCell cellPrefab;
     public MazePassage passagePrefab;
+	public MazeWall wallPrefab;
 	public MazeDoor[] doorPrefab;
-    public MazeWall wallPrefab;
 
 	[Range(0f, 1f)]
 	public float doorProbability;
@@ -33,28 +36,39 @@ public class Maze : MonoBehaviour {
     }
 
     public void Generate (int level) {
+
+		string holderName = "Generated Maze";
+		if(transform.FindChild (holderName)) {
+			DestroyImmediate(transform.FindChild(holderName).gameObject);
+		}
+
+		Transform mapHolder = new GameObject (holderName).transform;
+		mapHolder.parent = transform;
+		mapHolder.localScale *= cellScale;
+
 		size.x = startSize.x + level;
 		size.z = startSize.z + level;
 		cells = new MazeCell[size.x, size.z];
 		List<MazeCell> activeCells = new List<MazeCell> ();
-		DoFirstGenerationStep (activeCells);
+		DoFirstGenerationStep (activeCells, mapHolder);
 		while (activeCells.Count > 0) {
-			DoNextGenerationStep (activeCells);
+			DoNextGenerationStep (activeCells, mapHolder);
 		}
-		
+		/*
 		for (int i = 0; i < rooms.Count; i++) {
 			rooms[i].Hide();
 		}
+		*/
 		
 	}
 
-	private void DoFirstGenerationStep (List<MazeCell> activeCells) {
-		MazeCell newCell = CreateCell(RandomCoordinates);
+	private void DoFirstGenerationStep (List<MazeCell> activeCells, Transform mapHolder) {
+		MazeCell newCell = CreateCell(RandomCoordinates, mapHolder);
 		newCell.Initialize(CreateRoom(-1),false);
 		activeCells.Add(newCell);
 	}
 
-	private void DoNextGenerationStep (List<MazeCell> activeCells) {
+	private void DoNextGenerationStep (List<MazeCell> activeCells, Transform mapHolder) {
 		int currentIndex = activeCells.Count - 1;
 		MazeCell currentCell = activeCells [currentIndex];
         
@@ -69,7 +83,7 @@ public class Maze : MonoBehaviour {
             MazeCell neighbor = GetCell(coordinates);
             if (GetCell(coordinates) == null)
             {
-                neighbor = CreateCell(coordinates);
+                neighbor = CreateCell(coordinates, mapHolder);
                 CreatePassage(currentCell, neighbor, direction);
                 activeCells.Add(neighbor);
             }
@@ -113,7 +127,7 @@ public class Maze : MonoBehaviour {
 			MazeRoom roomToAssimilate = otherCell.room;
 			cell.room.Assimilate(roomToAssimilate);
 			rooms.Remove(roomToAssimilate);
-			Destroy(roomToAssimilate);
+			DestroyImmediate(roomToAssimilate);
 		}
 	}
 
@@ -138,15 +152,17 @@ public class Maze : MonoBehaviour {
     }
 
 
-    public MazeCell CreateCell (IntVector2 coordinates) {
+    public MazeCell CreateCell (IntVector2 coordinates, Transform mapHolder) {
 		MazeCell newCell = Instantiate (cellPrefab) as MazeCell;
 		cells [coordinates.x, coordinates.z] = newCell;
 		newCell.coordinates = coordinates;
 		newCell.name = "Maze Cell" + coordinates.x + ", " + coordinates.z;
-		newCell.transform.parent = transform;
-		//newCell.transform.localScale = transform.localScale;
+		newCell.transform.parent = mapHolder.transform;
+		//newCell.transform.localScale = Vector3.one * cellScale;
+		//newCell.transform.localPosition = new Vector3(coordinates.x - size.x + 0.5f, 0f, coordinates.z - size.z + 0.5f);
 		newCell.transform.localPosition = 
-			new Vector3(coordinates.x - size.x * 1f + 0.5f, 0f, coordinates.z - size.z * 1f + 0.5f);
+			new Vector3(coordinates.x - size.x / 2f + 0.5f, 0f, coordinates.z - size.z / 2f + 0.5f);
+
 		return newCell;
 	}
 

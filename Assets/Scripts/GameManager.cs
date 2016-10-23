@@ -86,13 +86,6 @@ public class GameManager : MonoBehaviour {
     }
 
 	public void GenerateMaze() {
-		/*if(mazeInstance != null){
-			if(Application.isPlaying) {
-				Destroy(mazeInstance.gameObject);
-			} else {
-				DestroyImmediate (mazeInstance.gameObject);
-			}
-		}*/
 		mazeInstance = Instantiate (mazePrefab) as Maze;
 		mazeInstance.playerCoordinates = startingCoordinates;
 		mazeInstance.Generate(level);
