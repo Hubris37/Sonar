@@ -29,7 +29,7 @@ public class AddForceDoor : MonoBehaviour {
 		float dist = xz.sqrMagnitude;
 		Vector3 dir = heading / dist;
 
-		myRigidbody.AddForce(dir*(dbVal*2000/(dist+20f)), ForceMode.Impulse);
+		myRigidbody.AddForce(dir*(dbVal*3000/(dist+25f)), ForceMode.Impulse);
 	}
 
 	void OnDestroy() {

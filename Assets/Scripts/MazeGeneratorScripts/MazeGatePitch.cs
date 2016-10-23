@@ -84,7 +84,7 @@ public class MazeGatePitch : MazeDoor {
 					percentTowardsGoal += 0.25f;
 				}
 				//Vector3 insert = key.transform.TransformPoint(new Vector3(percentTowardsGoal,0,0));
-				keyTargetPos = keyStandardPos + new Vector3(percentTowardsGoal*0.4f,pitchVal*pitchMultiplier,0f);
+				keyTargetPos = keyStandardPos + new Vector3(percentTowardsGoal*0.6f,pitchVal*pitchMultiplier,0f);
 			}
 			if(percentTowardsGoal >= 1) {
 				percentTowardsGoal = 1;

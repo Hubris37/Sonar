@@ -28,7 +28,6 @@ public class Maze : MonoBehaviour {
 		return cells [coordinates.x, coordinates.z];
 	}
 
-    public MazeCell GetCell(Vector3 coordinates) {
         // Maze scale = 4
         int xC = Mathf.FloorToInt(coordinates.x / 4) + size.x;
         int zC = Mathf.FloorToInt(coordinates.z / 4) + size.z;
@@ -54,11 +53,9 @@ public class Maze : MonoBehaviour {
 		while (activeCells.Count > 0) {
 			DoNextGenerationStep (activeCells, mapHolder);
 		}
-		/*
 		for (int i = 0; i < rooms.Count; i++) {
 			rooms[i].Hide();
 		}
-		*/
 		
 	}
 
@@ -158,7 +155,6 @@ public class Maze : MonoBehaviour {
 		newCell.coordinates = coordinates;
 		newCell.name = "Maze Cell" + coordinates.x + ", " + coordinates.z;
 		newCell.transform.parent = mapHolder.transform;
-		//newCell.transform.localScale = Vector3.one * cellScale;
 		//newCell.transform.localPosition = new Vector3(coordinates.x - size.x + 0.5f, 0f, coordinates.z - size.z + 0.5f);
 		newCell.transform.localPosition = 
 			new Vector3(coordinates.x - size.x / 2f + 0.5f, 0f, coordinates.z - size.z / 2f + 0.5f);
