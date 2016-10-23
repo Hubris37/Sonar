@@ -33,7 +33,7 @@
 			{
 				float4 vertex : SV_POSITION;
 				float2 uv : TEXCOORD0;
-				float2 uvd : TEXCOORD1; // For depth texture
+				float2 uvDepth : TEXCOORD1; // For depth texture
 			};
 
 			v2f vert (appdata v)
@@ -42,7 +42,7 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				
 				o.uv = v.uv;
-				o.uvd = v.uv;
+				o.uvDepth = v.uv;
 
 				// On non-GL when AA is used, the main Texture and scene depth Texture
 				// will come out in different vertical orientations.
@@ -51,7 +51,7 @@
 				// https://docs.unity3d.com/Manual/SL-PlatformDifferences.html
 				#if UNITY_UV_STARTS_AT_TOP
 					if (_MainTex_TexelSize.y < 0)
-        				o.uvd.y = 1 - o.uvd.y;
+        				o.uvDepth.y = 1 - o.uvDepth.y;
 				#endif
 
 				return o;
@@ -93,32 +93,66 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				
-				fixed4 fragColor = fixed4(0, 0, 0, 0); //tex2D(_MainTex, i.uv);
+				fixed4 fragColor = tex2D(_MainTex, i.uv);
 
 				fixed4 blurColor = fixed4(0, 0, 0, 0);
 				blurColor += blur( _MainTex, i.uv, _ScreenParams.xy, float2(0, 1.2) ) * .5;
 				blurColor += blur( _MainTex, i.uv, _ScreenParams.xy, float2(1.2, 0) ) * .5;
 
-				half4 depth = tex2D(_CameraDepthTexture, i.uvd);
+				half4 depth = tex2D(_CameraDepthTexture, i.uvDepth);
 				float depthValue = Linear01Depth(depth);
 				depth.r = depthValue;
 				depth.g = depthValue;
 				depth.b = depthValue;
 				depth.a = 1;
 
+				half compareDist = 0.003; // How far apart comparison texels in _CameraDepthTexture should be
+
+				half4 depth2 = tex2D( _CameraDepthTexture, i.uvDepth + float2(compareDist, 0) );
+				half4 depth3 = tex2D( _CameraDepthTexture, i.uvDepth - float2(compareDist, 0) );
+				half4 depth4 = tex2D( _CameraDepthTexture, i.uvDepth + float2(0, compareDist) );
+				half4 depth5 = tex2D( _CameraDepthTexture, i.uvDepth - float2(0, compareDist) );
+
+				float depthValue2 = Linear01Depth(depth2);
+				float depthValue3 = Linear01Depth(depth3);
+				float depthValue4 = Linear01Depth(depth4);
+				float depthValue5 = Linear01Depth(depth5);
+
+				float depthDiff = 0.06; // How large depth difference there should be before counted as edge
+
 				// Start: Chromatic Aberration
-				fixed2 varyingOffset = fixed2(sin(_Time.g*0.4), cos(_Time.g*0.04)); // Moves in a circle
-				// Offset the different colors in x and y
-				fixed2 rOffset = fixed2(0.007 * depthValue, -0.005 * depthValue) * varyingOffset;
-				fixed2 gOffset = fixed2(-0.005 * depthValue, 0.007 * depthValue);
-				fixed2 bOffset = fixed2(-0.01 * depthValue, -0.01 * depthValue) * varyingOffset * 2;
-				fragColor.r = tex2D(_MainTex, i.uv + rOffset).r;
-				fragColor.g = tex2D(_MainTex, i.uv + gOffset).g;
-				fragColor.b = tex2D(_MainTex, i.uv + bOffset).b;
+				// Only affect edges
+				if(
+					depthValue - depthValue2 > depthDiff || depthValue - depthValue2 < -depthDiff ||
+					depthValue - depthValue3 > depthDiff || depthValue - depthValue3 < -depthDiff ||
+					depthValue - depthValue4 > depthDiff || depthValue - depthValue4 < -depthDiff ||
+					depthValue - depthValue5 > depthDiff || depthValue - depthValue5 < -depthDiff
+				) {
+
+					fixed2 varyingOffset = fixed2(sin(_Time.g*0.4), cos(_Time.g*0.04)); // Moves in a circle-ish
+					// Offset the different colors in x and y
+					fixed2 rOffset = fixed2(0.007 * depthValue, -0.005 * depthValue) * varyingOffset;
+					fixed2 gOffset = fixed2(-0.005 * depthValue, 0.007 * depthValue);
+					fixed2 bOffset = fixed2(-0.01 * depthValue, -0.01 * depthValue) * varyingOffset * 2;
+					fragColor.r = tex2D(_MainTex, i.uv + rOffset).r;
+					fragColor.g = tex2D(_MainTex, i.uv + gOffset).g;
+					fragColor.b = tex2D(_MainTex, i.uv + bOffset).b;
+
+					// More extreme
+					// fixed2 varyingOffset = fixed2(sin(_Time.g*2), cos(_Time.g)); // Moves in a circle-ish
+					// // Offset the different colors in x and y
+					// fixed2 rOffset = fixed2(0.7 * depthValue, -0.5 * depthValue) * varyingOffset;
+					// fixed2 gOffset = fixed2(-0.5 * depthValue, 0.7 * depthValue) * varyingOffset;
+					// fixed2 bOffset = fixed2(-0.1 * depthValue, -0.1 * depthValue) * varyingOffset * 2;
+					// fragColor.r = tex2D(_MainTex, i.uv + rOffset).r;
+					// fragColor.g = tex2D(_MainTex, i.uv + gOffset).g;
+					// fragColor.b = tex2D(_MainTex, i.uv + bOffset).b;
+
+				}
 				// End: Chromatic Aberration
 
 				// return depth;
-				return lerp(fragColor, blurColor, pow(depthValue,2));
+				return lerp(fragColor, blurColor, pow(depthValue,2)); // Blend in more blurred color when higher depth
 				// return blurColor;
 				// return fragColor;
 			}
