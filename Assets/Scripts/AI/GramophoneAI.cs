@@ -35,7 +35,6 @@ public class GramophoneAI : EnemyAI {
     }
 
     void FixedUpdate() {
-   //     handleStartle();
         findPath();
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Walking")) {
             move();
@@ -62,63 +61,45 @@ public class GramophoneAI : EnemyAI {
             }
             musicLoudness /= musicSampleAmount;
             musicLoudness = Mathf.Clamp(musicLoudness * 100, 1, 1.9f);
-        //    float scaleLimit = 0.05f;
+            //    float scaleLimit = 0.05f;
             Vector3 newScale = Vector3.one * musicLoudness;
-          //  if (Mathf.Abs(newScale.magnitude - head.localScale.magnitude) > scaleLimit) {
+            //  if (Mathf.Abs(newScale.magnitude - head.localScale.magnitude) > scaleLimit) {
             //    newScale = (newScale.magnitude > head.localScale.magnitude) ? head.localScale + (Vector3.one * scaleLimit) : head.localScale - (Vector3.one * scaleLimit);
-           // }
+            // }
             newScale.y = 1;
             head.localScale = newScale;
         }
     }
-
-    private void handleStartle() {
-        if (isAggroed && !hasStartled) {
-            anim.SetBool("startled", true);
-            hasStartled = true;
-        } else if (!isAggroed) {
-            hasStartled = false;
-        }
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Startled")) {
-            anim.SetBool("startled", false);
-        }
-    }
+    
 
     protected override void onAggro() {
         List<MazeCell> map = currentPositionCell.room.getCells();
         movementPath = aStar(findMaxCostCell(currentPositionCell, map),map);
         anim.SetTrigger("startled");
         anim.speed = runAnimSpeed;
+        rigid.drag = 2;
     }
 
     protected override void onLoseAggro() {
         anim.speed = 1.0f;
+        rigid.drag = 10;
     }
 
     public override void move() {
         Vector3 dif, movePoint;
         Vector3 curPos = transform.position;
         float movementMultiplier = (isAggroed) ? chasingSpeedMultiplier : 1.0f;
-        rigid.drag = (isAggroed) ? 2 : 10;
-        
+      
         // Move on calculated path
-        int tilesLeft = movementPath.Count;
-        if (tilesLeft == 0) return;
-        float thresh = 0.5f;
-        movePoint = movementPath[0].transform.position;
+        movePoint = getPathTargetPoint(curPos);
         dif = movePoint - curPos;
-        dif.y = 0;
-        if (dif.magnitude < thresh) {
-            currentPositionCell = movementPath[0];
-            movementPath.RemoveAt(0);
-            if (movementPath.Count == 0) return;
-            // movementPath = tryDiagonal(movementPath);
-        }
 
         curPos.y = 0;
        // transform.Translate(curPos);
         movePoint.y = curPos.y;
-        transform.LookAt(movePoint);
+        if (dif.normalized != transform.forward) {
+            transform.LookAt(movePoint);
+        }
         rigid.AddForce( dif.normalized * movementSpeed * movementMultiplier);
        // transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
     }

@@ -17,9 +17,11 @@ public class GameManager : MonoBehaviour {
     private List<GameObject> bots;
     public GameObject Chef;
     public GameObject Gramophone;
+    public GameObject Waiter;
     public int startChefAmount = 3;
     public int startGramophoneAmount = 1;
-    private int chefAmount, gramophoneAmount;
+    public int startWaiterAmount = 1;
+    private int chefAmount, gramophoneAmount, waiterAmount;
 	private bool playerIsDead = false;
 
     public int level = 1;
@@ -28,6 +30,8 @@ public class GameManager : MonoBehaviour {
 	public delegate void PlayerState();
 	public static event PlayerState isDead;
 	public static event PlayerState isReborn;
+
+
 
     private AudioSource audioPlayer;
 
@@ -49,6 +53,7 @@ public class GameManager : MonoBehaviour {
 		player.goal = goal;
         chefAmount = startChefAmount;
         gramophoneAmount = startGramophoneAmount;
+        waiterAmount = startWaiterAmount;
 		BeginGame();
     }
 
@@ -77,6 +82,7 @@ public class GameManager : MonoBehaviour {
 
         spawnAI(Chef, chefAmount, startingCell);
         spawnAI(Gramophone, gramophoneAmount, startingCell);
+        spawnAI(Waiter, waiterAmount, startingCell);
     }
 
 	public void GenerateMaze() {
@@ -170,4 +176,5 @@ public class GameManager : MonoBehaviour {
         return null;
 
     }
+
 }

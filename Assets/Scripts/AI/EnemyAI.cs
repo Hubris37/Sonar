@@ -8,9 +8,9 @@ public abstract class EnemyAI : MonoBehaviour {
     private List<MazeCell> mazeNodes;
 
     protected bool moving = false;
-    public List<MazeCell> movementPath;
-    public MazeCell startCell;
-    public MazeCell currentPositionCell;
+    protected List<MazeCell> movementPath;
+    protected MazeCell startCell;
+    protected MazeCell currentPositionCell;
 
     [Header("Behaviour modifiers")]
     public float aggroRange = 1.0f;
@@ -18,15 +18,15 @@ public abstract class EnemyAI : MonoBehaviour {
     public int patrolMinRoomSize = 4;
     public bool patrolsRoom = true;
 
-    public Vector3 playerPos;
+    protected Vector3 playerPos;
     protected float playerNoise;
     protected Rigidbody rigid;
 
     protected GameManager gameManager;
 
-    public bool isAggroed = false;
-    public bool isInvestigating = false;
-    public bool chasingAround = false;
+    protected bool isAggroed = false;
+    //public bool isInvestigating = false;
+    protected bool chasingAround = false;
     protected Animator anim;
 
     public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
@@ -49,9 +49,9 @@ public abstract class EnemyAI : MonoBehaviour {
         if (currentPositionCell == null)
             findCurrentCell();
         startCell = currentPositionCell;
-        if (currentPositionCell.room.getCells().Count < patrolMinRoomSize) {
+    /*    if (currentPositionCell.room.getCells().Count < patrolMinRoomSize) {
             patrolsRoom = false;
-        }
+        } */
     }
 
     void OnCollisionEnter(Collision other) {
@@ -85,18 +85,18 @@ public abstract class EnemyAI : MonoBehaviour {
         playerNoise = gameManager.audioMeasure.DbValue;
     }
 
-    protected void checkAggro() {
+    protected void checkAggro(float addedRadius = 0f) {
         getPlayerInformation();
         if (!isAggroed) {
-            float detectionRadius = aggroRange + Mathf.Max(0, playerNoise);
+            float detectionRadius = aggroRange + Mathf.Max(0, playerNoise) + addedRadius;
             Vector3 dif = (playerPos - transform.position);
             dif.y = 0;
-            if (dif.magnitude < detectionRadius && !wallBetweenPlayer()) {
+            if (dif.magnitude < detectionRadius && !wallBetweenPoint(playerPos)) {
                 isAggroed = true;
                 onAggro();
             }
         }
-        else if (wallBetweenPlayer()) {
+        else if (wallBetweenPoint(playerPos)) {
             isAggroed = false;
             onLoseAggro();
             findCurrentCell();
@@ -105,13 +105,13 @@ public abstract class EnemyAI : MonoBehaviour {
     }
     
 
-    protected bool wallBetweenPlayer() {
+    protected bool wallBetweenPoint(Vector3 point) {
         Vector3 pos = transform.position;
         pos.y += 0.5f;
-        Vector3 dir = pos - playerPos;
+        Vector3 dir = pos - point;
         RaycastHit hit;
         int layerMask = 1 << 9;
-        if (Physics.Raycast(playerPos, dir.normalized, out hit, dir.magnitude, layerMask)) {
+        if (Physics.Raycast(point, dir.normalized, out hit, dir.magnitude, layerMask)) {
             // Funkar inte för grandchildren
             if (hit.transform.name == "Quad" || hit.transform.name.Contains("Door") || hit.transform.name.Contains("Gate")) {
                 return true;
@@ -284,5 +284,29 @@ public abstract class EnemyAI : MonoBehaviour {
 
     protected void setCurrentPositionCell(MazeCell c) {
         currentPositionCell = c;
+    }
+
+    protected Vector3 getPathTargetPoint(Vector3 currentPos) {
+        Vector3 dif, movePoint;
+        int tilesLeft = movementPath.Count;
+        if (tilesLeft == 0) return currentPos;
+        float thresh = 0.5f;
+        movePoint = movementPath[0].transform.position;
+        dif = movePoint - currentPos;
+        dif.y = 0;
+        if (dif.magnitude < thresh) {
+            currentPositionCell = movementPath[0];
+            movementPath.RemoveAt(0);
+            if (movementPath.Count == 0) return currentPos;
+        }
+        return movePoint;
+    }
+
+    protected void investigatePoint(Vector3 targetPoint, float aggroRadius) {
+        MazeCell targetCell = maze.GetCell(targetPoint);
+        if (!isAggroed && targetCell.room == currentPositionCell.room) {
+            movementPath = aStar(maze.GetCell(targetPoint), mazeNodes);
+            checkAggro(aggroRadius);
+        }
     }
 }

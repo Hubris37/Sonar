@@ -30,6 +30,15 @@ public class ChefAI : EnemyAI {
         audioStartle = sources[2];
     }
 
+    void OnEnable() {
+        WaiterAI.shout += investigatePoint;
+    }
+
+
+    void OnDisable() {
+        WaiterAI.shout -= investigatePoint;
+    }
+
     // Update is called once per frame
     void Update() {
         findPath();
@@ -63,22 +72,8 @@ public class ChefAI : EnemyAI {
             jumpDist *= jumpChaseMultiplier;
         }
         else {
-         /*   if (chasingAround) {
-                movementPath = pathToPlayer();
-            }*/
-            // Else, move on calculated path
-            int tilesLeft = movementPath.Count;
-            if (tilesLeft == 0) return;
-            float thresh = 0.5f;
-            movePoint = movementPath[0].transform.position;
+            movePoint = getPathTargetPoint(curPos);
             dif = movePoint - curPos;
-            dif.y = 0;
-            if (dif.magnitude < thresh) {
-                currentPositionCell = movementPath[0];
-                movementPath.RemoveAt(0);
-                if (movementPath.Count == 0) return;
-                // movementPath = tryDiagonal(movementPath);
-            }
         }
         tryGrabPlayer();
         movePoint.y = curPos.y;
