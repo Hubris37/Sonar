@@ -23,26 +23,19 @@ public class MazeDoor : MazePassage {
 	}
 	
 	void OnTriggerEnter(Collider triggerCollider) {
-	//	print (triggerCollider.gameObject.name);
 
-		if (triggerCollider.gameObject.name == "Player(Clone)" || triggerCollider.gameObject.name == "Bird(Clone)") {
+		if (triggerCollider.tag == "Player") {
 
 			cell.room.Show();
 			otherCell.room.Show();
-			//hinge.localPosition += new Vector3(0f,1f,0f);
-			//move = true;
-			//hinge.localRotation = hinge.localRotation = Quaternion.Euler(0f, -90f, 0f);
+
 		}
 	}
 
 	void OnTriggerExit(Collider triggerCollider) {
-		//print (triggerCollider.gameObject.name);
 
-		if (triggerCollider.gameObject.name == "Player(Clone)") {
+		if (triggerCollider.tag == "Player") {
 
-			//move = true;
-			//hinge.localPosition -= new Vector3(0f,1f,0f);
-			//hinge.localRotation = hinge.localRotation = Quaternion.Euler(0f, -90f, 0f);
 		}
 	}
 }
