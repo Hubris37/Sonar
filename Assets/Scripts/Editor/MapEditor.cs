@@ -11,11 +11,11 @@ public class MapEditor : Editor {
 		Maze MazeGenerator = target as Maze;
 		
 		if (DrawDefaultInspector ()) {
-			MazeGenerator.Generate(0);
+			MazeGenerator.Generate();
 		}
 
 		if(GUILayout.Button ("Generate Maze")) {
-			MazeGenerator.Generate(0);
+			MazeGenerator.Generate();
 		}
 
 	}

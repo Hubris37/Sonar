@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class Maze : MonoBehaviour {
 
-	public IntVector2 startSize;
 	public IntVector2 size;
 	[Range(1f,4f)]
 	public float cellScale;
@@ -15,8 +14,8 @@ public class Maze : MonoBehaviour {
 	public MazeRoomSettings[] roomSettings;
 
 	public IntVector2 playerCoordinates;
-	//public IntVector2 goalCoordinates;
 
+	[HeaderAttribute("Prefabs")]
     public MazeCell cellPrefab;
     public MazePassage passagePrefab;
 	public MazeWall wallPrefab;
@@ -37,7 +36,7 @@ public class Maze : MonoBehaviour {
         return cells[xCell, zCell];
     }
 
-    public void Generate (int level) {
+    public void Generate () {
 
 		string holderName = "Generated Maze";
 		if(transform.FindChild (holderName)) {
@@ -48,8 +47,8 @@ public class Maze : MonoBehaviour {
 		mapHolder.parent = transform;
 		mapHolder.localScale *= cellScale;
 
-		size.x = startSize.x + level;
-		size.z = startSize.z + level;
+		//size.x = startSize.x + level;
+		//size.z = startSize.z + level;
 		cells = new MazeCell[size.x, size.z];
 		List<MazeCell> activeCells = new List<MazeCell> ();
 		rooms = new List<MazeRoom>();

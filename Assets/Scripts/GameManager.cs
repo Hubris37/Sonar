@@ -5,9 +5,7 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour {
 
 	public FirstPersonController player;
-	CarController car;
 	GameObject goal;
-	public GameObject carPrefab;
 	public GameObject playerPrefab;
 	public GameObject goalPrefab;
 	public Maze mazePrefab;
@@ -44,11 +42,9 @@ public class GameManager : MonoBehaviour {
         audioPlayer = GetComponent<AudioSource>();
         bots = new List<GameObject>();
 		goal = Instantiate (goalPrefab);
-		
-		//Instantiate(carPrefab);
+
 		player = FindObjectOfType<FirstPersonController> ();
         audioMeasure = GameObject.Find("AudioMeasure source").GetComponent<AudioMeasure>();
-        //car = FindObjectOfType<CarController> ();
         player.OnGoalTouch += WonGame;
 		player.goal = goal;
         chefAmount = startChefAmount;
@@ -74,7 +70,6 @@ public class GameManager : MonoBehaviour {
 		player.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
 		
 		startingCell.room.Show();
-		//car.transform.position = new Vector3(pos.x, pos.y+1f, pos.z);
 
 		pos = mazeInstance.GetCell (new IntVector2 (mazeInstance.size.x - 1, mazeInstance.size.z - 1)).transform.position;
 		goal.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
@@ -88,7 +83,9 @@ public class GameManager : MonoBehaviour {
 	public void GenerateMaze() {
 		mazeInstance = Instantiate (mazePrefab) as Maze;
 		mazeInstance.playerCoordinates = startingCoordinates;
-		mazeInstance.Generate(level);
+        mazeInstance.size.x += level;
+        mazeInstance.size.z += level;
+		mazeInstance.Generate();
 
 	}
 
