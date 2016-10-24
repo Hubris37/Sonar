@@ -23,16 +23,14 @@ public class MazeGatePitch : MazeDoor {
 	Vector3 keyStandardPos;
 	Vector3 keyTargetPos;
 
-	AudioSource Unlock;
+	public AudioClip unlockSound;
 
-	// Use this for initialization
 	void Start () {
 		FireSoundWave.onBlastHit += RecieveForce;
 		pitchPoint = Random.Range(lowestPoint,800);
 		keyGoal.localPosition += new Vector3(0f,pitchPoint*pitchMultiplier,0f);
 		keyStandardPos = key.localPosition;
 		keyTargetPos = keyStandardPos;
-		Unlock = GetComponent<AudioSource>();
 		/*startPos = hinge.localPosition;
 		endPos = startPos + new Vector3(0f,1f,0f);
 		startRot = hinge.localRotation;
@@ -63,23 +61,13 @@ public class MazeGatePitch : MazeDoor {
 		key.localPosition = Vector3.MoveTowards(key.localPosition,keyTargetPos,Time.deltaTime);
 	}
 
-	void OnTriggerEnter(Collider triggerCollider) {
-
-		if (triggerCollider.gameObject.name == "Player(Clone)" || triggerCollider.gameObject.name == "Bird(Clone)") {
-			cell.room.Show();
-			otherCell.room.Show();
-		}
-	}
-
 	void RecieveForce(Vector3 hitPos, float pitchVal, float dbVal) {
 		Vector3 myPos = transform.position;
 		Vector3 heading = (myPos - hitPos);
 		float dist = heading.sqrMagnitude;
-		//Vector3 dir = heading / dist; never used
 		if(percentTowardsGoal != 1){
 			//if(!move){
 			if(dist < 20) {
-				//Debug.Log(pitchVal);
 				if(pitchVal < pitchPoint+pitchThreshold && pitchVal > pitchPoint-pitchThreshold) {
 					percentTowardsGoal += 0.25f;
 				}
@@ -89,7 +77,7 @@ public class MazeGatePitch : MazeDoor {
 			if(percentTowardsGoal >= 1) {
 				percentTowardsGoal = 1;
 				move = true;
-				Unlock.Play();
+				AudioManager.instance.PlaySound(unlockSound,transform.position);
 				keyTargetPos = keyGoal.localPosition;
 			}
 			//}
