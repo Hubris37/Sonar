@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-Shader "Custom/Echolocation" {
+﻿Shader "Custom/Echolocation" {
 	Properties {
 		_DefaultColor("Default Color", Color) = (0, 0, 0, 0)
 		_EdgeWidth("Circle Edge Width", Range(0.0, 0.5)) = 0.15
@@ -16,42 +14,11 @@ Shader "Custom/Echolocation" {
 
 		// https://docs.unity3d.com/Manual/SL-CullAndDepth.html
 		// extra pass that renders to depth buffer only
-		Pass {
-			Name "ShadowCaster"
-			ZWrite On
-			ColorMask 0
-		}
-
 		// Pass {
-		// 	Blend SrcAlpha OneMinusSrcAlpha
-		// 	ZWrite Off
-        //     CGPROGRAM
-
-        //     #pragma vertex vert
-        //     #pragma fragment frag
-        //     #include "UnityCG.cginc"
-
-		// 	struct v2f {
-		// 		float2 uv : TEXCOORD0;
-		// 		float4 pos : SV_POSITION;
-		// 	};
-
-        //     sampler2D _CameraDepthTexture;
-		// 	v2f vert( appdata_img v )
-		// 	{
-		// 		v2f o;
-		// 		o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
-		// 		o.uv =  v.texcoord;
-		// 		return o;
-		// 	}    
-			
-		// 	half4 frag (v2f i) : COLOR
-		// 	{      
-		// 		half4 depth = tex2D(_CameraDepthTexture, i.uv);
-		// 		return depth;
-		// 	}
-        //     ENDCG
-        // }
+		// 	Name "ShadowCaster"
+		// 	ZWrite On
+		// 	ColorMask 0
+		// }
 
 		// Show depth in gray scale
 		// Pass {
@@ -112,15 +79,19 @@ Shader "Custom/Echolocation" {
 			float _UseDepth;	
 			int _NumCircles = 0;
 
+			sampler2D _NormalMap;
+			float4 _NormalMap_ST;
+
 			struct v2f {
 				float3 worldPos : TEXCOORD0;
+
 				// these three vectors will hold a 3x3 rotation matrix
 				// that transforms from tangent to world space
 				half3 tspace0 : TEXCOORD1; // tangent.x, bitangent.x, normal.x
 				half3 tspace1 : TEXCOORD2; // tangent.y, bitangent.y, normal.y
 				half3 tspace2 : TEXCOORD3; // tangent.z, bitangent.z, normal.z
-				// texture coordinate for the normal map
-				float2 uv : TEXCOORD4;
+
+				float2 uv : TEXCOORD4; // texture coordinate for the normal map
 				float depth: DEPTH;
 				float4 pos : SV_POSITION;
 			};
@@ -139,13 +110,10 @@ Shader "Custom/Echolocation" {
 				o.tspace0 = half3(wTangent.x, wBitangent.x, wNormal.x);
 				o.tspace1 = half3(wTangent.y, wBitangent.y, wNormal.y);
 				o.tspace2 = half3(wTangent.z, wBitangent.z, wNormal.z);
-				o.uv = uv;
+				o.uv = TRANSFORM_TEX(uv, _NormalMap);
 				o.depth = -mul(UNITY_MATRIX_MV, vertex).z * _ProjectionParams.w;;
 				return o;
 			}
-
-			sampler2D _NormalMap;
-			sampler2D _CameraDepthTexture;
 
 			fixed4 frag(v2f i) : SV_Target {
 				half3 tnormal;
@@ -153,22 +121,22 @@ Shader "Custom/Echolocation" {
 
 				float invDepth = 1-i.depth;
 
-				half3 worldViewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
-				half3 worldRefl = reflect(-worldViewDir, worldNormal);
+				// half3 worldViewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
+				// half3 worldRefl = reflect(-worldViewDir, worldNormal);
 				// half3 refractDir = -refract(normalize(i.worldPos-_WorldSpaceCameraPos), worldNormal, .5);
 
 				fixed4 finalColor = fixed4(_DefaultColor.rgb, _WallO);
 				float bestAlpha = 0.1;
-				//finalColor.a = 0;
+
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
 					float val;
 
 					// Used for wavy effect
-					val = step(dist, _Radius[j]) * step(_Radius[j] - _EdgeWidth*2, dist); // Hollow circle
-					//i.uv.x += _Radius[j]*1/dist*_DistortScale;
-					i.uv.x += sin(10*(i.uv.x+i.uv.y)*dist*1/_Radius[j] + _Time.g)*_DistortScale;
-					//i.uv.y += val * sin((i.uv.x-i.uv.y)*dist + _Time.g*_Frequency[j]*.2)*_DistortScale*2;
+					val = step(dist, _Radius[j]) * step(_Radius[j] - _EdgeWidth*6, dist); // Hollow circle
+					i.uv.x += val * sin( (i.uv.x+i.uv.y)*dist + _Time.y ) * _DistortScale;
+					// i.uv.x += sin(10*(i.uv.x+i.uv.y)*dist*1/_Radius[j] + _Time.y)*_DistortScale;
+					i.uv.y += val * sin( (i.uv.x-i.uv.y)*dist + _Time.x*_Frequency[j] ) * _DistortScale*2;
 					// END Used for wavy effect
 
 					// sample the normal map, and decode from the Unity encoding
@@ -177,7 +145,6 @@ Shader "Custom/Echolocation" {
 					worldNormal.x = dot(i.tspace0, tnormal);
 					worldNormal.y = dot(i.tspace1, tnormal);
 					worldNormal.z = dot(i.tspace2, tnormal);
-
 
 					// Create circle
 					// val += (1 - step(dist, _Radius[j] - _EdgeWidth) * 0.5) * step(dist, _Radius[j]);
@@ -190,7 +157,6 @@ Shader "Custom/Echolocation" {
 					float bump = (_UseNormalMap==1) ? max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) : 1;
 
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val * _Color[j].rgb * bump;
-
 					
 					//finalColor.a += 0.05 + _MaxRadius[j]/200 * (1 - _Radius[j]/_MaxRadius[j]) * val;
 
