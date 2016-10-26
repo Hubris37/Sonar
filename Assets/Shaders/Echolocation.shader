@@ -6,7 +6,7 @@
 		_WallO("Wall Opacity", Range(0.00,1)) = 1.0
 		[MaterialToggle] _UseNormalMap("Use Normal Map", Float) = 0
 		_NormalMap ("Normal Map", 2D) = "bump" {}
-		[MaterialToggle] _UseDepth("Use Depth Map", Float) = 1
+		// [MaterialToggle] _UseDepth("Use Depth Map", Float) = 1
 	}
 
 	SubShader {
@@ -76,7 +76,7 @@
 			float _DistortScale; // Amplitude of bump map distortion
 			float _WallO; // Wall Opacity	
 			float _UseNormalMap;
-			float _UseDepth;	
+			// float _UseDepth;	
 			int _NumCircles = 0;
 
 			sampler2D _NormalMap;
@@ -118,6 +118,7 @@
 			fixed4 frag(v2f i) : SV_Target {
 				half3 tnormal;
 				half3 worldNormal;
+				float3 toCam = normalize(_WorldSpaceCameraPos - i.worldPos);
 
 				float invDepth = 1-i.depth;
 
@@ -127,6 +128,7 @@
 
 				fixed4 finalColor = fixed4(_DefaultColor.rgb, _WallO);
 				float bestAlpha = 0.1;
+				float nonNormalMapGain = 8 - _UseNormalMap*7;
 
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
@@ -147,37 +149,47 @@
 					worldNormal.z = dot(i.tspace2, tnormal);
 
 					// Create circle
-					// val += (1 - step(dist, _Radius[j] - _EdgeWidth) * 0.5) * step(dist, _Radius[j]);
-					float weight = clamp(dist/_Radius[j], 0, 1);
+					float weight = saturate(dist/_Radius[j]);
 					val = step(dist - _EdgeWidth*2, _Radius[j]) * lerp(3, 0, weight) * step(_Radius[j] - _EdgeWidth*2, dist);
 					val += step(dist - _EdgeWidth*2, _Radius[j]) * lerp(0, 3, weight) * step(dist, _Radius[j] - _EdgeWidth*2);
 
-					// val = step(dist, _Radius[j]) * lerp(5, 0, dist/_Radius[j]);
-
-					float bump = (_UseNormalMap==1) ? max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) : 1;
-
-					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val * _Color[j].rgb * bump;
+					// Vectors used to calculate how the light should shine, and for bump maps
+					float3 normalMod = float3(0, 1 + sin(_Time.y)*(1-_Radius[j]/_MaxRadius[j]), 0); // Fun stuff to make the lights move up and down
+					float3 toLight = normalize(_Center[j]+normalMod - _WorldSpaceCameraPos);
+					float3 halfway = normalize(toCam + toLight); // Halfway vector between toCam and toLight 
 					
-					//finalColor.a += 0.05 + _MaxRadius[j]/200 * (1 - _Radius[j]/_MaxRadius[j]) * val;
+					// Calculate some bumps
+					float bump = pow(max(0.0, dot(halfway, worldNormal)), 10.0) * nonNormalMapGain;
+					float bump2 = max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) * 0.3 * nonNormalMapGain; // Bump map not depending on circle center
+
+					// Ambient, Specular and Diffuse calculation
+					float attenuation = 1.0 / (1.0 + 1/_MaxRadius[j] * pow(dist, 2)); // Intensity gets weaker by distance and stronger by higher _MaxRadius
+
+					float3 ambient = _DefaultColor.rgb + _Color[j];
+
+					float specularCoefficient = pow(max(0.0, dot(halfway, worldNormal)), 32.0);
+					float3 specular = specularCoefficient * _Color[j].rgb;
+
+					float diffuseCoefficient = max(0.0, dot(worldNormal, toLight));
+					float3 diffuse = diffuseCoefficient * _Color[j].rgb;
+
+					// Combine the components
+					float3 color = ambient + attenuation * (diffuse + specular);
+					
+					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val * color * bump;
+					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val * color * bump2; // Add color from the bump map not depending on circle center
 
 					float curAlpha = 0.1 + _MaxRadius[j]/60 * (1 - _Radius[j]/_MaxRadius[j]) * val;
-					if(curAlpha > bestAlpha)
-						bestAlpha = curAlpha;
+					bestAlpha = max(bestAlpha,curAlpha);
 				}
 
 				finalColor.a = bestAlpha;
-				
-				if(_UseDepth)
-					return fixed4(finalColor.rgb * invDepth, finalColor.a);
-				else
-					return fixed4(finalColor.rgb, finalColor.a);
+
+				return fixed4(finalColor.rgb * invDepth, finalColor.a);
 			}
 			ENDCG
 		}
-		
-		// Pass {
 
-		// }
 	}
 	FallBack "Diffuse"
 }
