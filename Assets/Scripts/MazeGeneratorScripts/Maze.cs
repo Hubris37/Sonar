@@ -8,7 +8,7 @@ public class Maze : MonoBehaviour {
 	[Range(1f,4f)]
 	public float cellScale;
 	public int seed;
-	public bool hideRooms = true;
+	public bool useShaderMaterials = true;
 
     private MazeCell[,] cells;
 	private List<MazeRoom> rooms = new List<MazeRoom>();
@@ -44,13 +44,8 @@ public class Maze : MonoBehaviour {
 		Random.InitState (seed);
 
 		string holderName = "Generated Maze";
-		if(transform.FindChild (holderName) && !Application.isPlaying) {
-			Debug.Log ("Found Former Maze");
-//			if (!Application.isPlaying) {
-				DestroyImmediate (transform.FindChild (holderName).gameObject);
-//			} else {
-//				Destroy (transform.GetChild (0).gameObject);
-//			}
+		if(transform.FindChild (holderName)) {
+			DestroyImmediate (transform.FindChild (holderName).gameObject);
 		}
 
 		Transform mapHolder = new GameObject (holderName).transform;
@@ -60,13 +55,17 @@ public class Maze : MonoBehaviour {
 		cells = new MazeCell[size.x, size.z];
 		List<MazeCell> activeCells = new List<MazeCell> ();
 		rooms = new List<MazeRoom>();
+
+		if (Application.isPlaying) {
+			useShaderMaterials = true;
+		}
 		
 		DoFirstGenerationStep (activeCells, mapHolder);
 		while (activeCells.Count > 0) {
 			DoNextGenerationStep (activeCells, mapHolder);
 		}
 
-		if(hideRooms) {
+		if(Application.isPlaying) {
 			for (int i = 0; i < rooms.Count; i++) {
 				rooms[i].Hide();
 			}
@@ -76,7 +75,7 @@ public class Maze : MonoBehaviour {
 
 	private void DoFirstGenerationStep (List<MazeCell> activeCells, Transform mapHolder) {
 		MazeCell newCell = CreateCell(RandomCoordinates, mapHolder);
-		newCell.Initialize(CreateRoom(-1),false);
+		newCell.Initialize(CreateRoom(-1),false, useShaderMaterials);
 		activeCells.Add(newCell);
 	}
 
@@ -122,10 +121,10 @@ public class Maze : MonoBehaviour {
         passage.Initialize(cell, otherCell, direction);
         passage = Instantiate(prefab) as MazePassage;
 		if (passage is MazeDoor) {
-			otherCell.Initialize(CreateRoom(cell.room.settingsIndex),false);
+			otherCell.Initialize(CreateRoom(cell.room.settingsIndex),false,useShaderMaterials);
 		}
 		else {
-			otherCell.Initialize(cell.room,createDecor);
+			otherCell.Initialize(cell.room,createDecor,useShaderMaterials);
 		}
         passage.Initialize(otherCell, cell, direction.GetOpposite());
     }
@@ -146,7 +145,7 @@ public class Maze : MonoBehaviour {
     private void CreateWall(MazeCell cell, MazeCell otherCell, MazeDirection direction)
     {
 		MazeWall wall = Instantiate(wallPrefab) as MazeWall;
-        wall.Initialize(cell, otherCell, direction);
+		wall.Initialize(cell, otherCell, direction);
 		
 		bool createDecor = Random.value < cell.room.settings.decorProbability ? true : false;
 		if (createDecor && cell.room.settings.WallDecor.Length > 0){
@@ -159,7 +158,7 @@ public class Maze : MonoBehaviour {
             wall = Instantiate(wallPrefab) as MazeWall;
             cell.wallBetween.Add(otherCell);
             otherCell.wallBetween.Add(cell);
-            wall.Initialize(otherCell, cell, direction.GetOpposite());
+			wall.Initialize(otherCell, cell, direction.GetOpposite());
         }
     }
 
@@ -171,7 +170,6 @@ public class Maze : MonoBehaviour {
 		newCell.name = "Maze Cell" + coordinates.x + ", " + coordinates.z;
 		newCell.transform.parent = mapHolder.transform;
 		newCell.transform.localScale *= cellScale;
-		//newCell.transform.localPosition = new Vector3(coordinates.x - size.x + 0.5f, 0f, coordinates.z - size.z + 0.5f);
 		newCell.transform.localPosition = 
 			new Vector3(coordinates.x - size.x / 2f + 0.5f, 0f, coordinates.z - size.z / 2f + 0.5f);
 

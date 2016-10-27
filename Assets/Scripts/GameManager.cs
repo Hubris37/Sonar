@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour {
 	GameObject goal;
 	public GameObject playerPrefab;
 	public GameObject goalPrefab;
-	public Maze mazePrefab;
 	private Maze mazeInstance;
     public AudioMeasure audioMeasure;
 
@@ -36,7 +35,7 @@ public class GameManager : MonoBehaviour {
     private AudioSource audioPlayer;
 
 	private void Awake () {
-		
+		mazeInstance = FindObjectOfType<Maze> ();
 		Instantiate(playerPrefab);
 	}
 
@@ -46,7 +45,6 @@ public class GameManager : MonoBehaviour {
         audioPlayer = GetComponent<AudioSource>();
         bots = new List<GameObject>();
 		goal = Instantiate (goalPrefab);
-		mazeInstance = Instantiate (mazePrefab) as Maze;
 
 		player = FindObjectOfType<FirstPersonController> ();
         audioMeasure = GameObject.Find("AudioMeasure source").GetComponent<AudioMeasure>();

@@ -29,14 +29,16 @@ public class MazeCell : MonoBehaviour {
         return neighbours;
     }
 
-    public void Initialize(MazeRoom room, bool decoration) {
+	public void Initialize(MazeRoom room, bool decoration, bool useShaderMaterials) {
         room.Add(this);
         if (decoration && room.settings.Decor.Length > 0){
             decor = Instantiate(room.settings.Decor[Random.Range(0,room.settings.Decor.Length)],transform.position,Quaternion.identity) as GameObject;
             decor.transform.parent = transform;
             AISpawnable = false;
         }
-        transform.GetChild(0).GetComponent<Renderer>().material = room.settings.floorMaterial;
+		if(useShaderMaterials) {
+        	transform.GetChild(0).GetComponent<Renderer>().material = room.settings.floorMaterial;
+		}
     }
 
     public void SetEdge(MazeDirection direction, MazeCellEdge edge) {
