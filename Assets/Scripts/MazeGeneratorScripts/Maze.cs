@@ -35,13 +35,22 @@ public class Maze : MonoBehaviour {
         return cells[xCell, zCell];
     }
 
+	public void DestroyMaze () {
+		Destroy (transform.GetChild (0).gameObject);
+	}
+
     public void Generate () {
 
 		Random.InitState (seed);
 
 		string holderName = "Generated Maze";
-		if(transform.FindChild (holderName)) {
-			DestroyImmediate(transform.FindChild(holderName).gameObject);
+		if(transform.FindChild (holderName) && !Application.isPlaying) {
+			Debug.Log ("Found Former Maze");
+//			if (!Application.isPlaying) {
+				DestroyImmediate (transform.FindChild (holderName).gameObject);
+//			} else {
+//				Destroy (transform.GetChild (0).gameObject);
+//			}
 		}
 
 		Transform mapHolder = new GameObject (holderName).transform;

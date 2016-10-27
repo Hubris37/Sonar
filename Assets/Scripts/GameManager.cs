@@ -22,7 +22,9 @@ public class GameManager : MonoBehaviour {
     private int chefAmount, gramophoneAmount, waiterAmount;
 	private bool playerIsDead = false;
 
-    public int level = 1;
+	public int startingLevel = 0;
+	int level;
+	public IntVector2 startingSize;
 	private IntVector2 startingCoordinates;
 
 	public delegate void PlayerState();
@@ -34,14 +36,17 @@ public class GameManager : MonoBehaviour {
     private AudioSource audioPlayer;
 
 	private void Awake () {
+		
 		Instantiate(playerPrefab);
 	}
 
 	private void Start () {
+		level = startingLevel;
 		startingCoordinates = new IntVector2(0, 0);
         audioPlayer = GetComponent<AudioSource>();
         bots = new List<GameObject>();
 		goal = Instantiate (goalPrefab);
+		mazeInstance = Instantiate (mazePrefab) as Maze;
 
 		player = FindObjectOfType<FirstPersonController> ();
         audioMeasure = GameObject.Find("AudioMeasure source").GetComponent<AudioMeasure>();
@@ -81,17 +86,15 @@ public class GameManager : MonoBehaviour {
     }
 
 	public void GenerateMaze() {
-		mazeInstance = Instantiate (mazePrefab) as Maze;
 		mazeInstance.playerCoordinates = startingCoordinates;
-        mazeInstance.size.x += level;
-        mazeInstance.size.z += level;
+		mazeInstance.size.x = startingSize.x + level;
+		mazeInstance.size.z = startingSize.z + level;
 		mazeInstance.Generate();
-
 	}
 
 	private void RestartGame () {
-        destroyLevel();
-        level = 1;
+        DestroyLevel();
+		level = startingLevel;
         chefAmount = startChefAmount;
 		BeginGame ();
 		isReborn();
@@ -99,8 +102,8 @@ public class GameManager : MonoBehaviour {
 		playerIsDead = false;
 	}
 
-    private void destroyLevel() {
-        Destroy(mazeInstance.gameObject);
+    private void DestroyLevel() {
+		mazeInstance.DestroyMaze ();
         foreach (GameObject bot in bots) {
             Destroy(bot);
         }
@@ -108,7 +111,7 @@ public class GameManager : MonoBehaviour {
     }
 
 	private void WonGame() {
-		destroyLevel();
+		DestroyLevel();
 		level++;
         chefAmount++;
 		BeginGame ();
