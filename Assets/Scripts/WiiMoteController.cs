@@ -12,21 +12,25 @@ public class WiiMoteController : MonoBehaviour {
 	static bool[] leds6 = new bool[4] { true, true, true, false };
 	static bool[] leds7 = new bool[4] { true, true, true, true };
 	static bool[] leds8 = new bool[4] { false, true, false, false };
-
 	static bool[][] ledsList = new bool[][] { leds1, leds2, leds3, leds4, leds5, leds6, leds7, leds8 };
 
-	int ledCount = 0;
-	bool blink = false;
-	float prevTime = 0;
-	List<float> prevSoundTimes = new List<float>();
-	List<GameObject> faces = new List<GameObject>();
-	List<float> pitches = new List<float>();
-
+	public bool blink = false;
 	public float basePitch = 200;
 	public float audioLevel = 0.5f;
 	public Camera cam;
+	public GameObject facePrefab;
+	public GameObject projectilePrefab;
 
+	protected FirstPersonController player;
+
+	private int ledCount = 0;
+	private float prevTime = 0;
+	private List<float> prevSoundTimes = new List<float>();
+	private List<GameObject> faces = new List<GameObject>();
+	private List<float> pitches = new List<float>();
 	private Vector3 screenPoint;
+	private GameObject[] projectiles = new GameObject[100];
+	private int projectileNum = 0;
 
 	public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
 	public static event SoundBlastHit onBlastHit;
@@ -36,6 +40,20 @@ public class WiiMoteController : MonoBehaviour {
 		if(cam == null) {
 			cam = Camera.main;
 		}
+		player = FindObjectOfType<FirstPersonController>();
+
+		Vector3 pScale = new Vector3(0.7f,0.7f,0.7f);
+		for(int i = 0; i < projectiles.Length; ++i) {
+			GameObject p = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			// GameObject p = Instantiate(projectilePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+			p.transform.localScale = pScale;
+			p.AddComponent<AddForce>();
+			p.transform.position = new Vector3(50*i, -1000, 0);;
+			Rigidbody pRB = p.AddComponent<Rigidbody>();
+			pRB.mass = 0.15f;
+			projectiles[i] = p;
+		}
+
 		InitWiimotes();
 	}
 	
@@ -49,13 +67,15 @@ public class WiiMoteController : MonoBehaviour {
 			} while (ret > 0); // ReadWiimoteData() returns 0 when nothing is left to read.  So by doing this we continue to
 									// update the Wiimote until it is "up to date."
 
+			faces[i].transform.LookAt(player.transform.position);
+
 			screenPoint = cam.WorldToScreenPoint(faces[i].transform.position);
 
 			float[] pointer = remote.Ir.GetPointingPosition();
 			if(pointer[0] > 0 && pointer[1] > 0) {
 				Vector3 curScreenPoint = new Vector3(pointer[0]*Screen.width, pointer[1]*Screen.height, screenPoint.z);
 				Vector3 curPosition = cam.ScreenToWorldPoint(curScreenPoint);
-				faces[i].transform.position = new Vector3(curPosition.x, 5f, curPosition.z);
+				faces[i].transform.position = new Vector3(curPosition.x, 2f, curPosition.z);
 
 
 
@@ -72,40 +92,39 @@ public class WiiMoteController : MonoBehaviour {
 				// 	Mathf.Clamp(transform.position.z + (pointer[1]-.5f), -5, 5)
 				// 	);
 
-				if(Time.time - prevSoundTimes[i] > 0.5f && remote.Button.a) {
+				if(Time.time - prevSoundTimes[i] > 0.1f && remote.Button.a) {
 					prevSoundTimes[i] = Time.time;
 
-					// Create spheres
-					// GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-					// sphere.transform.position = faces[i].transform.position;
-					// sphere.transform.localScale = new Vector3(0.7f,0.7f,0.7f);
-					// Rigidbody sphereRB = sphere.AddComponent<Rigidbody>();
-					// sphereRB.mass = 15;
+					// Create projectiles
+					GameObject p = projectiles[projectileNum];
+					p.transform.position = faces[i].transform.position;
+					Rigidbody pRB = p.GetComponent<Rigidbody>();
+					pRB.velocity = Vector3.zero;
+					pRB.AddForce(faces[i].transform.forward * 256);
 
+					projectileNum = (projectileNum+1) % projectiles.Length;
+
+					// Create sound
 					RaycastHit hit;
-					if (Physics.Raycast(faces[i].transform.position, Vector3.down, out hit, 20)) {
+					if (Physics.Raycast(faces[i].transform.position, faces[i].transform.forward, out hit, 20)) {
 						onBlastHit(hit.point, pitches[i], audioLevel);
 					}
 				}
 			}
-			++i;
-		}
 
-		// Changing LEDs in a fun pattern: (*-*-) <-> (-*-*) 
-		if(blink) {
-			if(Time.time - prevTime > .5f) {
-				prevTime = Time.time;
-				ledCount += 1;
-				foreach(Wiimote remote in WiimoteManager.Wiimotes) {
+			// Changing LEDs in a fun pattern: (*-*-) <-> (-*-*) 
+			if(blink) {
+				if(Time.time - prevTime > .5f) {
+					prevTime = Time.time;
+					ledCount += 1;
 					int a = (ledCount+1)%2;
 					int b = (ledCount+0)%2;
 					int c = (ledCount+1)%2;
 					int d = (ledCount+0)%2;
 					remote.SendPlayerLED(leds1[a], leds1[b], leds1[c], leds1[d]);
 				}
-			} else {
-
 			}
+			++i;
 		}
 	}
 
@@ -119,12 +138,11 @@ public class WiiMoteController : MonoBehaviour {
 		int i = 0;
 		foreach(Wiimote remote in WiimoteManager.Wiimotes) {
 			SetWiimoteLeds(remote, i);
-
 			remote.SetupIRCamera(IRDataType.BASIC); // Basic IR dot position data
-			prevSoundTimes.Add(0);
-			faces.Add(GameObject.CreatePrimitive(PrimitiveType.Sphere));
+			GameObject face = Instantiate(facePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+			faces.Add(face);
 			pitches.Add(basePitch + i*500);
-
+			prevSoundTimes.Add(0);
 			++i;
 		}
 	}

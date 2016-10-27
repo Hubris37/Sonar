@@ -4,9 +4,8 @@
 		_EdgeWidth("Circle Edge Width", Range(0.0, 0.5)) = 0.15
 		_DistortScale("Distort Scale", range(0.005, 0.1)) = 0.01
 		_WallO("Wall Opacity", Range(0.00,1)) = 1.0
-		[MaterialToggle] _UseNormalMap("Use Normal Map", Float) = 0
 		_NormalMap ("Normal Map", 2D) = "bump" {}
-		// [MaterialToggle] _UseDepth("Use Depth Map", Float) = 1
+		[MaterialToggle] _UseDepth("Use Depth Map", Float) = 1
 	}
 
 	SubShader {
@@ -75,8 +74,8 @@
 			float _EdgeWidth; // Circle Edge Width
 			float _DistortScale; // Amplitude of bump map distortion
 			float _WallO; // Wall Opacity	
-			float _UseNormalMap;
-			// float _UseDepth;	
+			// float _UseNormalMap;
+			float _UseDepth;	
 			int _NumCircles = 0;
 
 			sampler2D _NormalMap;
@@ -128,7 +127,6 @@
 
 				fixed4 finalColor = fixed4(_DefaultColor.rgb, _WallO);
 				float bestAlpha = 0.1;
-				float nonNormalMapGain = 8 - _UseNormalMap*7;
 
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
@@ -159,8 +157,8 @@
 					float3 halfway = normalize(toCam + toLight); // Halfway vector between toCam and toLight 
 					
 					// Calculate some bumps
-					float bump = pow(max(0.0, dot(halfway, worldNormal)), 10.0) * nonNormalMapGain;
-					float bump2 = max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) * 0.3 * nonNormalMapGain; // Bump map not depending on circle center
+					float bump = pow(max(0.0, dot(halfway, worldNormal)), 10.0);
+					float bump2 = max(0.0, dot(worldNormal, normalize(_WorldSpaceCameraPos-i.worldPos))) * 0.3; // Bump map not depending on circle center
 
 					// Ambient, Specular and Diffuse calculation
 					float attenuation = 1.0 / (1.0 + 1/_MaxRadius[j] * pow(dist, 2)); // Intensity gets weaker by distance and stronger by higher _MaxRadius
@@ -185,7 +183,10 @@
 
 				finalColor.a = bestAlpha;
 
-				return fixed4(finalColor.rgb * invDepth, finalColor.a);
+				if(_UseDepth)
+					return fixed4(finalColor.rgb * invDepth, finalColor.a);
+				else
+					return fixed4(finalColor.rgb, finalColor.a);
 			}
 			ENDCG
 		}
