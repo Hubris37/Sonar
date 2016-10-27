@@ -8,8 +8,8 @@ public class OverviewCameraScript : MonoBehaviour {
 	public FirstPersonController player;
 
 	public bool rotate = true;
-	[RangeAttribute(1,100)]
 	public float rotationSpeed = 3;
+	public float moveSpeed = 4;
 	[RangeAttribute(1,100)]
 	public float radius = 5;
 	private Vector3 rotationPoint;
@@ -33,22 +33,19 @@ public class OverviewCameraScript : MonoBehaviour {
 		// for(int i = 0; i < colorsArray.Length; i++) {
 		// 	colorsArray[i] = Color.HSVToRGB(.2f, 0.9f, .8f);;
 		// }
-		transform.position = (transform.position - rotationPoint).normalized * radius + rotationPoint;
+		//transform.position = (transform.position - rotationPoint).normalized * radius + rotationPoint;
 	}
 
 	void Awake() {
 		//transform.position = player.transform.position + new Vector3(0,10f,0);
 	}
-	
-	
-	// Update is called once per frame
+
 	void FixedUpdate() {
-		//
 		rotationPoint = player.transform.position;
 		transform.RotateAround(rotationPoint, Vector3.up, rotationSpeed * Time.deltaTime);
 		//transform.position = (transform.position - rotationPoint).normalized * radius + rotationPoint;
 		Vector3 desiredPosition = (transform.position - rotationPoint).normalized * radius + rotationPoint;
-        transform.position = Vector3.MoveTowards(transform.position, desiredPosition, Time.deltaTime * rotationSpeed);
+        transform.position = Vector3.MoveTowards(transform.position, desiredPosition, Time.deltaTime * moveSpeed);
 	}
 
 	void OnPreRender() {
