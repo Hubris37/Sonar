@@ -7,6 +7,7 @@ public class Maze : MonoBehaviour {
 	public IntVector2 size;
 	[Range(1f,4f)]
 	public float cellScale;
+	public int seed;
 	public bool hideRooms = true;
 
     private MazeCell[,] cells;
@@ -31,12 +32,12 @@ public class Maze : MonoBehaviour {
     public MazeCell GetCell(Vector3 worldPosition) {
 		int xCell = Mathf.FloorToInt(worldPosition.x / cellScale + size.x/2f - 0.5f);
 		int zCell = Mathf.FloorToInt(worldPosition.z / cellScale + size.z/2f - 0.5f);
-        //int xC = Mathf.FloorToInt(worldPosition.x / 4) + size.x;
-        //int zC = Mathf.FloorToInt(worldPosition.z / 4) + size.z;
         return cells[xCell, zCell];
     }
 
     public void Generate () {
+
+		Random.InitState (seed);
 
 		string holderName = "Generated Maze";
 		if(transform.FindChild (holderName)) {
@@ -47,8 +48,6 @@ public class Maze : MonoBehaviour {
 		mapHolder.parent = transform;
 		mapHolder.localScale *= cellScale;
 
-		//size.x = startSize.x + level;
-		//size.z = startSize.z + level;
 		cells = new MazeCell[size.x, size.z];
 		List<MazeCell> activeCells = new List<MazeCell> ();
 		rooms = new List<MazeRoom>();
