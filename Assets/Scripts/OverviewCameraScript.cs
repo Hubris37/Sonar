@@ -11,7 +11,7 @@ public class OverviewCameraScript : MonoBehaviour {
 	public float rotationSpeed = 3;
 	public float moveSpeed = 4;
 	[RangeAttribute(1,100)]
-	public float radius = 5;
+	public float radius = 30;
 	private Vector3 rotationPoint;
 
 	private const int MAX_CIRCLES = 120; // Maximum circles allowed at once
@@ -28,7 +28,7 @@ public class OverviewCameraScript : MonoBehaviour {
 
 		player = FindObjectOfType<FirstPersonController> ();
 
-		rotationPoint = new Vector3(-24, 0, -24);
+		rotationPoint = new Vector3(0, 0, 0);
 
 		// for(int i = 0; i < colorsArray.Length; i++) {
 		// 	colorsArray[i] = Color.HSVToRGB(.2f, 0.9f, .8f);;
