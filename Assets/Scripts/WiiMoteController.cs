@@ -45,6 +45,7 @@ public class WiiMoteController : MonoBehaviour {
 		Vector3 pScale = new Vector3(0.7f,0.7f,0.7f);
 		for(int i = 0; i < projectiles.Length; ++i) {
 			GameObject p = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			p.transform.parent = gameObject.transform;
 			// GameObject p = Instantiate(projectilePrefab, Vector3.zero, Quaternion.identity) as GameObject;
 			p.transform.localScale = pScale;
 			p.AddComponent<AddForce>();
