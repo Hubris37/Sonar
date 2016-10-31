@@ -5,7 +5,7 @@ public class TutorialManager : MonoBehaviour {
 
 	public IntroTutorial tutorialSign1;
 	public bool playTutorial1 = true;
-	public SoundTutorial tutorialSign2;
+	public SoundTutorial2 tutorialSign2;
 	public bool playTutorial2 = true;
 
 	// Use this for initialization

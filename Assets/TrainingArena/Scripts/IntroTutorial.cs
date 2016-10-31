@@ -25,6 +25,7 @@ public class IntroTutorial : MonoBehaviour
 	// Plays the turorial in the right order.
 	public IEnumerator StartTutorial()
 	{
+		Debug.Log("Hej");
 		// Intro
 		yield return StartCoroutine(typer.TypeMessage(0));
 		yield return StartCoroutine(WaitForButtonPress());

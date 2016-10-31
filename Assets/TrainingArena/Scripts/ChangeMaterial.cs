@@ -13,7 +13,7 @@ public class ChangeMaterial : MonoBehaviour
 		lightController.LightsAreOut += SwapMaterial;		
 	}
 	
-	private void SwapMaterial()
+	public void SwapMaterial()
 	{
 		for(int i = 0; i < objects.Length; i++)
 		{

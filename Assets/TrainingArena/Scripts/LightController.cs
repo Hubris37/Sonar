@@ -9,10 +9,14 @@ public class LightController : MonoBehaviour
 	public Light dirLight;
 
 	private float lightIntens = 1;
+	void Awake()
+	{
+		RenderSettings.skybox.SetFloat("_Exposure", 1);
+	}
 
 	void Start()
 	{
-		RenderSettings.skybox.SetFloat("_Exposure", 1);
+		
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -45,6 +49,13 @@ public class LightController : MonoBehaviour
 		}
 		LightsAreOut();
 		yield return null;
+	}
+
+	public void TurnOff()
+	{
+		RenderSettings.skybox.SetFloat("_Exposure", 0);
+		dirLight.intensity = 0;
+		LightsAreOut();
 	}
 
 	// Prevent skybox from having exposure 0 when exiting playmode
