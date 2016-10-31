@@ -27,10 +27,11 @@ a:visited{
 
 main{
   background-color: rgba(0, 0, 0, 0.7);
-  padding: 5vw;
-  width: 60%;
+  padding: 5%;
+  width: 70%;
   margin: 0 auto;
 }
+
 .index h1{
   margin-top: 2em;
   margin-bottom: .25em;
@@ -49,5 +50,20 @@ main{
 }
 
 .screenshot{
-  max-width: 100%;
+  max-width: 95%;
+}
+
+@media screen and (min-width: 601px) and (max-width: 800px) {
+  main {
+    padding: 5%;
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  main {
+    padding: 5%;
+    width: 90%;
+    margin: 0;
+  }
 }

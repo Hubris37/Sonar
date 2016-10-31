@@ -1,18 +1,18 @@
 'use strict';
 
 import React from 'react';
-import Slider from 'react-slick'
+// import Slider from 'react-slick'
 
 require('styles/content/About.css')
 
 let groupMembers = [{
   name: 'Fredrik Berglund',
-  email: 'fberglund@kth.se',
+  email: 'fberglun@kth.se',
   image:require('../../images/member-photos/fredrik-berglund.jpg'),
   contributions:[
     'Shaders',
     'Microphone interaction',
-    'Wiimote interaction',
+    'Wiimote interaction'
   ]
 }, {
   name: 'Karl Andersson',
@@ -21,7 +21,7 @@ let groupMembers = [{
   contributions:[
     'Modelling',
     'Animation',
-    'Natural Leader',
+    'Natural Leader'
   ]
 }, {
   name: 'Karl Gylleus',
@@ -30,7 +30,7 @@ let groupMembers = [{
   contributions:[
     'Modelling',
     'Animation',
-    'AI',
+    'AI'
   ]
 }, {
   name: 'Marcus Ahlström',
@@ -40,7 +40,7 @@ let groupMembers = [{
     'Procedural maze generation',
     'Microphone interaction',
     'Controller interaction',
-    'Interactive objects',
+    'Interactive objects'
   ]
 }, {
   name: 'Rodrigo Roa Rodríguez',
@@ -48,7 +48,7 @@ let groupMembers = [{
   image:require('../../images/member-photos/rodrigo-roa-rodriguez.jpg'),
   contributions:[
     'Web demo',
-    'Web page',
+    'Web page'
   ]
 }, {
   name: 'Staffan Sandberg',
@@ -59,7 +59,7 @@ let groupMembers = [{
     'Morale booster',
     'UI',
     'Tutorial',
-    'Cleaner',
+    'Cleaner'
   ]
 }]
 
@@ -67,31 +67,32 @@ let groupMembers = [{
 const memberTemplate  = (member) => (
   <div className="member" key={member.name}>
     <p className='name'>{member.name}</p>
-    <img src={member.image} alt={member.name} className="member-image"/>
-    <p className='email'><i class="material-icons">email</i>{member.email}</p>
-    <p className='contributions'>{}</p>
+    
+    <div style={{backgroundImage: 'url(' + member.image + ')'}} className="member-image"/>
+    <p className='email'><i class="material-icons">email: </i>{member.email}</p>
+    <ul className='contributions'>
+      {member.contributions.map(function(contribution){
+        return <li>{contribution}</li>;
+      })}
+    </ul>
   </div>
 )
 
 class AboutComponent extends React.Component {
 
   render() {
-    let settings = {
-      dots: true,
-      adaptiveHeight: true,
-      swipeToSlide: true,
-      speed: 500,
-      slidesToScroll: 1,
-      slidesToShow : 1
-    }
+    // let settings = {
+    //   dots: true,
+    //   adaptiveHeight: true,
+    //   swipeToSlide: true,
+    //   speed: 500,
+    //   slidesToScroll: 1,
+    //   slidesToShow : 1
+    // }
 
     return (
       <div className="about-component">
-          <div className="carousel-wrapper">
-            <Slider {...settings}>
             {groupMembers.map(memberTemplate)}
-            </Slider>
-          </div>
       </div>
     );
     // return (

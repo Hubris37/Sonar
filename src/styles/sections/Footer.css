@@ -4,7 +4,7 @@
   background: rgba(0, 0, 0, 0.6);
   padding: 1vw 0;
   background: #333;
-  width: 70vw;
+  width: 100%;
   margin: auto;
   border-top: 4px solid #666;
 }
@@ -37,8 +37,8 @@
   color: #fc4;
 }
 
-@media (min-width: 600px) {
-  .footer-component li{
+@media screen and (min-width: 600px) {
+  .footer-component li {
     display: inline;
     padding: 0 5px;
   }

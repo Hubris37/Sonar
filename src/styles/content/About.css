@@ -1,29 +1,67 @@
 .about-component {
   /*border: 1px dashed #f00;*/
   min-width:0;
+  text-align: center;
+
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
 }
 
-.carousel-wrapper {
+/*.member-image{
   width: 80%;
-  margin: 30px auto;
-}
+  margin: 0 auto;
+}*/
 
 .member-image{
-  height: 50vh;
+  /*width: 80%;*/
   margin: 0 auto;
+  width:  80%;
+  height: 300px;
+  background-position: 50% 50%;
+  background-repeat:   no-repeat;
+  background-size:     cover;
 }
 
 .member {
-    display: block;
-    width: 100%;
+  vertical-align: top;
+  display: inline-block;
+  min-width: 40%;
+  flex: 1;
 }
 
 .member .name, .member .email{
   text-align: center;
 }
 .member .name{
+  font-size: 1.3em;
   color: #fc4;
 }
 .member .email{
   color: #c39c34;
+}
+
+.member .contributions {
+  display: inline-block;
+  list-style: none;
+  -webkit-padding-start: 0;
+  margin-top: 0;
+}
+
+.member .contributions li {
+  
+}
+
+.member .contributions li:nth-child(even) {
+  color: #aaa;
+}
+
+.member .contributions li:nth-child(odd) {
+  color: #ccc;
+}
+
+.member .contributions li:not(:first-child) {
+  margin-top: 8px;
 }

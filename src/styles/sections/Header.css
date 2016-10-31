@@ -3,8 +3,12 @@
 
 /*TODO: Add at media queries*/
 .header-component {
+  position: fixed;
+	top: 0;
+	left: 0;
+  z-index: 100;
   background: rgba(0, 0, 0, 0.8);
-  /*width: 70vw;*/
+  width: 100%;
   /*margin: auto;*/
 }
 
@@ -34,7 +38,6 @@
   align-self: flex-end;
   flex: 1;
   text-align: center;
-  padding: 12px 0;
   border-bottom: 4px solid #333;
 }
 
@@ -43,8 +46,14 @@
   text-decoration: none;
   font-size: 1.12em;
 }
-.header-component ul li:first-child{
+
+.header-component ul li:first-child {
   background-color: #222;
+}
+
+.header-component ul li:not(:first-child) a {
+  display: block;
+  padding: 12px 0;
 }
 
 .header-component ul li:not(:first-child):hover {
@@ -54,7 +63,9 @@
 #brand{
   display: inline-block;
   padding: 0 2vw;
+  min-width: 132px;
 }
+
 #brand span{
   font-family: "megrim", sans-serif;
   font-size: 20px;
@@ -68,4 +79,19 @@
   height: 32px;
   width: 32px;
   padding: 5px 0;
+}
+
+@media screen and (max-width: 600px) {
+  .header-component ul li:not(:first-child) {
+    display: none;
+  }
+
+  .header-component ul li {
+    width: 100%;
+    text-align: center;
+  }
+
+  #brand {
+    width: 100%;
+  }
 }

@@ -19,7 +19,7 @@ let brand = {
 
 let sectionNames = [
   'Introduction',
-  'WebVRDemo',
+  'WebVR',
   // 'The project',
   'Demo',
   'About'
@@ -27,7 +27,7 @@ let sectionNames = [
 
 let components = {
   'Introduction': <IntroComponent/>,
-  'WebVRDemo': <WebVRDemoComponent/>,
+  'WebVR': <WebVRDemoComponent/>,
   'Demo': <DemoComponent/>,
   'About': <AboutComponent/>
 }
