@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 
 public class ChefAI : EnemyAI {
 
@@ -16,6 +17,10 @@ public class ChefAI : EnemyAI {
     public AudioSource audioThump;
     public AudioSource audioSniff;
 
+    [Header("Visuals")]
+    public Sprite happy;
+    public Sprite angry;
+    public Image statusImage;
 
     // Use this for initialization
     void Start() {
@@ -32,11 +37,13 @@ public class ChefAI : EnemyAI {
 
     void OnEnable() {
         WaiterAI.shout += investigatePoint;
+        statusImage.color = new Color(1,1,1,1);
     }
 
 
     void OnDisable() {
         WaiterAI.shout -= investigatePoint;
+        statusImage.color = new Color(1,1,1,0);
     }
 
     // Update is called once per frame
@@ -52,10 +59,12 @@ public class ChefAI : EnemyAI {
             anim.SetTrigger("chasing");
         }
         makeDetectionSound();
+        statusImage.sprite = angry;
     }
 
     protected override void onLoseAggro() {
         anim.speed = 1.0f;
+        statusImage.sprite = happy;
     }
 
     public override void move() {
