@@ -8,7 +8,7 @@ public class AudioMeasure : MonoBehaviour {
 
 	private const int QSamples = 1024;
 	private const float RefValue = 0.1f;
-	private const float Threshold = 0.02f;
+	private const float Threshold = 0.01f;
 
 	float[] _samples;
 	private float[] _spectrum;
