@@ -38,8 +38,6 @@ public class GramophoneAI : EnemyAI {
         findPath();
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Walking")) {
             move();
-        } else {
-            rigid.velocity = Vector3.zero;
         }
         checkAggro();
     }
@@ -97,11 +95,15 @@ public class GramophoneAI : EnemyAI {
         curPos.y = 0;
        // transform.Translate(curPos);
         movePoint.y = curPos.y;
+        Debug.DrawLine(transform.position, movePoint, Color.green, 5.0f);
         if (dif.normalized != transform.forward) {
             transform.LookAt(movePoint);
         }
+        Vector3 force = dif.normalized * movementSpeed * movementMultiplier;
+        force.y = 0;
+        force.z = 0;
         rigid.AddForce( dif.normalized * movementSpeed * movementMultiplier);
-       // transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
+      //  transform.Translate(dif.normalized * movementSpeed * movementMultiplier * Time.deltaTime, Space.World);
     }
 
     private Transform searchForBone(Transform current, string name) {

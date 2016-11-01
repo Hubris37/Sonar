@@ -8,7 +8,7 @@ public abstract class EnemyAI : MonoBehaviour {
     private List<MazeCell> mazeNodes;
 
     protected bool moving = false;
-    protected List<MazeCell> movementPath;
+    public List<MazeCell> movementPath;
     protected MazeCell startCell;
     protected MazeCell currentPositionCell;
 
@@ -55,7 +55,7 @@ public abstract class EnemyAI : MonoBehaviour {
     }
 
     void OnCollisionEnter(Collision other) {
-        rigid.velocity = Vector3.zero;
+       // rigid.velocity = Vector3.zero;
     }
 
     protected void findCurrentCell() {
@@ -113,7 +113,7 @@ public abstract class EnemyAI : MonoBehaviour {
         int layerMask = 1 << 9;
         if (Physics.Raycast(point, dir.normalized, out hit, dir.magnitude, layerMask)) {
             // Funkar inte för grandchildren
-            if (hit.transform.name == "Quad" || hit.transform.name.Contains("Door") || hit.transform.name.Contains("Gate")) {
+            if (hit.transform.name == "Quad") {
                 return true;
             }
         }
@@ -135,8 +135,10 @@ public abstract class EnemyAI : MonoBehaviour {
 
     protected void findPath() {
         if (movementPath.Count == 0) {
-            if (!isAggroed && Random.Range(0,1) > 0.9f)
+            if (!isAggroed && Random.Range(0,1) > 0.9f) {
+                rigid.velocity = Vector3.zero;
                 anim.SetTrigger("seek");
+            }
             //makeSniffingSound();
             List<MazeCell> map;
             if (patrolsRoom) {
@@ -146,7 +148,7 @@ public abstract class EnemyAI : MonoBehaviour {
             else {
                 map = mazeNodes;
             }
-            movementPath = aStar(findTargetPosition(map), mazeNodes);
+            movementPath = aStar(findTargetPosition(map), map);
         }
     }
 
@@ -308,5 +310,12 @@ public abstract class EnemyAI : MonoBehaviour {
             movementPath = aStar(maze.GetCell(targetPoint), mazeNodes);
             checkAggro(aggroRadius);
         }
+    }
+
+    protected void moveToFloor() {
+        Vector3 pos = transform.position;
+        pos.y = 0;
+        rigid.velocity = new Vector3(0.001f, 0.0001f, 0.0001f);
+        transform.Translate(currentPositionCell.transform.position);
     }
 }
