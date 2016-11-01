@@ -21,6 +21,9 @@ public class MazeGatePitchRedo : MazeDoor {
 	bool unlocked;
 
 	public AudioClip unlockSound;
+	public AudioClip keyIn;
+	public AudioClip doorOpen;
+
 	AudioMeasure audioMeasure;
 	GameObject player;
 
@@ -46,6 +49,7 @@ public class MazeGatePitchRedo : MazeDoor {
 		float val = initScale;
 
 		while (percent < 1) {
+			
 			percent += Time.deltaTime * unlockSpeed;
 			val = Mathf.Lerp (initScale, 0, percent);
 			key.localScale = new Vector3 (key.localScale.x, key.localScale.y, val);
@@ -53,7 +57,9 @@ public class MazeGatePitchRedo : MazeDoor {
 			yield return null;
 		}
 
+		AudioManager.instance.PlaySound(keyIn,transform.position);
 		yield return new WaitForSeconds (0.5f);
+		AudioManager.instance.PlaySound(doorOpen,transform.position);
 
 		percent = 0;
 		Vector3 initialPos = hinge.transform.position;
