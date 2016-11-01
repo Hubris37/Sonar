@@ -35,11 +35,11 @@ public class WaiterAI : EnemyAI {
 
     void FixedUpdate() {
         findPath();
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Walking") && !tooCloseToPlayer()) {
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Walk")) {
             move();
         }
         else {
-            rigid.velocity = Vector3.zero;
+          //  rigid.velocity = Vector3.zero;
         }
         checkAggro();
         if (isAggroed) {
@@ -62,7 +62,7 @@ public class WaiterAI : EnemyAI {
     
     public bool tooCloseToPlayer() {
         if ((transform.position-playerPos).magnitude < chaseStopDistance) {
-            rigid.velocity = Vector3.zero;
+          //  rigid.velocity = Vector3.zero;
             return true;
         }
         return false;
@@ -99,6 +99,10 @@ public class WaiterAI : EnemyAI {
         movePoint.y = curPos.y;
         if (dif.normalized != transform.forward) {
             transform.LookAt(movePoint);
+        }
+        if (tooCloseToPlayer()) {
+            dif = -dif;
+            totalMS /= 2;
         }
         rigid.AddForce(dif.normalized * totalMS);
     }
