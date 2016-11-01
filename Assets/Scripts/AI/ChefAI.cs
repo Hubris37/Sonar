@@ -126,7 +126,7 @@ public class ChefAI : EnemyAI {
 
     private void makeLandingSound() {
         AudioManager.instance.PlaySound(audioThump, transform.position);
-        blastHit(transform.position, 750, .2f);
+        blastHit(transform.position, 750, .8f);
     }
 
     private void makeSniffingSound() {
