@@ -7,7 +7,7 @@ public class ShaderController : MonoBehaviour {
     public bool standardShader = false;
     public Renderer r;
 
-    private const int MAX_CIRCLES = 120; // Maximum circles allowed at once !!!CHANGE IN SHADER AND OVERVIEWCAMERA AS WELL!!!
+    private const int MAX_CIRCLES = 120; // Maximum circles allowed at once !!!CHANGE IN SHADERS AND OVERVIEWCAMERA AS WELL!!!
     private int numCircles = 0;
     private float prevTime, prevSoundCheck;
 	private GameObject soundBlastList;
@@ -33,10 +33,6 @@ public class ShaderController : MonoBehaviour {
     void Start () {
 
         r = GetComponent<Renderer>();
-        if(standardShader) // Use standard shader to see everything
-            r.sharedMaterial.shader = Shader.Find("Standard");
-        else
-            r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
 
         // Subscribe to SoundBlast onBlastHit function
         FireSoundWave.onBlastHit += addCircle;
@@ -46,10 +42,6 @@ public class ShaderController : MonoBehaviour {
         GameManager.isReborn += ClearCircles;
 
         Camera.main.depthTextureMode = DepthTextureMode.Depth;
-
-        // rTexture = new RenderTexture(Mathf.RoundToInt(Screen.width), Mathf.RoundToInt(Screen.height), 16, RenderTextureFormat.Default, RenderTextureReadWrite.Default);
-        // texture = new Texture2D(Mathf.RoundToInt(Screen.width), Mathf.RoundToInt(Screen.height), TextureFormat.ARGB32, false);
-        // Graphics.SetRenderTarget(rTexture);
     }
 
     void addCircle(Vector3 hitPos, float pitchVal, float dbVal)
@@ -123,7 +115,6 @@ public class ShaderController : MonoBehaviour {
         // Set shader uniforms
         for(int i = 0; i < r.sharedMaterials.Length; ++i)
         {
-            r.sharedMaterials[i].SetInt("_NumCircles", numCircles);
             if(numCircles > 0)
             {
                 // Move properties of all the circles to the fixed size arrays
@@ -136,22 +127,14 @@ public class ShaderController : MonoBehaviour {
                     frequenciesArray[j] = frequencies[j];
                 }
 
-                r.sharedMaterials[i].SetVectorArray("_Center", centersArray);
-                r.sharedMaterials[i].SetFloatArray("_Radius", radiusArray);
-                r.sharedMaterials[i].SetFloatArray("_MaxRadius", maxRadiusArray);
-                r.sharedMaterials[i].SetColorArray("_Color", colorsArray);
-                r.sharedMaterials[i].SetFloatArray("_Frequency", frequenciesArray);
+                r.sharedMaterials[i].SetColorArray("_Color", colorsArray); // No setGlobalColorArray function, so have to do this (or convert to vectorArray etc)
             }
         }
         
-        // StartCoroutine(imageEffects());
+        Shader.SetGlobalInt("_NumCircles", numCircles);
+        Shader.SetGlobalVectorArray("_Center", centersArray);
+        Shader.SetGlobalFloatArray("_Radius", radiusArray);
+        Shader.SetGlobalFloatArray("_MaxRadius", maxRadiusArray);
+        Shader.SetGlobalFloatArray("_Frequency", frequenciesArray);
 	}
-
-    // IEnumerator imageEffects() {
-    //     yield return new WaitForEndOfFrame();
-    //     texture.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0, false);
-    //     texture.Apply();
-    //     imgEffectMat.mainTexture = texture;
-    //     Graphics.Blit(texture, null, imgEffectMat);
-    // }
 }

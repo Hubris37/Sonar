@@ -1,23 +1,15 @@
 ﻿Shader "Custom/Echolocation" {
 	Properties {
 		_DefaultColor("Default Color", Color) = (0, 0, 0, 0)
-		_EdgeWidth("Circle Edge Width", Range(0.0, 0.5)) = 0.15
+		_EdgeWidth("Circle Edge Width", Range(0.0, 0.5)) = 0.5
 		_DistortScale("Distort Scale", range(0.005, 0.1)) = 0.01
-		_WallO("Wall Opacity", Range(0.00,1)) = 1.0
+		_WallO("Wall Opacity", Range(0.0, 1)) = 0.0
 		_NormalMap ("Normal Map", 2D) = "bump" {}
 		[MaterialToggle] _UseDepth("Use Depth Map", Float) = 1
 	}
 
 	SubShader {
 		Tags { "RenderType"="Opaque" "IgnoreProjector"="True" }
-
-		// https://docs.unity3d.com/Manual/SL-CullAndDepth.html
-		// extra pass that renders to depth buffer only
-		// Pass {
-		// 	Name "ShadowCaster"
-		// 	ZWrite On
-		// 	ColorMask 0
-		// }
 
 		// Show depth in gray scale
 		// Pass {
@@ -69,14 +61,13 @@
 			float _Radius[MAX_CIRCLES];
 			float _MaxRadius[MAX_CIRCLES];
 			float _Frequency[MAX_CIRCLES];
+			int _NumCircles;
 
 			float4 _DefaultColor;
 			float _EdgeWidth; // Circle Edge Width
 			float _DistortScale; // Amplitude of bump map distortion
 			float _WallO; // Wall Opacity	
-			// float _UseNormalMap;
-			float _UseDepth;	
-			int _NumCircles = 0;
+			float _UseDepth;
 
 			sampler2D _NormalMap;
 			float4 _NormalMap_ST;
@@ -109,8 +100,10 @@
 				o.tspace0 = half3(wTangent.x, wBitangent.x, wNormal.x);
 				o.tspace1 = half3(wTangent.y, wBitangent.y, wNormal.y);
 				o.tspace2 = half3(wTangent.z, wBitangent.z, wNormal.z);
+
 				o.uv = TRANSFORM_TEX(uv, _NormalMap);
-				o.depth = -mul(UNITY_MATRIX_MV, vertex).z * _ProjectionParams.w;;
+				o.depth = -mul(UNITY_MATRIX_MV, vertex).z * _ProjectionParams.w;
+
 				return o;
 			}
 
