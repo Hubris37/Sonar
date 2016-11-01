@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -30,6 +33,11 @@ public class GameManager : MonoBehaviour {
 	public static event PlayerState isDead;
 	public static event PlayerState isReborn;
 
+	private int totRoomsCleared = 0;
+	private int tempRoomsCleared = 0;
+	public Text roomsClearedText;
+	public Text tempRoomsClearedText;
+
     private AudioSource audioPlayer;
 
 	private void Awake () {
@@ -52,6 +60,8 @@ public class GameManager : MonoBehaviour {
         gramophoneAmount = startGramophoneAmount;
         waiterAmount = startWaiterAmount;
 		BeginGame();
+
+		LoadRoomsCleared(); // load totalnumber of rooms cleared;
     }
 
 	private void Update () {
@@ -61,6 +71,9 @@ public class GameManager : MonoBehaviour {
 		if(playerIsDead)
 			if(Input.GetKeyDown("z") || Input.GetButtonDown("Fire1"))
 				RestartGame();
+
+		roomsClearedText.text = "Rooms Cleared(total): " + totRoomsCleared;
+		tempRoomsClearedText.text = "Rooms Cleared: " + tempRoomsCleared;
 	}
 
 	private void BeginGame () {
@@ -110,7 +123,10 @@ public class GameManager : MonoBehaviour {
 		DestroyLevel();
 		level++;
         chefAmount++;
+		totRoomsCleared++;
+		tempRoomsCleared++;
 		BeginGame ();
+		SaveRoomsCleared();
 	}
 
     public void LostGame() {
@@ -163,7 +179,39 @@ public class GameManager : MonoBehaviour {
                 return c;
         }
         return null;
-
     }
 
+
+	public void SaveRoomsCleared()
+	{
+		BinaryFormatter bf = new BinaryFormatter();
+		FileStream file = File.Open(Application.persistentDataPath + "/roomsCleared.dat", FileMode.Open);
+		
+		GameData data = new GameData();
+		data.totRoomsCleared = totRoomsCleared;
+		
+		bf.Serialize(file, data);
+		
+		file.Close();
+	}
+
+	public void LoadRoomsCleared()
+	{
+		if(File.Exists(Application.persistentDataPath + "/roomsCleared.dat"))
+		{
+			BinaryFormatter bf = new BinaryFormatter();
+			FileStream file = File.Open(Application.persistentDataPath + "/roomsCleared.dat", FileMode.Open);
+			GameData data = (GameData)bf.Deserialize(file);
+			file.Close();
+
+			if(totRoomsCleared < data.totRoomsCleared) //A bit of safety
+				totRoomsCleared = data.totRoomsCleared;
+		}
+	}
+}
+
+[System.Serializable]
+class GameData
+{
+	public int totRoomsCleared;
 }
