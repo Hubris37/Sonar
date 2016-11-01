@@ -14,8 +14,8 @@ public class ChefAI : EnemyAI {
     //private Vector3 jumpStartPos;
     private bool makeSound = false;
 
-    public AudioSource audioThump;
-    public AudioSource audioSniff;
+    public AudioClip audioThump;
+    public AudioClip audioSniff;
 
     [Header("Visuals")]
     public Sprite happy;
@@ -30,9 +30,9 @@ public class ChefAI : EnemyAI {
         AudioSource[] sources = GetComponents<AudioSource>();
         rigid = GetComponent<Rigidbody>();
 
-        audioThump = sources[0];
-        audioSniff = sources[1];
-        audioStartle = sources[2];
+        //audioThump = sources[0];
+        //audioSniff = sources[1];
+        //audioStartle = sources[2];
     }
 
     void OnEnable() {
@@ -125,12 +125,12 @@ public class ChefAI : EnemyAI {
     }
 
     private void makeLandingSound() {
-        audioThump.Play();
+        AudioManager.instance.PlaySound(audioThump, transform.position);
         blastHit(transform.position, 750, .2f);
     }
 
     private void makeSniffingSound() {
-        audioSniff.Play();
+        AudioManager.instance.PlaySound(audioSniff, transform.position);
         blastHit(transform.position, 450, .18f);
     }
 

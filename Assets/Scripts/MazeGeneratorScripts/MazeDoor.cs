@@ -16,9 +16,9 @@ public class MazeDoor : MazePassage {
 			Transform child = transform.GetChild(i);
 			if (child != hinge) {
 				child.GetComponent<Renderer>().material = cell.room.settings.wallMaterial;
-			} else {
-				child.GetChild(0).GetComponent<Renderer>().material = cell.room.settings.floorMaterial;
-			}
+			} //else {
+			//	child.GetChild(0).GetComponent<Renderer>().material = cell.room.settings.floorMaterial;
+			//}
 		}
 	}
 	

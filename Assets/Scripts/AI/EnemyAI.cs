@@ -32,7 +32,7 @@ public abstract class EnemyAI : MonoBehaviour {
     public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
 	public static event SoundBlastHit onBlastHit;
 
-    protected AudioSource audioStartle;
+    public AudioClip audioStartle;
 
     protected abstract void onAggro();
     protected abstract void onLoseAggro();
@@ -246,7 +246,7 @@ public abstract class EnemyAI : MonoBehaviour {
 
 
     protected void makeDetectionSound() {
-        audioStartle.Play();
+        AudioManager.instance.PlaySound(audioStartle, transform.position);
         onBlastHit(transform.position, 1000, .25f);
     }
 

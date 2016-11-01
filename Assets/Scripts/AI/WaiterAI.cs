@@ -18,7 +18,7 @@ public class WaiterAI : EnemyAI {
     public delegate void Alert(Vector3 position, float noiseLevel);
     public static event Alert shout;
 
-    private AudioSource audioScream;
+    public AudioClip audioScream;
 
     // Fixa inte opera i alla rum
 
@@ -29,8 +29,8 @@ public class WaiterAI : EnemyAI {
         AudioSource[] sources = GetComponents<AudioSource>();
         rigid = GetComponent<Rigidbody>();
 
-        audioStartle = sources[0];
-        audioScream = sources[1];
+   //     audioStartle = sources[0];
+     //   audioScream = sources[1];
     }
 
     void FixedUpdate() {
@@ -54,7 +54,7 @@ public class WaiterAI : EnemyAI {
             Vector3 curPos = transform.position;
             anim.SetTrigger("shout");
             blastHit(curPos, 600, shoutVolume);
-            audioScream.Play();
+            AudioManager.instance.PlaySound(audioScream, transform.position);
             if (shout != null)
                 shout(curPos, 5);
         }
