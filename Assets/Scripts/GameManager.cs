@@ -30,8 +30,6 @@ public class GameManager : MonoBehaviour {
 	public static event PlayerState isDead;
 	public static event PlayerState isReborn;
 
-
-
     private AudioSource audioPlayer;
 
 	private void Awake () {
