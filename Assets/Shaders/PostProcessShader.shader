@@ -60,19 +60,19 @@
 			// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
 			// https://github.com/Jam3/glsl-fast-gaussian-blur
 			// 9 tap gaussian blur
-			float4 blur(sampler2D image, float2 uv, float2 resolution, float2 direction) {
-				float4 color = float4(0, 0, 0, 0);
+			// float4 blur(sampler2D image, float2 uv, float2 resolution, float2 direction) {
+			// 	float4 color = float4(0, 0, 0, 0);
 
-				float2 off1 = float2(1.3846153846, 1.3846153846) * direction;
-				float2 off2 = float2(3.2307692308, 3.2307692308) * direction;
+			// 	float2 off1 = float2(1.3846153846, 1.3846153846) * direction;
+			// 	float2 off2 = float2(3.2307692308, 3.2307692308) * direction;
 
-				color += tex2D(image, uv) * 0.2270270270;
-				color += tex2D(image, uv + (off1 / resolution)) * 0.3162162162;
-				color += tex2D(image, uv - (off1 / resolution)) * 0.3162162162;
-				color += tex2D(image, uv + (off2 / resolution)) * 0.0702702703;
-				color += tex2D(image, uv - (off2 / resolution)) * 0.0702702703;
-				return color;
-			}
+			// 	color += tex2D(image, uv) * 0.2270270270;
+			// 	color += tex2D(image, uv + (off1 / resolution)) * 0.3162162162;
+			// 	color += tex2D(image, uv - (off1 / resolution)) * 0.3162162162;
+			// 	color += tex2D(image, uv + (off2 / resolution)) * 0.0702702703;
+			// 	color += tex2D(image, uv - (off2 / resolution)) * 0.0702702703;
+			// 	return color;
+			// }
 
 			// 13 tap gaussian blur
 			// float4 blur(sampler2D image, float2 uv, float2 resolution, float2 direction) {
@@ -95,9 +95,9 @@
 				
 				fixed4 fragColor = tex2D(_MainTex, i.uv);
 
-				fixed4 blurColor = fixed4(0, 0, 0, 0);
-				blurColor += blur( _MainTex, i.uv, _ScreenParams.xy, float2(0, 1.2) ) * .5;
-				blurColor += blur( _MainTex, i.uv, _ScreenParams.xy, float2(1.2, 0) ) * .5;
+				// fixed4 blurColor = fixed4(0, 0, 0, 0);
+				// blurColor += blur( _MainTex, i.uv, _ScreenParams.xy, float2(0, 1.2) ) * .5;
+				// blurColor += blur( _MainTex, i.uv, _ScreenParams.xy, float2(1.2, 0) ) * .5;
 
 				half4 depth = tex2D(_CameraDepthTexture, i.uvDepth);
 				float depthValue = Linear01Depth(depth);
@@ -152,9 +152,9 @@
 				// End: Chromatic Aberration
 
 				// return depth;
-				return lerp(fragColor, blurColor, pow(depthValue,2)); // Blend in more blurred color when higher depth
+				// return lerp(fragColor, blurColor, pow(depthValue,2)); // Blend in more blurred color when higher depth
 				// return blurColor;
-				// return fragColor;
+				return fragColor;
 			}
 			ENDCG
 		}
