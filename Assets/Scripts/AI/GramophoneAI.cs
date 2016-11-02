@@ -95,7 +95,7 @@ public class GramophoneAI : EnemyAI {
         curPos.y = 0;
        // transform.Translate(curPos);
         movePoint.y = curPos.y;
-        Debug.DrawLine(transform.position, movePoint, Color.green, 5.0f);
+       // Debug.DrawLine(transform.position, movePoint, Color.green, 5.0f);
         if (dif.normalized != transform.forward) {
             transform.LookAt(movePoint);
         }
