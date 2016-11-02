@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -62,15 +63,22 @@ public class GameManager : MonoBehaviour {
 		BeginGame();
 
 		LoadRoomsCleared(); // load totalnumber of rooms cleared;
+		tempRoomsCleared = 0;
     }
 
 	private void Update () {
     	if (Input.GetKeyDown("z")) {
 			RestartGame();
 		}
-		if(playerIsDead)
-			if(Input.GetKeyDown("z") || Input.GetButtonDown("Fire1"))
+		if(playerIsDead) {
+			if(Input.GetKeyDown("z") || Input.GetButtonDown("Fire1") || Input.GetButtonDown("Fire2") ||
+			Input.GetButtonDown("Fire3") || Input.GetButtonDown("Gamepad Y")) {
 				RestartGame();
+			}
+		}
+		
+		if(Input.GetKeyDown("l"))
+			SceneManager.LoadScene("TrainingArena");
 
 		roomsClearedText.text = "Rooms Cleared(total): " + totRoomsCleared;
 		tempRoomsClearedText.text = "Rooms Cleared: " + tempRoomsCleared;
