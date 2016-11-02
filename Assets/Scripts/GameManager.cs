@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour {
 
 	private int totRoomsCleared = 0;
 	public int tempRoomsCleared = 0;
+	public bool saveRoomCount = true;
 	public Text roomsClearedText;
 	public Text tempRoomsClearedText;
 
@@ -194,15 +195,18 @@ public class GameManager : MonoBehaviour {
 
 	public void SaveRoomsCleared()
 	{
-		BinaryFormatter bf = new BinaryFormatter();
-		FileStream file = File.Open(Application.persistentDataPath + "/roomsCleared.dat", FileMode.Open);
-		
-		GameData data = new GameData();
-		data.totRoomsCleared = totRoomsCleared;
-		
-		bf.Serialize(file, data);
-		
-		file.Close();
+		if(saveRoomCount)
+		{
+			BinaryFormatter bf = new BinaryFormatter();
+			FileStream file = File.Open(Application.persistentDataPath + "/roomsCleared.dat", FileMode.Open);
+			
+			GameData data = new GameData();
+			data.totRoomsCleared = totRoomsCleared;
+			
+			bf.Serialize(file, data);
+			
+			file.Close();
+		}
 	}
 
 	public void LoadRoomsCleared()
