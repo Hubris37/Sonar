@@ -38,6 +38,8 @@ public abstract class EnemyAI : MonoBehaviour {
     protected abstract void onLoseAggro();
     public abstract void move();
 
+    private float colliderCounter = 0;
+
     // Use this for initialization
     void Start() {
     }
@@ -54,8 +56,13 @@ public abstract class EnemyAI : MonoBehaviour {
         } */
     }
 
-    void OnCollisionEnter(Collision other) {
-       // rigid.velocity = Vector3.zero;
+    void OnCollisionStay(Collision other) {
+        if (other.transform.name != "Quad" && colliderCounter <= 0) {
+            colliderCounter = 1.0f;
+            List<MazeCell> map = currentPositionCell.room.getCells();
+            movementPath = aStar(map[Random.Range(0,map.Count)], map);
+        }
+        colliderCounter -= Time.deltaTime;
     }
 
     protected void findCurrentCell() {
