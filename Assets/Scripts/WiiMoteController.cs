@@ -27,6 +27,7 @@ public class WiiMoteController : MonoBehaviour {
 	private float prevTime = 0;
 	private List<float> prevSoundTimes = new List<float>();
 	private List<GameObject> faces = new List<GameObject>();
+	private List<Animator> animators = new List<Animator>();
 	private List<float> pitches = new List<float>();
 	private Vector3 screenPoint;
 	private GameObject[] projectiles = new GameObject[100];
@@ -44,14 +45,15 @@ public class WiiMoteController : MonoBehaviour {
 
 		Vector3 pScale = new Vector3(0.7f,0.7f,0.7f);
 		for(int i = 0; i < projectiles.Length; ++i) {
-			GameObject p = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-			// GameObject p = Instantiate(projectilePrefab);
+			// GameObject p = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			GameObject p = Instantiate(projectilePrefab);
 			p.transform.parent = gameObject.transform;
 			p.transform.localScale = pScale;
 			p.AddComponent<AddForce>();
-			p.transform.position = new Vector3(50*i, -1000, 0);;
-			Rigidbody pRB = p.AddComponent<Rigidbody>();
-			pRB.mass = 0.15f;
+			p.transform.position = new Vector3(50*i, -1000, 0);
+			 Rigidbody pRB = p.GetComponent<Rigidbody>();
+			// Rigidbody pRB = p.AddComponent<Rigidbody>();
+			pRB.mass = 0.25f;
 			projectiles[i] = p;
 		}
 
@@ -76,7 +78,7 @@ public class WiiMoteController : MonoBehaviour {
 			if(pointer[0] > 0 && pointer[1] > 0) {
 				Vector3 curScreenPoint = new Vector3(pointer[0]*Screen.width, pointer[1]*Screen.height, screenPoint.z);
 				Vector3 curPosition = cam.ScreenToWorldPoint(curScreenPoint);
-				faces[i].transform.position = new Vector3(curPosition.x, 2f, curPosition.z);
+				faces[i].transform.position = new Vector3(curPosition.x, 4f, curPosition.z);
 
 
 
@@ -92,24 +94,30 @@ public class WiiMoteController : MonoBehaviour {
 				// 	transform.position.y,
 				// 	Mathf.Clamp(transform.position.z + (pointer[1]-.5f), -5, 5)
 				// 	);
+				if(remote.Button.a || remote.Button.b) {
+					animators[i].SetBool("IsOpen", true);
 
-				if(Time.time - prevSoundTimes[i] > 0.1f && remote.Button.a) {
-					prevSoundTimes[i] = Time.time;
+					if(Time.time - prevSoundTimes[i] > 0.3f) {
+						prevSoundTimes[i] = Time.time;
 
-					// Create projectiles
-					GameObject p = projectiles[projectileNum];
-					p.transform.position = faces[i].transform.position;
-					Rigidbody pRB = p.GetComponent<Rigidbody>();
-					pRB.velocity = Vector3.zero;
-					pRB.AddForce(faces[i].transform.forward * 256);
+						// Create projectiles
+						GameObject p = projectiles[projectileNum];
+						p.transform.position = faces[i].transform.position;
+						Rigidbody pRB = p.GetComponent<Rigidbody>();
+						pRB.velocity = Vector3.zero;
+						pRB.AddForce(faces[i].transform.forward * 256);
 
-					projectileNum = (projectileNum+1) % projectiles.Length;
+						projectileNum = (projectileNum+1) % projectiles.Length;
 
-					// Create sound
-					RaycastHit hit;
-					if (Physics.Raycast(faces[i].transform.position, faces[i].transform.forward, out hit, 20)) {
-						onBlastHit(hit.point, pitches[i], audioLevel);
+						// Create sound
+						// RaycastHit hit;
+						// if (Physics.Raycast(faces[i].transform.position, faces[i].transform.forward, out hit, 20)) {
+						// 	onBlastHit(hit.point, pitches[i], audioLevel);
+						// }
+						onBlastHit(faces[i].transform.position, pitches[i], audioLevel);
 					}
+				} else {
+					animators[i].SetBool("IsOpen", false);
 				}
 			}
 
@@ -142,6 +150,7 @@ public class WiiMoteController : MonoBehaviour {
 			remote.SetupIRCamera(IRDataType.BASIC); // Basic IR dot position data
 			GameObject face = Instantiate(facePrefab, Vector3.zero, Quaternion.identity) as GameObject;
 			faces.Add(face);
+			animators.Add(face.GetComponent<Animator>());
 			pitches.Add(basePitch + i*500);
 			prevSoundTimes.Add(0);
 			++i;
