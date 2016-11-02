@@ -35,3 +35,7 @@ sysinfo.txt
 .DS_Store
 Assets/Materials/Spaceship.meta
 Assets/Plugins.meta
+
+#Untracked folders from gh-pages
+dist
+node_modules
