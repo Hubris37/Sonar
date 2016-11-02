@@ -45,6 +45,12 @@ public class StaticSoundSource : MonoBehaviour {
         cdB = audiodB * dB;
     }
 
+    public void setAudio(AudioClip newAudio, float seekTime = 0f) {
+        soundSource.clip = newAudio;
+        soundSource.time = seekTime;
+        soundSource.Play();
+    }
+
     public AudioSource getAudio() {
         return soundSource;
     }

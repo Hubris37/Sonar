@@ -10,7 +10,8 @@ public class GramophoneAI : EnemyAI {
     public float runAnimSpeed = 2.0f;
 
     private bool hasStartled = false;
-    private AudioSource music;
+    public AudioClip happyMusic;
+    public AudioClip scaredMusic;
 
     private float musicLoudness;
     private float[] musicSampleData;
@@ -48,10 +49,7 @@ public class GramophoneAI : EnemyAI {
     }
 
     private void volumeScale() {
-        if (music == null) {
-            music = GetComponent<StaticSoundSource>().getAudio();
-        }
-        else {
+            AudioSource music = soundEmitter.getAudio();
             music.clip.GetData(musicSampleData, music.timeSamples);
             musicLoudness = 0f;
             foreach (var s in musicSampleData) {
@@ -66,7 +64,6 @@ public class GramophoneAI : EnemyAI {
             // }
             newScale.y = 1;
             head.localScale = newScale;
-        }
     }
     
 
@@ -76,11 +73,13 @@ public class GramophoneAI : EnemyAI {
         anim.SetTrigger("startled");
         anim.speed = runAnimSpeed;
         rigid.drag = 2;
+        soundEmitter.setAudio(scaredMusic,200.0f);
     }
 
     protected override void onLoseAggro() {
         anim.speed = 1.0f;
         rigid.drag = 10;
+        soundEmitter.setAudio(happyMusic);
     }
 
     public override void move() {

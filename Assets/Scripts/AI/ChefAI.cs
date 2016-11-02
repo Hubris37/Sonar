@@ -96,13 +96,10 @@ public class ChefAI : EnemyAI {
     private void jumpHandler(Vector3 movePoint, float dist) {
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
             rigid.velocity = Vector3.zero;
-      //      jumpStartPos = transform.position;
+            //      jumpStartPos = transform.position;
+            makeSound = true;
             anim.SetTrigger("jump");
-            jumpOffsetCounter = getAnimationLength("Chesschef Jump") / (3 * anim.speed);
-            if (makeSound) {
-                makeLandingSound();
-                makeSound = false;
-            }
+            jumpOffsetCounter = getAnimationLength("Chesschef Jump") / (3 * anim.speed);            
         }
         if (anim.GetCurrentAnimatorStateInfo(0).IsName("Jump")) {
             if (jumpOffsetCounter <= 0) {
@@ -111,12 +108,18 @@ public class ChefAI : EnemyAI {
                // jumpOffsetCounter = 1000000;
 
                 rigid.velocity = transform.forward * dist;
+                // Offset for landing sound
+                if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8) {
+                    if (makeSound) {
+                        makeLandingSound();
+                        makeSound = false;
+                    }
+                }
                 //rigid.velocity = transform.TransformDirection(dir.normalized * 1.0f);
                 // transform.Translate(dir.normalized * distance * Time.deltaTime, Space.World);
                 //rigid.MovePosition(transform.TransformDirection(dir.normalized * distance * Time.deltaTime));
                 // transform.Move(dir.normalized * distance * Time.deltaTime, Space.World);
-                
-                makeSound = true;
+
             }
             else {
                 jumpOffsetCounter -= Time.deltaTime;
