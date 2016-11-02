@@ -197,7 +197,7 @@ public class GameManager : MonoBehaviour {
 	{
 		if(saveRoomCount)
 		{
-			BinaryFormatter bf = new BinaryFormatter();
+			/*BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Open(Application.persistentDataPath + "/roomsCleared.dat", FileMode.Open);
 			
 			GameData data = new GameData();
@@ -205,13 +205,14 @@ public class GameManager : MonoBehaviour {
 			
 			bf.Serialize(file, data);
 			
-			file.Close();
+			file.Close();*/
+			PlayerPrefs.SetInt("TOTALROOMSCLEARED", totRoomsCleared);
 		}
 	}
 
 	public void LoadRoomsCleared()
 	{
-		if(File.Exists(Application.persistentDataPath + "/roomsCleared.dat"))
+		/*if(File.Exists(Application.persistentDataPath + "/roomsCleared.dat"))
 		{
 			BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Open(Application.persistentDataPath + "/roomsCleared.dat", FileMode.Open);
@@ -220,7 +221,9 @@ public class GameManager : MonoBehaviour {
 
 			if(totRoomsCleared < data.totRoomsCleared) //A bit of safety
 				totRoomsCleared = data.totRoomsCleared;
-		}
+		}*/
+		totRoomsCleared = PlayerPrefs.GetInt("TOTALROOMSCLEARED");
+
 	}
 }
 
