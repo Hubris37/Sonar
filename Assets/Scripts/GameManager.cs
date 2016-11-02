@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour {
 	public static event PlayerState isReborn;
 
 	private int totRoomsCleared = 0;
-	private int tempRoomsCleared = 0;
+	public int tempRoomsCleared = 0;
 	public Text roomsClearedText;
 	public Text tempRoomsClearedText;
 
