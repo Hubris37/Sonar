@@ -14,7 +14,7 @@ public class WiiMoteController : MonoBehaviour {
 	static bool[] leds8 = new bool[4] { false, true, false, false };
 	static bool[][] ledsList = new bool[][] { leds1, leds2, leds3, leds4, leds5, leds6, leds7, leds8 };
 
-	public bool blink = false;
+	// public bool blink = false;
 	public float basePitch = 200;
 	public float audioLevel = 0.5f;
 	public Camera cam;
@@ -31,6 +31,7 @@ public class WiiMoteController : MonoBehaviour {
 	private List<float> pitches = new List<float>();
 	private Vector3 screenPoint;
 	private GameObject[] projectiles = new GameObject[100];
+	private Rigidbody[] projectilesRB = new Rigidbody[100];
 	private int projectileNum = 0;
 
 	public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
@@ -45,18 +46,18 @@ public class WiiMoteController : MonoBehaviour {
 
 		Vector3 pScale = new Vector3(0.7f,0.7f,0.7f);
 		for(int i = 0; i < projectiles.Length; ++i) {
-			// GameObject p = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 			GameObject p = Instantiate(projectilePrefab);
 			p.transform.parent = gameObject.transform;
 			p.transform.localScale = pScale;
 			p.AddComponent<AddForce>();
 			p.transform.position = new Vector3(50*i, -1000, 0);
-			 Rigidbody pRB = p.GetComponent<Rigidbody>();
-			// Rigidbody pRB = p.AddComponent<Rigidbody>();
-			pRB.mass = 0.25f;
+			projectilesRB[i] = p.GetComponent<Rigidbody>();
+			projectilesRB[i].mass = 0.25f;
+			projectilesRB[i].useGravity = false;
 			projectiles[i] = p;
 		}
 
+		GameManager.isReborn += ClearProjectiles;
 		InitWiimotes();
 	}
 	
@@ -80,20 +81,10 @@ public class WiiMoteController : MonoBehaviour {
 				Vector3 curPosition = cam.ScreenToWorldPoint(curScreenPoint);
 				faces[i].transform.position = new Vector3(curPosition.x, 4f, curPosition.z);
 
-
-
 				// float distance = transform.position.y - cam.transform.position.y;
 				// Vector3 pos = new Vector3(pointer[0]*Screen.width, distance, pointer[1]*Screen.height);
 				// transform.position = cam.ScreenToWorldPoint(pos);
 
-
-
-
-				// transform.position = new Vector3(
-				// 	Mathf.Clamp(transform.position.x + (pointer[0]-.5f), -5, 5),
-				// 	transform.position.y,
-				// 	Mathf.Clamp(transform.position.z + (pointer[1]-.5f), -5, 5)
-				// 	);
 				if(remote.Button.a || remote.Button.b) {
 					animators[i].SetBool("IsOpen", true);
 
@@ -103,18 +94,20 @@ public class WiiMoteController : MonoBehaviour {
 						// Create projectiles
 						GameObject p = projectiles[projectileNum];
 						p.transform.position = faces[i].transform.position;
-						Rigidbody pRB = p.GetComponent<Rigidbody>();
+						
+						Rigidbody pRB = projectilesRB[projectileNum];
+						pRB.useGravity = true;
 						pRB.velocity = Vector3.zero;
 						pRB.AddForce(faces[i].transform.forward * 256);
 
 						projectileNum = (projectileNum+1) % projectiles.Length;
 
 						// Create sound
+						onBlastHit(faces[i].transform.position, pitches[i], audioLevel);
 						// RaycastHit hit;
 						// if (Physics.Raycast(faces[i].transform.position, faces[i].transform.forward, out hit, 20)) {
 						// 	onBlastHit(hit.point, pitches[i], audioLevel);
 						// }
-						onBlastHit(faces[i].transform.position, pitches[i], audioLevel);
 					}
 				} else {
 					animators[i].SetBool("IsOpen", false);
@@ -122,17 +115,17 @@ public class WiiMoteController : MonoBehaviour {
 			}
 
 			// Changing LEDs in a fun pattern: (*-*-) <-> (-*-*) 
-			if(blink) {
-				if(Time.time - prevTime > .5f) {
-					prevTime = Time.time;
-					ledCount += 1;
-					int a = (ledCount+1)%2;
-					int b = (ledCount+0)%2;
-					int c = (ledCount+1)%2;
-					int d = (ledCount+0)%2;
-					remote.SendPlayerLED(leds1[a], leds1[b], leds1[c], leds1[d]);
-				}
-			}
+			// if(blink) {
+			// 	if(Time.time - prevTime > .5f) {
+			// 		prevTime = Time.time;
+			// 		ledCount += 1;
+			// 		int a = (ledCount+1)%2;
+			// 		int b = (ledCount+0)%2;
+			// 		int c = (ledCount+1)%2;
+			// 		int d = (ledCount+0)%2;
+			// 		remote.SendPlayerLED(leds1[a], leds1[b], leds1[c], leds1[d]);
+			// 	}
+			// }
 			++i;
 		}
 	}
@@ -169,6 +162,15 @@ public class WiiMoteController : MonoBehaviour {
 	void FinishedWithWiimotes() {
 		foreach(Wiimote remote in WiimoteManager.Wiimotes) {
 			WiimoteManager.Cleanup(remote);
+		}
+	}
+
+	void ClearProjectiles() {
+		for(int i = 0; i < projectiles.Length; ++i) {
+			projectiles[i].transform.position = new Vector3(50*i, -1000, 0);
+			projectilesRB[i].useGravity = false;
+			projectilesRB[i].velocity = Vector3.zero;
+ 			projectilesRB[i].angularVelocity = Vector3.zero;
 		}
 	}
 }
