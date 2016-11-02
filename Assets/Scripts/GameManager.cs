@@ -39,7 +39,8 @@ public class GameManager : MonoBehaviour {
 	public Text roomsClearedText;
 	public Text tempRoomsClearedText;
 
-    private AudioSource audioPlayer;
+    public AudioClip loseSound;
+	public AudioClip winSound;
 
 	private void Awake () {
 		mazeInstance = FindObjectOfType<Maze> ();
@@ -49,7 +50,6 @@ public class GameManager : MonoBehaviour {
 	private void Start () {
 		level = startingLevel;
 		startingCoordinates = new IntVector2(0, 0);
-        audioPlayer = GetComponent<AudioSource>();
         bots = new List<GameObject>();
 		goal = Instantiate (goalPrefab);
 
@@ -133,12 +133,13 @@ public class GameManager : MonoBehaviour {
         chefAmount++;
 		totRoomsCleared++;
 		tempRoomsCleared++;
-		BeginGame ();
+		BeginGame();
+		AudioManager.instance.PlaySound(winSound, player.transform.position);
 		SaveRoomsCleared();
 	}
 
     public void LostGame() {
-        audioPlayer.Play();
+        AudioManager.instance.PlaySound(loseSound, player.transform.position);
         isDead();
 		playerIsDead = true;
 		player.freezeMovement = true;
