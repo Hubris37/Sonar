@@ -1,4 +1,6 @@
-﻿Shader "UI/Overlay"
+﻿// https://unity3d.com/learn/tutorials/topics/virtual-reality/interaction-vr?playlist=22946
+// From VRSamples in assetstore
+Shader "UI/Overlay"
 {
 	Properties
 	{
