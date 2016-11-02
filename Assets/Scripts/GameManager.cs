@@ -133,6 +133,7 @@ public class GameManager : MonoBehaviour {
         chefAmount++;
 		totRoomsCleared++;
 		tempRoomsCleared++;
+		isReborn();
 		BeginGame();
 		AudioManager.instance.PlaySound(winSound, player.transform.position);
 		SaveRoomsCleared();
