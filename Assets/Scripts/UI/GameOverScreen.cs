@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GameOverScreen : MonoBehaviour 
 {
+	public GameObject gameOver;
 	private Animator anim;
 	private CanvasGroup cG;
 
@@ -12,18 +13,21 @@ public class GameOverScreen : MonoBehaviour
 		anim = GetComponent<Animator>();
 		cG = GetComponent<CanvasGroup>();
 
-		cG.alpha = 0; //????
 		GameManager.isDead += ShowGameOver; 
 		GameManager.isReborn += HideGameOver;	
+		gameOver.SetActive(false);
 	}
 	
 	private void ShowGameOver()
 	{
-		anim.SetBool("PlayerDead", true);
+		//anim.SetBool("PlayerDead", true);
+		gameOver.SetActive(true);
+		Debug.Log("DeAD");
 	}
 
 	private void HideGameOver()
 	{
-		anim.SetBool("PlayerDead", false);
+		//anim.SetBool("PlayerDead", false);
+		gameOver.SetActive(false);
 	}
 }
