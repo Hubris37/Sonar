@@ -146,8 +146,8 @@ public class Maze : MonoBehaviour {
     {
 		MazeWall wall = Instantiate(wallPrefab) as MazeWall;
 		wall.Initialize(cell, otherCell, direction);
-		
-		bool createDecor = Random.value < cell.room.settings.decorProbability ? true : false;
+
+		bool createDecor = Random.value < cell.room.settings.decorProbability*0.5f ? true : false;
 		if (createDecor && cell.room.settings.WallDecor.Length > 0){
 			GameObject decor = Instantiate(cell.room.settings.WallDecor[Random.Range(0,cell.room.settings.WallDecor.Length-1)],wall.transform.position,wall.transform.rotation) as GameObject;
 			decor.transform.parent = wall.transform;
