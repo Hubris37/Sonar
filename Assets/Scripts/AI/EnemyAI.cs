@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public abstract class EnemyAI : MonoBehaviour {
 
-    private Maze maze;
+    protected Maze maze;
     private List<MazeCell> mazeNodes;
 
     protected bool moving = false;
@@ -66,15 +66,16 @@ public abstract class EnemyAI : MonoBehaviour {
     }
 
     protected void findCurrentCell() {
-        currentPositionCell = maze.GetCell(transform.position);
-        /*
+      //  currentPositionCell = maze.GetCell(transform.position);
+        // Tills vidare, gärna hitta korrekt formel för hitta MazeCell givet world pos istället
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, -Vector3.up, out hit)) {
+        int layerMask = 1 << 11;
+        if (Physics.Raycast(transform.position, -Vector3.up, out hit, 5.0f, layerMask)) {
             currentPositionCell = hit.transform.parent.transform.gameObject.GetComponent<MazeCell>();
         }
         else {
             Debug.LogWarning("Error: Could not find current MazeCell of AI.", transform);
-        }*/
+        }
     }
 
     protected List<MazeCell> pathToPlayer() {
@@ -93,6 +94,7 @@ public abstract class EnemyAI : MonoBehaviour {
     }
 
     protected void checkAggro(float addedRadius = 0f) {
+        print(playerNoise);
         getPlayerInformation();
         if (!isAggroed) {
             float detectionRadius = aggroRange + Mathf.Max(0, playerNoise) + addedRadius;
@@ -120,7 +122,7 @@ public abstract class EnemyAI : MonoBehaviour {
         int layerMask = 1 << 9;
         if (Physics.Raycast(point, dir.normalized, out hit, dir.magnitude, layerMask)) {
             // Funkar inte för grandchildren
-            if (hit.transform.name == "Quad") {
+            if (hit.transform.name.Contains("Quad") || hit.transform.name.Contains("Gate") || hit.transform.name.Contains("Door")) {
                 return true;
             }
         }

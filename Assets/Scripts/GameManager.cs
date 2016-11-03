@@ -58,10 +58,12 @@ public class GameManager : MonoBehaviour {
         audioMeasure = GameObject.Find("AudioMeasure source").GetComponent<AudioMeasure>();
         player.OnGoalTouch += WonGame;
 		player.goal = goal;
+        /*
         chefAmount = startChefAmount;
         gramophoneAmount = startGramophoneAmount;
         waiterAmount = startWaiterAmount;
-		BeginGame();
+        */
+        BeginGame();
 
 		LoadRoomsCleared(); // load totalnumber of rooms cleared;
 		tempRoomsCleared = 0;
@@ -98,6 +100,10 @@ public class GameManager : MonoBehaviour {
 		goal.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
 		player.transform.LookAt(pos);
 
+        chefAmount = startChefAmount + level / 2;
+        gramophoneAmount = (level > 1) ? 1 : 0;
+        waiterAmount = startWaiterAmount + level / 3;
+
         spawnAI(Chef, chefAmount, startingCell);
         spawnAI(Gramophone, gramophoneAmount, startingCell);
         spawnAI(Waiter, waiterAmount, startingCell);
@@ -131,7 +137,7 @@ public class GameManager : MonoBehaviour {
 	private void WonGame() {
 		DestroyLevel();
 		level++;
-        chefAmount++;
+        // chefAmount++;
 		totRoomsCleared++;
 		tempRoomsCleared++;
 		isReborn();
