@@ -14,21 +14,25 @@ public class TrapCrush : MonoBehaviour {
 	bool attacking;
 	bool lethal;
 
+	public delegate void SoundBlastHit(Vector3 hitPos, float pitchVal, float dbVal);
+	public static event SoundBlastHit onBlastHit;
+
 	void Start () {
 		trigger = GetComponentInChildren<BoxCollider> ();
 	}
 
 	IEnumerator trapTriggered() {
-		AudioManager.instance.PlaySound(triggerSound, transform.position);
+		Vector3 groundPos = new Vector3 (transform.position.x, 0, transform.position.z);
+		AudioManager.instance.PlaySound(triggerSound, groundPos);
 		yield return new WaitForSeconds (0.5f);
 		AudioManager.instance.PlaySound(attackSound, transform.position);
 	
 		float percent = 0;
 		float attackSpeed = 1 / attackTime;
 		Vector3 initPos = crusher.transform.position;
-		Vector3 attackPos = initPos + Vector3.down * 2;
+		Vector3 attackPos = initPos + Vector3.down * 16;
 		Vector3 initSize = crusher.transform.localScale;
-		Vector3 attackSize = initSize + Vector3.down * 2;
+		Vector3 attackSize = initSize + Vector3.down * 16;
 
 		while (percent < 1) {
 			percent += attackSpeed * Time.deltaTime;
@@ -42,7 +46,8 @@ public class TrapCrush : MonoBehaviour {
 			yield return null;
 		}
 
-		AudioManager.instance.PlaySound(hitGroundSound, transform.position);
+		AudioManager.instance.PlaySound(hitGroundSound, groundPos);
+		onBlastHit (transform.position, 300f, 0.5f);
 		yield return new WaitForSeconds (1f);
 		lethal = false;
 		AudioManager.instance.PlaySound(attackSound, transform.position);
@@ -61,7 +66,7 @@ public class TrapCrush : MonoBehaviour {
 
 	void OnTriggerEnter(Collider triggerCollider) {
 
-		if (triggerCollider.tag == "Player") {
+		if (triggerCollider.tag == "Player" || triggerCollider.tag == "MaskProjectile") {
 			if (!attacking) {
 				attacking = true;
 				StartCoroutine (trapTriggered ());
