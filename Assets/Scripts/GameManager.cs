@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour {
 		startingCell.room.Show();
 
 		pos = mazeInstance.GetCell (new IntVector2 (mazeInstance.size.x - 1, mazeInstance.size.z - 1)).transform.position;
-		goal.transform.position = new Vector3(pos.x, pos.y+0.5f, pos.z);
+		goal.transform.position = new Vector3(pos.x, pos.y+1.6f, pos.z);
 		player.transform.LookAt(pos);
 
         chefAmount = startChefAmount + level / 2;
