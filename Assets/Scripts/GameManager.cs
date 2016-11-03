@@ -46,13 +46,14 @@ public class GameManager : MonoBehaviour {
 	private void Awake () {
 		mazeInstance = FindObjectOfType<Maze> ();
 		Instantiate(playerPrefab);
+		goal = Instantiate (goalPrefab);
 	}
 
 	private void Start () {
 		level = startingLevel;
 		startingCoordinates = new IntVector2(0, 0);
         bots = new List<GameObject>();
-		goal = Instantiate (goalPrefab);
+
 
 		player = FindObjectOfType<FirstPersonController> ();
         audioMeasure = GameObject.Find("AudioMeasure source").GetComponent<AudioMeasure>();
