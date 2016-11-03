@@ -161,7 +161,7 @@ public class WiiMoteController : MonoBehaviour {
 
 			GameObject pointer = Instantiate(pointerPrefab);
 
-			pointer.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(i*0.1f%1, 0.7f, 1);
+			pointer.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(i*0.15f%1, 0.7f, 1);
 			pointers.Add(pointer);
 			++i;
 		}
