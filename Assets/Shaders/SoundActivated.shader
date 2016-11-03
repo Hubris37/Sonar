@@ -53,7 +53,7 @@
 				for (int j = 0; j < _NumCircles; ++j) {
 					float dist = distance(_Center[j], i.worldPos); // Distance from wave center to current fragment
 					
-					finalColor.a += (dist <= _Radius[j]) ? (_MaxRadius[j]/_Radius[j])/30 : 0;
+					finalColor.a += (dist <= _Radius[j]) ? (_MaxRadius[j]/_Radius[j])/15 : 0;
 				}
 				
 				return finalColor;
