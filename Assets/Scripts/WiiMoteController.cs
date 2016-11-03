@@ -16,10 +16,11 @@ public class WiiMoteController : MonoBehaviour {
 
 	// public bool blink = false;
 	public float basePitch = 200;
-	public float audioLevel = 0.5f;
+	public float audioLevel = 0.01f;
 	public Camera cam;
 	public GameObject facePrefab;
 	public GameObject projectilePrefab;
+	public GameObject pointerPrefab;
 
 	protected FirstPersonController player;
 
@@ -29,6 +30,7 @@ public class WiiMoteController : MonoBehaviour {
 	private List<GameObject> faces = new List<GameObject>();
 	private List<Animator> animators = new List<Animator>();
 	private List<float> pitches = new List<float>();
+	private List<GameObject> pointers = new List<GameObject>();
 	private Vector3 screenPoint;
 	private GameObject[] projectiles = new GameObject[100];
 	private Rigidbody[] projectilesRB = new Rigidbody[100];
@@ -69,22 +71,32 @@ public class WiiMoteController : MonoBehaviour {
 			do {
 				ret = remote.ReadWiimoteData();
 			} while (ret > 0); // ReadWiimoteData() returns 0 when nothing is left to read.  So by doing this we continue to
-									// update the Wiimote until it is "up to date."
-
-			faces[i].transform.LookAt(player.transform.position);
+								// update the Wiimote until it is "up to date."
 
 			screenPoint = cam.WorldToScreenPoint(faces[i].transform.position);
 
 			float[] pointer = remote.Ir.GetPointingPosition();
+			// Move mask pointer
 			if(pointer[0] > 0 && pointer[1] > 0) {
-				Vector3 curScreenPoint = new Vector3(pointer[0]*Screen.width, pointer[1]*Screen.height, screenPoint.z);
-				Vector3 curPosition = cam.ScreenToWorldPoint(curScreenPoint);
-				faces[i].transform.position = new Vector3(curPosition.x, 4f, curPosition.z);
+				// Change pointer position
+				Vector3 pointScreenPoint = new Vector3(pointer[0]*Screen.width, pointer[1]*Screen.height, screenPoint.z);
+				Vector3 pointPosition = cam.ScreenToWorldPoint(pointScreenPoint);
+				pointers[i].transform.position = new Vector3(pointPosition.x, 3, pointPosition.z);
 
-				// float distance = transform.position.y - cam.transform.position.y;
-				// Vector3 pos = new Vector3(pointer[0]*Screen.width, distance, pointer[1]*Screen.height);
-				// transform.position = cam.ScreenToWorldPoint(pos);
+				// Change face position
+				Vector3 currentPos = faces[i].transform.position;
+				Vector3 targetPos = pointers[i].transform.position;
+				faces[i].transform.position = Vector3.MoveTowards(currentPos, targetPos, Vector3.Distance(currentPos, targetPos)*Time.deltaTime);
+				faces[i].transform.position = new Vector3(faces[i].transform.position.x, 12, faces[i].transform.position.z);
 
+				// Fix lookat
+				pointers[i].transform.forward = cam.transform.forward; // Billboard pointer
+				RaycastHit hit;
+				if (Physics.Raycast(pointers[i].transform.position, pointers[i].transform.forward, out hit, 20)) {
+					faces[i].transform.LookAt(hit.point);
+				}
+
+				// Shoot projectiles and make sounds
 				if(remote.Button.a || remote.Button.b) {
 					animators[i].SetBool("IsOpen", true);
 
@@ -146,6 +158,11 @@ public class WiiMoteController : MonoBehaviour {
 			animators.Add(face.GetComponent<Animator>());
 			pitches.Add(basePitch + i*500);
 			prevSoundTimes.Add(0);
+
+			GameObject pointer = Instantiate(pointerPrefab);
+
+			pointer.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(i*50, 0.7f, 1);
+			pointers.Add(pointer);
 			++i;
 		}
 	}
