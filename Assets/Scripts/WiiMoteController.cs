@@ -81,13 +81,13 @@ public class WiiMoteController : MonoBehaviour {
 				// Change pointer position
 				Vector3 pointScreenPoint = new Vector3(pointer[0]*Screen.width, pointer[1]*Screen.height, screenPoint.z);
 				Vector3 pointPosition = cam.ScreenToWorldPoint(pointScreenPoint);
-				pointers[i].transform.position = new Vector3(pointPosition.x, 3, pointPosition.z);
+				pointers[i].transform.position = new Vector3(pointPosition.x, 8.5f, pointPosition.z);
 
 				// Change face position
 				Vector3 currentPos = faces[i].transform.position;
 				Vector3 targetPos = pointers[i].transform.position;
 				faces[i].transform.position = Vector3.MoveTowards(currentPos, targetPos, Vector3.Distance(currentPos, targetPos)*Time.deltaTime);
-				faces[i].transform.position = new Vector3(faces[i].transform.position.x, 12, faces[i].transform.position.z);
+				faces[i].transform.position = new Vector3(faces[i].transform.position.x, 9, faces[i].transform.position.z);
 
 				// Fix lookat
 				pointers[i].transform.forward = cam.transform.forward; // Billboard pointer
@@ -161,7 +161,7 @@ public class WiiMoteController : MonoBehaviour {
 
 			GameObject pointer = Instantiate(pointerPrefab);
 
-			pointer.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(i*50, 0.7f, 1);
+			pointer.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(i*0.15f%1, 0.7f, 1);
 			pointers.Add(pointer);
 			++i;
 		}
