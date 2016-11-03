@@ -94,7 +94,6 @@ public abstract class EnemyAI : MonoBehaviour {
     }
 
     protected void checkAggro(float addedRadius = 0f) {
-        print(playerNoise);
         getPlayerInformation();
         if (!isAggroed) {
             float detectionRadius = aggroRange + Mathf.Max(0, playerNoise) + addedRadius;
