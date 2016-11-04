@@ -170,7 +170,7 @@
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val * color * bump;
 					finalColor.rgb += (1 - _Radius[j]/_MaxRadius[j]) * val * color * bump2; // Add color from the bump map not depending on circle center
 
-					float curAlpha = 0.1 + _MaxRadius[j]/60 * (1 - _Radius[j]/_MaxRadius[j]) * val;
+					float curAlpha = 0.1 + _MaxRadius[j]/45 * (1 - _Radius[j]/_MaxRadius[j]) * val;
 					bestAlpha = max(bestAlpha,curAlpha);
 				}
 
