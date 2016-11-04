@@ -82,6 +82,8 @@ public class WiiMoteController : MonoBehaviour {
 			screenPoint = cam.WorldToScreenPoint(faces[i].transform.position);
 
 			float[] pointer = remote.Ir.GetPointingPosition();
+
+			pointers[i].transform.forward = cam.transform.forward; // Billboard pointer
 			// Move mask pointer
 			if(pointer[0] > 0 && pointer[1] > 0) {
 				// Change pointer position
@@ -89,8 +91,6 @@ public class WiiMoteController : MonoBehaviour {
 				Vector3 pointPosition = cam.ScreenToWorldPoint(pointScreenPoint);
 				pointers[i].transform.position = new Vector3(pointPosition.x, 8.5f, pointPosition.z);
 
-				// Fix lookat
-				pointers[i].transform.forward = cam.transform.forward; // Billboard pointer
 				RaycastHit hit;
 				if (Physics.Raycast(pointers[i].transform.position, pointers[i].transform.forward, out hit, 20)) {
 					faces[i].transform.LookAt(hit.point);
@@ -176,9 +176,9 @@ public class WiiMoteController : MonoBehaviour {
 			reloadTimes.Add(baseReloadTime);
 
 			GameObject pointer = Instantiate(pointerPrefab);
-
 			pointer.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(i*0.15f%1, 0.7f, 1);
 			pointers.Add(pointer);
+
 			++i;
 		}
 	}
