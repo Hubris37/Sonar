@@ -129,12 +129,12 @@ public class ChefAI : EnemyAI {
 
     private void makeLandingSound() {
         AudioManager.instance.PlaySound(audioThump, transform.position);
-        blastHit(transform.position, 750, .8f);
+        blastHit(transform.position, 350, .5f);
     }
 
     private void makeSniffingSound() {
         AudioManager.instance.PlaySound(audioSniff, transform.position);
-        blastHit(transform.position, 450, .18f);
+        blastHit(transform.position, 450, .2f);
     }
 
 }

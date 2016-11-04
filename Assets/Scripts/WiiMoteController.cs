@@ -15,7 +15,7 @@ public class WiiMoteController : MonoBehaviour {
 	static bool[][] ledsList = new bool[][] { leds1, leds2, leds3, leds4, leds5, leds6, leds7, leds8 };
 
 	// public bool blink = false;
-	public float basePitch = 200;
+	public float basePitch = 800;
 	public float audioLevel = 0.01f;
 	public Camera cam;
 	public GameObject facePrefab;
