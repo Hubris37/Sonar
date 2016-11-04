@@ -18,10 +18,12 @@ public class TrapCrush : MonoBehaviour {
 	public static event SoundBlastHit onBlastHit;
 
 	void Start () {
+		crusher.SetActive (false);
 		trigger = GetComponentInChildren<BoxCollider> ();
 	}
 
 	IEnumerator trapTriggered() {
+		crusher.SetActive (true);
 		Vector3 groundPos = new Vector3 (transform.position.x, 0, transform.position.z);
 		AudioManager.instance.PlaySound(triggerSound, groundPos);
 		yield return new WaitForSeconds (0.5f);
@@ -62,6 +64,7 @@ public class TrapCrush : MonoBehaviour {
 		}
 
 		attacking = false;
+		crusher.SetActive (false);
 	}
 
 	void OnTriggerEnter(Collider triggerCollider) {

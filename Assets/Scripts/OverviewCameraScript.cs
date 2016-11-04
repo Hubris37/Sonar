@@ -6,13 +6,17 @@ public class OverviewCameraScript : MonoBehaviour {
 	public GameObject shaderCtrlObj;
 	public ShaderController shaderCtrl;
 	public FirstPersonController player;
+	public GameObject goal;
 
 	public bool rotate = true;
-	public float rotationSpeed = 3;
+	float rotationSpeed = 30;
 	public float moveSpeed = 4;
 	[RangeAttribute(1,100)]
 	public float radius = 30;
 	private Vector3 rotationPoint;
+	public float timeUntilColorChange;
+	float timeBetweenColor = 1f;
+	float curCol = 0;
 
 	private const int MAX_CIRCLES = 120; // Maximum circles allowed at once
 	// private Color[] colorsArray = new Color[MAX_CIRCLES];
@@ -21,14 +25,17 @@ public class OverviewCameraScript : MonoBehaviour {
 	
 	void Start() {
 		shaderCtrlObj = GameObject.FindGameObjectWithTag("ShaderController");
+		goal = GameObject.FindGameObjectWithTag("Goal");
 		shaderCtrl = (ShaderController) shaderCtrlObj.GetComponent(typeof(ShaderController));
 
 		m_camera = GetComponent<Camera>();
-		m_camera.backgroundColor = new Color(.266f, .486f, .482f, 1);
+		m_camera.backgroundColor = new Color(.266f, .286f, .282f, 1);
 
 		player = FindObjectOfType<FirstPersonController> ();
 
+
 		rotationPoint = new Vector3(0, 0, 0);
+
 
 		// for(int i = 0; i < colorsArray.Length; i++) {
 		// 	colorsArray[i] = Color.HSVToRGB(.2f, 0.9f, .8f);;
@@ -40,12 +47,34 @@ public class OverviewCameraScript : MonoBehaviour {
 		//transform.position = player.transform.position + new Vector3(0,10f,0);
 	}
 
+	void Update() {
+		if (Time.time > timeUntilColorChange) {
+			curCol = 0.6f + Mathf.Sin(Time.time*0.02f)*0.2f;
+			curCol %= 1;
+			m_camera.backgroundColor = Color.HSVToRGB (curCol, 0.6f, 0.3f);
+			timeUntilColorChange = Time.time+timeBetweenColor;
+		}
+	}
+
+
 	void FixedUpdate() {
 		rotationPoint = player.transform.position;
-		transform.RotateAround(rotationPoint, Vector3.up, rotationSpeed * Time.deltaTime);
+		Vector3 distCheck = (player.transform.position + goal.transform.position) / 2;
+		float dist = (distCheck.magnitude+10)/10;
+		m_camera.orthographicSize = Mathf.Clamp(20/dist,12,30);
+
+		Debug.DrawLine (rotationPoint, player.transform.position);
+
+		//transform.position = /*(transform.position - rotationPoint).normalized * radius +*/ rotationPoint + Vector3.up * 10;
+		//rotationPoint *= Vector3.down * 10f;
+		//transform.RotateAround(rotationPoint, Vector3.up, rotationSpeed * Time.deltaTime);
 		//transform.position = (transform.position - rotationPoint).normalized * radius + rotationPoint;
-		Vector3 desiredPosition = (transform.position - rotationPoint).normalized * radius + rotationPoint;
-        transform.position = Vector3.MoveTowards(transform.position, desiredPosition, Time.deltaTime * moveSpeed);
+
+        //transform.position = Vector3.MoveTowards(transform.position, desiredPosition, Time.deltaTime * moveSpeed);
+		//Vector3 desiredPosition
+		//transform.position = new Vector3(transform.position.x, 5, transform.position.z);
+		transform.Translate(Vector3.right * Time.deltaTime * rotationSpeed);
+		transform.LookAt (rotationPoint);
 	}
 
 	void OnPreRender() {
