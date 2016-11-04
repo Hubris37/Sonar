@@ -39,6 +39,7 @@ public abstract class EnemyAI : MonoBehaviour {
     public abstract void move();
 
     private float colliderCounter = 0;
+    protected float grabCooldown = 1.5f;
 
     // Use this for initialization
     void Start() {
@@ -278,7 +279,9 @@ public abstract class EnemyAI : MonoBehaviour {
     protected void tryGrabPlayer() {
         Vector3 dif = playerPos - transform.position;
         dif.y = 0;
-        if (dif.magnitude <= grabRange && Time.time > 1.0f) {
+        if (grabCooldown > 0) {
+            grabCooldown -= Time.deltaTime;
+        } else if (dif.magnitude <= grabRange) {
             gameManager.LostGame();
         }
     }
