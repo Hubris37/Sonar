@@ -62,9 +62,9 @@ public class OverviewCameraScript : MonoBehaviour {
 
 	void FixedUpdate() {
 		//rotationPoint = player.transform.position;
-		rotationPoint = (player.transform.position + goal.transform.position) / 2;
+		rotationPoint = (player.transform.position*2 + goal.transform.position) / 3;
 		float dist = (rotationPoint.magnitude+10)/10;
-		m_camera.orthographicSize = Mathf.Clamp(20/dist,12,30);
+		m_camera.orthographicSize = Mathf.Clamp(20/dist,12,35);
 
 		Debug.DrawLine (rotationPoint, player.transform.position);
 
