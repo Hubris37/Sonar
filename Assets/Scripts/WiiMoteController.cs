@@ -26,11 +26,17 @@ public class WiiMoteController : MonoBehaviour {
 
 	private int ledCount = 0;
 	private float prevTime = 0;
-	private List<float> prevSoundTimes = new List<float>();
+
+	private List<float> prevShootTimes = new List<float>();
 	private List<GameObject> faces = new List<GameObject>();
 	private List<Animator> animators = new List<Animator>();
 	private List<float> pitches = new List<float>();
 	private List<GameObject> pointers = new List<GameObject>();
+	private List<float> reloadTimes = new List<float>();
+	private List<float> prevSoundTimes = new List<float>();
+	private float soundTime = 0.6f;
+	private float baseReloadTime = 0.08f;
+
 	private Vector3 screenPoint;
 	private GameObject[] projectiles = new GameObject[100];
 	private Rigidbody[] projectilesRB = new Rigidbody[100];
@@ -83,47 +89,55 @@ public class WiiMoteController : MonoBehaviour {
 				Vector3 pointPosition = cam.ScreenToWorldPoint(pointScreenPoint);
 				pointers[i].transform.position = new Vector3(pointPosition.x, 8.5f, pointPosition.z);
 
-				// Change face position
-				Vector3 currentPos = faces[i].transform.position;
-				Vector3 targetPos = pointers[i].transform.position;
-				faces[i].transform.position = Vector3.MoveTowards(currentPos, targetPos, Vector3.Distance(currentPos, targetPos)*Time.deltaTime);
-				faces[i].transform.position = new Vector3(faces[i].transform.position.x, 9, faces[i].transform.position.z);
-
 				// Fix lookat
 				pointers[i].transform.forward = cam.transform.forward; // Billboard pointer
 				RaycastHit hit;
 				if (Physics.Raycast(pointers[i].transform.position, pointers[i].transform.forward, out hit, 20)) {
 					faces[i].transform.LookAt(hit.point);
 				}
+			}
 
-				// Shoot projectiles and make sounds
-				if(remote.Button.a || remote.Button.b) {
-					animators[i].SetBool("IsOpen", true);
+			// Change face position
+			Vector3 currentPos = faces[i].transform.position;
+			Vector3 targetPos = pointers[i].transform.position;
+			faces[i].transform.position = Vector3.MoveTowards(currentPos, targetPos, Vector3.Distance(currentPos, targetPos)*Time.deltaTime);
+			faces[i].transform.position = new Vector3(faces[i].transform.position.x, 9, faces[i].transform.position.z);
 
-					if(Time.time - prevSoundTimes[i] > 0.3f) {
-						prevSoundTimes[i] = Time.time;
+			// Shoot projectiles
+			if(remote.Button.a || remote.Button.b) {
+				animators[i].SetBool("IsOpen", true);
 
-						// Create projectiles
-						GameObject p = projectiles[projectileNum];
-						p.transform.position = faces[i].transform.position;
-						
-						Rigidbody pRB = projectilesRB[projectileNum];
-						pRB.useGravity = true;
-						pRB.velocity = Vector3.zero;
-						pRB.AddForce(faces[i].transform.forward * 256);
+				if(Time.time - prevShootTimes[i] > reloadTimes[i]) {
+					prevShootTimes[i] = Time.time;
+					reloadTimes[i] += 0.05f;
 
-						projectileNum = (projectileNum+1) % projectiles.Length;
+					// Create projectiles
+					GameObject p = projectiles[projectileNum];
+					p.transform.position = faces[i].transform.position;
+					
+					Rigidbody pRB = projectilesRB[projectileNum];
+					pRB.useGravity = true;
+					pRB.velocity = Vector3.zero;
+					pRB.AddForce(faces[i].transform.forward * 350);
 
-						// Create sound
-						onBlastHit(faces[i].transform.position, pitches[i], audioLevel);
-						// RaycastHit hit;
-						// if (Physics.Raycast(faces[i].transform.position, faces[i].transform.forward, out hit, 20)) {
-						// 	onBlastHit(hit.point, pitches[i], audioLevel);
-						// }
-					}
-				} else {
-					animators[i].SetBool("IsOpen", false);
+					projectileNum = (projectileNum+1) % projectiles.Length;
+					
 				}
+
+				// Make sounds
+				if(Time.time - prevSoundTimes[i] > soundTime) {
+					prevSoundTimes[i] = Time.time;
+					// Create sound
+					onBlastHit(faces[i].transform.position, pitches[i], audioLevel);
+					// RaycastHit hit;
+					// if (Physics.Raycast(faces[i].transform.position, faces[i].transform.forward, out hit, 20)) {
+					// 	onBlastHit(hit.point, pitches[i], audioLevel);
+					// }
+				}
+
+			} else {
+				animators[i].SetBool("IsOpen", false);
+				reloadTimes[i] = baseReloadTime;
 			}
 
 			// Changing LEDs in a fun pattern: (*-*-) <-> (-*-*) 
@@ -157,7 +171,9 @@ public class WiiMoteController : MonoBehaviour {
 			faces.Add(face);
 			animators.Add(face.GetComponent<Animator>());
 			pitches.Add(basePitch + i*500);
+			prevShootTimes.Add(0);
 			prevSoundTimes.Add(0);
+			reloadTimes.Add(baseReloadTime);
 
 			GameObject pointer = Instantiate(pointerPrefab);
 
@@ -190,9 +206,8 @@ public class WiiMoteController : MonoBehaviour {
  			projectilesRB[i].angularVelocity = Vector3.zero;
 		}
 	}
-
-	void OnDestroy()
-	{
+	
+	void OnDestroy() {
 		GameManager.isReborn -= ClearProjectiles;
 	}
 }
