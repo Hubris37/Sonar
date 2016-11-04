@@ -15,5 +15,10 @@ public class KillPlayer : MonoBehaviour {
 		if (triggerCollider.tag == "Player") {
 			gameM.LostGame ();
 		}
+
+		if (triggerCollider.tag == "Enemy") {
+			Vector3 x = triggerCollider.gameObject.transform.localScale;
+			triggerCollider.gameObject.transform.localScale = new Vector3(x.x, x.y/2, x.z);
+		}
 	}
 }
