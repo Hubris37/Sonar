@@ -76,7 +76,10 @@ public class FirstPersonController : MonoBehaviour {
 			vH = 0;
 		}
 
-		transform.Rotate (h * Vector3.up);
+		if (!freezeMovement) {
+			transform.Rotate (h * Vector3.up);
+		}
+
 		//transform.Rotate (v * Vector3.right);
 		//myRigidBody.AddRelativeTorque (h * Vector3.back );
 		//myRigidBody.AddRelativeTorque (v * Vector3.right);
