@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour {
     public int startWaiterAmount = 1;
     private int chefAmount, gramophoneAmount, waiterAmount;
 	private bool playerIsDead = false;
+	Vector3 playerStartSize;
 
 	public int startingLevel = 0;
 	int level;
@@ -59,6 +60,7 @@ public class GameManager : MonoBehaviour {
         audioMeasure = GameObject.Find("AudioMeasure source").GetComponent<AudioMeasure>();
         player.OnGoalTouch += WonGame;
 		player.goal = goal;
+		playerStartSize = player.transform.localScale;
         /*
         chefAmount = startChefAmount;
         gramophoneAmount = startGramophoneAmount;
@@ -128,6 +130,7 @@ public class GameManager : MonoBehaviour {
 		isReborn();
 		player.freezeMovement = false;
 		playerIsDead = false;
+		player.transform.localScale = playerStartSize;
 	}
 
     private void DestroyLevel() {
@@ -153,6 +156,7 @@ public class GameManager : MonoBehaviour {
     public void LostGame() {
         AudioManager.instance.PlaySound(loseSound, player.transform.position);
         isDead();
+		player.transform.localScale = new Vector3 (player.transform.localScale.x, player.transform.localScale.y/2, player.transform.localScale.z);
 		playerIsDead = true;
 		player.freezeMovement = true;
         
