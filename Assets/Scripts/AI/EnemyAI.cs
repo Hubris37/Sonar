@@ -86,13 +86,16 @@ public abstract class EnemyAI : MonoBehaviour {
 
     public void getPlayerInformation() {
         playerPos = gameManager.player.transform.position;
-        playerNoise = gameManager.audioMeasure.DbValue;
+		float temp = gameManager.audioMeasure.DbValue + 25;
+		playerNoise = Mathf.Clamp01(temp / 30);
+		//HARDCODED FOR NOW
+		//CONVERTED TO PERCENT OTHERWISE NEGATIVE
     }
 
     protected void checkAggro(float addedRadius = 0f) {
         getPlayerInformation();
         if (!isAggroed) {
-            float detectionRadius = aggroRange + Mathf.Max(0, playerNoise) + addedRadius;
+			float detectionRadius = aggroRange + playerNoise*5 + addedRadius;
             Vector3 dif = (playerPos - transform.position);
             dif.y = 0;
             if (dif.magnitude < detectionRadius && !wallBetweenPoint(playerPos)) {

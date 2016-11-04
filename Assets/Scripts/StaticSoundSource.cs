@@ -30,7 +30,9 @@ public class StaticSoundSource : MonoBehaviour {
         intervalCounter -= Time.deltaTime;
         if (intervalCounter <= 0) {
             intervalCounter = interval;
-            onBlastHit(transform.position, cPitch, cdB);
+			if (cdB > 0.1f) {
+				onBlastHit (transform.position, cPitch, cdB);
+			}
             if (directionalSound) {
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, transform.forward, out hit, soundRange)) {
