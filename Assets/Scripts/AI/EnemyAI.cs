@@ -275,7 +275,7 @@ public abstract class EnemyAI : MonoBehaviour {
     protected void tryGrabPlayer() {
         Vector3 dif = playerPos - transform.position;
         dif.y = 0;
-        if (dif.magnitude <= grabRange) {
+        if (dif.magnitude <= grabRange && Time.time > 1.0f) {
             gameManager.LostGame();
         }
     }

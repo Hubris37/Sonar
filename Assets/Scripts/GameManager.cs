@@ -182,7 +182,6 @@ public class GameManager : MonoBehaviour {
             // If no free rooms left, set all to available
             if (roomsLeft.Count == 0) {
                 roomsLeft = new List<MazeRoom>(spawnableRooms);
-                break;
             }
             // Select a random room
             //int rand = Random.Range(0, roomsLeft.Count - 1);
@@ -211,9 +210,11 @@ public class GameManager : MonoBehaviour {
         const float minSpawnRange = 10;
         Vector3 startingPos = startingCell.transform.position;
         foreach (MazeCell c in room.getCells()) {
-            float distToPlayer = (room == startingCell.room) ? (c.transform.position - startingPos).magnitude : minSpawnRange;
-            if (c.AISpawnable && distToPlayer >= minSpawnRange)
+            //        float distToPlayer = (room == startingCell.room) ? (c.transform.position - startingPos).magnitude : minSpawnRange;
+            float distToPlayer = (c.transform.position - startingPos).magnitude;
+            if (c.AISpawnable && distToPlayer >= minSpawnRange && c != startingCell) {
                 return c;
+            }
         }
         return null;
     }
