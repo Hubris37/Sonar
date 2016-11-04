@@ -9,14 +9,15 @@ public class OverviewCameraScript : MonoBehaviour {
 	public GameObject goal;
 
 	public bool rotate = true;
-	float rotationSpeed = 30;
+	float rotationSpeed = 3;
 	public float moveSpeed = 4;
 	[RangeAttribute(1,100)]
-	public float radius = 30;
+	public float radius = 20;
 	private Vector3 rotationPoint;
 	public float timeUntilColorChange;
 	float timeBetweenColor = 1f;
 	float curCol = 0;
+	Vector3 firstPos;
 
 	private const int MAX_CIRCLES = 120; // Maximum circles allowed at once
 	// private Color[] colorsArray = new Color[MAX_CIRCLES];
@@ -24,6 +25,8 @@ public class OverviewCameraScript : MonoBehaviour {
 	private Camera m_camera;
 	
 	void Start() {
+		firstPos = transform.position;
+		//GameManager.isReborn += ResetPos;
 		shaderCtrlObj = GameObject.FindGameObjectWithTag("ShaderController");
 		goal = GameObject.FindGameObjectWithTag("Goal");
 		shaderCtrl = (ShaderController) shaderCtrlObj.GetComponent(typeof(ShaderController));
@@ -58,23 +61,23 @@ public class OverviewCameraScript : MonoBehaviour {
 
 
 	void FixedUpdate() {
-		rotationPoint = player.transform.position;
-		Vector3 distCheck = (player.transform.position + goal.transform.position) / 2;
-		float dist = (distCheck.magnitude+10)/10;
+		//rotationPoint = player.transform.position;
+		rotationPoint = (player.transform.position + goal.transform.position) / 2;
+		float dist = (rotationPoint.magnitude+10)/10;
 		m_camera.orthographicSize = Mathf.Clamp(20/dist,12,30);
 
 		Debug.DrawLine (rotationPoint, player.transform.position);
 
 		//transform.position = /*(transform.position - rotationPoint).normalized * radius +*/ rotationPoint + Vector3.up * 10;
 		//rotationPoint *= Vector3.down * 10f;
-		//transform.RotateAround(rotationPoint, Vector3.up, rotationSpeed * Time.deltaTime);
-		//transform.position = (transform.position - rotationPoint).normalized * radius + rotationPoint;
+		transform.RotateAround(rotationPoint, Vector3.up, rotationSpeed * Time.deltaTime);
+		transform.position = /*(transform.position - rotationPoint).normalized * radius + */rotationPoint;
 
         //transform.position = Vector3.MoveTowards(transform.position, desiredPosition, Time.deltaTime * moveSpeed);
 		//Vector3 desiredPosition
 		//transform.position = new Vector3(transform.position.x, 5, transform.position.z);
-		transform.Translate(Vector3.right * Time.deltaTime * rotationSpeed);
-		transform.LookAt (rotationPoint);
+		//transform.Translate(Vector3.right * Time.deltaTime * rotationSpeed);
+		//transform.LookAt (rotationPoint);
 	}
 
 	void OnPreRender() {
@@ -101,4 +104,9 @@ public class OverviewCameraScript : MonoBehaviour {
 		}
         // shaderCtrl.r.sharedMaterial.shader = Shader.Find("Custom/Echolocation");
     }
+
+	void ResetPos() {
+		transform.position = firstPos;
+	}
+		
 }

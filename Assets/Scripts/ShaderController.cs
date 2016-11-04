@@ -39,8 +39,9 @@ public class ShaderController : MonoBehaviour {
         EnemyAI.onBlastHit += addCircle;
         StaticSoundSource.onBlastHit += addCircle;
         WiiMoteController.onBlastHit += addCircle;
-        GameManager.isReborn += ClearCircles;
 		TrapCrush.onBlastHit += addCircle;
+
+		GameManager.isReborn += ClearCircles;
 
         Camera.main.depthTextureMode = DepthTextureMode.Depth;
     }
