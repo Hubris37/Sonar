@@ -108,8 +108,8 @@ public class GameManager : MonoBehaviour {
 		goal.transform.position = new Vector3(pos.x, pos.y+1.6f, pos.z);
 		player.transform.LookAt(pos);
 
-        chefAmount = startChefAmount + level / 2;
-        gramophoneAmount = (level > 1) ? 1 : 0;
+        chefAmount = startChefAmount + level;
+        gramophoneAmount = (level > 2) ? 1 : 0;
         waiterAmount = startWaiterAmount + level / 3;
 
         spawnAI(Chef, chefAmount, startingCell);
