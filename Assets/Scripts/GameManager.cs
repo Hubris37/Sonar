@@ -139,21 +139,15 @@ public class GameManager : MonoBehaviour {
     }
 
 	private void WonGame() {
-		Debug.Log("Game Won");
 		DestroyLevel();
-		Debug.Log("Game Won1");
 		level++;
         // chefAmount++;
 		totRoomsCleared++;
 		tempRoomsCleared++;
 		isReborn();
-		Debug.Log("Game Won2");
 		BeginGame();
-		Debug.Log("Game Won3");
 		AudioManager.instance.PlaySound(winSound, player.transform.position);
-		Debug.Log("Game Won4");
 		SaveRoomsCleared();
-		Debug.Log("Game Won5");
 	}
 
     public void LostGame() {
