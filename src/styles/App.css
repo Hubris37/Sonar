@@ -11,6 +11,11 @@ body {
   color: #ddd
 }
 
+/** Purple is too dark to read on black so make links orange*/
+a{
+  color: #f84;
+}
+
 h1 { font-size: 2em; }
 h2 { font-size: 1.5em; }
 h3 { font-size: 1.17em; }
@@ -18,11 +23,13 @@ h4 { font-size: 1.12em; }
 h5 { font-size: .83em; }
 h6 { font-size: .75em; }
 h1, h2, h3, h4, h5, h6{
+  color: #fc4;
   font-family: "Lora", serif;
 }
 
+
 a:visited{
-  color: #f84;
+  color: #949;
 }
 
 main{
@@ -35,8 +42,10 @@ main{
 .index h1{
   margin-top: 2em;
   margin-bottom: .25em;
-  color: #fc4;
   font-weight: normal;
+}
+.index h1 a{
+  color: #fc4;
 }
 
 .section-content{
@@ -52,6 +61,12 @@ main{
 .screenshot{
   max-width: 95%;
 }
+
+.material-icons{
+  font-size: 1em;
+  padding: 0 .25em;
+}
+
 
 @media screen and (min-width: 601px) and (max-width: 800px) {
   main {

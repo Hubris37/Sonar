@@ -47,6 +47,7 @@ let groupMembers = [{
   email: 'rorr@kth.se',
   image:require('../../images/member-photos/rodrigo-roa-rodriguez.jpg'),
   contributions:[
+    'Poster',
     'Web demo',
     'Web page'
   ]
@@ -67,9 +68,12 @@ let groupMembers = [{
 const memberTemplate  = (member) => (
   <div className="member" key={member.name}>
     <p className='name'>{member.name}</p>
-    
+
     <div style={{backgroundImage: 'url(' + member.image + ')'}} className="member-image"/>
-    <p className='email'><i class="material-icons">email: </i>{member.email}</p>
+    <div className='email'>
+      <i className="material-icons">email</i>
+      <a href={'mailto:' + member.email}>{member.email}</a>
+    </div>
     <ul className='contributions'>
       {member.contributions.map(function(contribution){
         return <li>{contribution}</li>;

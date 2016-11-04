@@ -37,10 +37,18 @@
 }
 .member .name{
   font-size: 1.3em;
+  font-family: "Lora", serif;
   color: #fc4;
 }
 .member .email{
   color: #c39c34;
+}
+
+div.email{
+  margin: 1em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .member .contributions {
@@ -51,7 +59,7 @@
 }
 
 .member .contributions li {
-  
+
 }
 
 .member .contributions li:nth-child(even) {
