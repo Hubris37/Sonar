@@ -123,6 +123,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void RestartGame () {
+		Time.timeScale = 1;
         DestroyLevel();
 		level = startingLevel;
         chefAmount = startChefAmount;
@@ -154,13 +155,16 @@ public class GameManager : MonoBehaviour {
 	}
 
     public void LostGame() {
-        AudioManager.instance.PlaySound(loseSound, player.transform.position);
-        isDead();
-		player.transform.localScale = new Vector3 (player.transform.localScale.x, player.transform.localScale.y/2, player.transform.localScale.z);
-		playerIsDead = true;
-		player.freezeMovement = true;
         
-		//RestartGame();
+		if(!playerIsDead) {
+			AudioManager.instance.PlaySound(loseSound, player.transform.position);
+			player.transform.localScale = new Vector3 (player.transform.localScale.x, player.transform.localScale.y/2, player.transform.localScale.z);
+			isDead();
+			playerIsDead = true;
+			player.freezeMovement = true;
+			Time.timeScale = 0.0000001f;
+		}
+
     }
 
     private void spawnAI(GameObject AIPrefab, int count, MazeCell startingCell) {
