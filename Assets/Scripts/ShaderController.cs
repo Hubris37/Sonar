@@ -138,4 +138,14 @@ public class ShaderController : MonoBehaviour {
         Shader.SetGlobalFloatArray("_MaxRadius", maxRadiusArray);
         Shader.SetGlobalFloatArray("_Frequency", frequenciesArray);
 	}
+
+    void OnDestroy()
+    {
+        FireSoundWave.onBlastHit -= addCircle;
+        EnemyAI.onBlastHit -= addCircle;
+        StaticSoundSource.onBlastHit -= addCircle;
+        WiiMoteController.onBlastHit -= addCircle;
+        GameManager.isReborn -= ClearCircles;
+		TrapCrush.onBlastHit -= addCircle;        
+    }
 }

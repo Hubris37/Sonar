@@ -30,4 +30,10 @@ public class GameOverScreen : MonoBehaviour
 		//anim.SetBool("PlayerDead", false);
 		gameOver.SetActive(false);
 	}
+
+	void OnDestroy()
+	{
+		GameManager.isDead -= ShowGameOver;
+		GameManager.isReborn -= HideGameOver;		
+	}
 }

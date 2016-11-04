@@ -190,4 +190,9 @@ public class WiiMoteController : MonoBehaviour {
  			projectilesRB[i].angularVelocity = Vector3.zero;
 		}
 	}
+
+	void OnDestroy()
+	{
+		GameManager.isReborn -= ClearProjectiles;
+	}
 }

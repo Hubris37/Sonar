@@ -33,6 +33,13 @@ public class VRUIController : MonoBehaviour
 
 	private void HideGameOver()
 	{
-		gameOverUI.SetActive(false);
+		if(gameOverUI != null)
+			gameOverUI.SetActive(false);
+	}
+
+	void OnDestroy()
+	{
+		GameManager.isDead -= ShowGameOver;
+		GameManager.isReborn -= HideGameOver;
 	}
 }
