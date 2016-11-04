@@ -10,9 +10,9 @@ public class MazeGatePitchRedo : MazeDoor {
 	float pitchCurVal;
 	float pitchLastVal;
 	float pitchMultiplier;
-	float maxPitch = 1000;
-	float pitchThreshold = 5;
-	int minPitch = 300;
+	float maxPitch = 700;
+	float pitchThreshold = 10;
+	int minPitch = 200;
 
 	public Transform key;
 	public Transform keyGoal;
@@ -30,7 +30,7 @@ public class MazeGatePitchRedo : MazeDoor {
 	void Start () {
 		audioMeasure = GameObject.Find("AudioMeasure source").GetComponent<AudioMeasure>();
 		player = GameObject.FindGameObjectWithTag ("Player");
-		pitchMultiplier = maxPitch / 360;
+		pitchMultiplier = 90 / maxPitch;
 		pitchPoint = Random.Range (minPitch, maxPitch);
 	}
 
@@ -78,17 +78,22 @@ public class MazeGatePitchRedo : MazeDoor {
 	void Update() {
 		if(!unlocked) {
 			if (audioMeasure.PitchValue > 1) {
+				//print (audioMeasure.PitchValue);
 				float dist = Vector3.Distance (player.transform.position, transform.position);
 				if (dist < 3) {
 					pitchCurVal = (audioMeasure.PitchValue + pitchLastVal) * 0.5f;
 					pitchLastVal = pitchCurVal;
 					if (pitchCurVal < pitchPoint + pitchThreshold && pitchCurVal > pitchPoint - pitchThreshold) {
+						pitchPoint = pitchCurVal;
 						StartCoroutine (Unlock ());
 						unlocked = true;
 					}
 				}
 			}
-			key.localEulerAngles = Vector3.forward * (pitchPoint - pitchCurVal) / pitchMultiplier;
+			float deg = (pitchPoint - pitchCurVal) * pitchMultiplier;
+			key.localEulerAngles = Vector3.forward * deg; //(pitchCurVal - pitchPoint) % 360;// * pitchMultiplier;
+			print (deg);
 		}
+
 	}
 }
