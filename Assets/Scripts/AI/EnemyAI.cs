@@ -84,10 +84,6 @@ public abstract class EnemyAI : MonoBehaviour {
             return aStar(maze.GetCell(playerPos), mazeNodes);
     }
 
-    // Update is called once per frame
-    void Update() {
-    }
-
     public void getPlayerInformation() {
         playerPos = gameManager.player.transform.position;
         playerNoise = gameManager.audioMeasure.DbValue;
@@ -120,10 +116,7 @@ public abstract class EnemyAI : MonoBehaviour {
         RaycastHit hit;
         int layerMask = 1 << 9;
         if (Physics.Raycast(point, dir.normalized, out hit, dir.magnitude, layerMask)) {
-            // Funkar inte för grandchildren
-            if (hit.transform.name.Contains("Quad") || hit.transform.name.Contains("Gate") || hit.transform.name.Contains("Door")) {
                 return true;
-            }
         }
         return false;
     }
