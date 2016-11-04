@@ -4,8 +4,8 @@ using System.Collections;
 public class TrapCrush : MonoBehaviour {
 
 	public GameObject crusher;
-	BoxCollider trigger;
-	public float attackTime; 
+	public GameObject trigger;
+	float attackTime = 2f;
 
 	public AudioClip triggerSound;
 	public AudioClip attackSound;
@@ -19,14 +19,17 @@ public class TrapCrush : MonoBehaviour {
 
 	void Start () {
 		crusher.SetActive (false);
-		trigger = GetComponentInChildren<BoxCollider> ();
 	}
 
 	IEnumerator trapTriggered() {
 		crusher.SetActive (true);
+		float triggerY = trigger.transform.position.y;
+		Vector3 triggerSize = trigger.transform.localScale;
+		trigger.transform.position += Vector3.down * 0.05f;
+		trigger.transform.localScale = new Vector3 (trigger.transform.localScale.x, 0.05f, trigger.transform.localScale.z);
 		Vector3 groundPos = new Vector3 (transform.position.x, 0, transform.position.z);
 		AudioManager.instance.PlaySound(triggerSound, groundPos);
-		yield return new WaitForSeconds (0.5f);
+		yield return new WaitForSeconds (0.1f);
 		AudioManager.instance.PlaySound(attackSound, transform.position);
 	
 		float percent = 0;
@@ -52,7 +55,6 @@ public class TrapCrush : MonoBehaviour {
 		onBlastHit (transform.position, 300f, 0.5f);
 		yield return new WaitForSeconds (1f);
 		lethal = false;
-		AudioManager.instance.PlaySound(attackSound, transform.position);
 		percent = 0;
 
 		while (percent < 1) {
@@ -63,6 +65,8 @@ public class TrapCrush : MonoBehaviour {
 			yield return null;
 		}
 
+		trigger.transform.localScale = triggerSize;
+		trigger.transform.position = new Vector3 (trigger.transform.position.x, triggerY, trigger.transform.position.z);
 		attacking = false;
 		crusher.SetActive (false);
 	}
