@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour {
 			SceneManager.LoadScene("TrainingArena");
 		}
 
-		roomsClearedText.text = "Levels Cleared(total): " + totRoomsCleared;
+		roomsClearedText.text = "Levels Cleared During Comic Con: " + totRoomsCleared;
 		tempRoomsClearedText.text = "Levels Cleared: " + tempRoomsCleared;
 	}
 
