@@ -20,4 +20,9 @@ public class ChangeMaterial : MonoBehaviour
 			objects[i].material = echoMaterial;
 		}
 	}
+
+	void OnDestroy()
+	{
+		lightController.LightsAreOut -= SwapMaterial;
+	}
 }

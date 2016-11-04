@@ -82,7 +82,10 @@ public class GameManager : MonoBehaviour {
 		}
 		
 		if(Input.GetKeyDown("l"))
+		{
+			//isReborn();
 			SceneManager.LoadScene("TrainingArena");
+		}
 
 		roomsClearedText.text = "Levels Cleared(total): " + totRoomsCleared;
 		tempRoomsClearedText.text = "Levels Cleared: " + tempRoomsCleared;
@@ -232,7 +235,14 @@ public class GameManager : MonoBehaviour {
 		totRoomsCleared = PlayerPrefs.GetInt("TOTALROOMSCLEARED");
 
 	}
+
+	void OnDestroy()
+	{
+		player.OnGoalTouch -= WonGame;
+	}
 }
+
+
 
 [System.Serializable]
 class GameData
