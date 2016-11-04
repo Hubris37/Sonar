@@ -56,7 +56,7 @@ public class WaiterAI : EnemyAI {
             blastHit(curPos, 600, shoutVolume);
             AudioManager.instance.PlaySound(audioScream, transform.position);
             if (shout != null)
-                shout(curPos, 8);
+                shout(curPos, 100);
         }
     }
     

@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class GameManager : MonoBehaviour {
 
@@ -170,8 +171,10 @@ public class GameManager : MonoBehaviour {
 
     private void spawnAI(GameObject AIPrefab, int count, MazeCell startingCell) {
         List<MazeRoom> spawnableRooms = mazeInstance.getRooms();
-        spawnableRooms.Remove(startingCell.room);
+     //   spawnableRooms.Remove(startingCell.room);
+        spawnableRooms.Sort((x, y) => x.roomsCount().CompareTo(y.roomsCount()));
         List<MazeRoom> roomsLeft = new List<MazeRoom>(spawnableRooms);
+        
         // Create as many AIs as specified
         for (int i = 0; i < count; ++i) {
             MazeCell initCell = null;
@@ -182,17 +185,18 @@ public class GameManager : MonoBehaviour {
                 break;
             }
             // Select a random room
-            int rand = Random.Range(0, roomsLeft.Count - 1);
-            room = roomsLeft[rand];
-            initCell = getSpawnableCell(room);
-            
-			// Remove current room from unoccupied ones
+            //int rand = Random.Range(0, roomsLeft.Count - 1);
+
+            room = roomsLeft[roomsLeft.Count-1];
+
+            initCell = getSpawnableCell(room, startingCell);
+
+            // Remove current room from unoccupied ones
+
+            roomsLeft.Remove(room);
             if (initCell == null) {
-                //i--;
-                roomsLeft.Remove(room);
                 continue;   
             }
-			roomsLeft.Remove(room);
 			Vector3 initPos = initCell.transform.position;
 			GameObject bot = Instantiate(AIPrefab, initPos, Quaternion.identity) as GameObject;
 			bot.transform.parent = initCell.transform;
@@ -202,14 +206,18 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private MazeCell getSpawnableCell(MazeRoom room) {
+    private MazeCell getSpawnableCell(MazeRoom room, MazeCell startingCell) {
         // Select a random cell in the room to initialize at
+        const float minSpawnRange = 10;
+        Vector3 startingPos = startingCell.transform.position;
         foreach (MazeCell c in room.getCells()) {
-            if (c.AISpawnable)
+            float distToPlayer = (room == startingCell.room) ? (c.transform.position - startingPos).magnitude : minSpawnRange;
+            if (c.AISpawnable && distToPlayer >= minSpawnRange)
                 return c;
         }
         return null;
     }
+    
 
 
 	public void SaveRoomsCleared()

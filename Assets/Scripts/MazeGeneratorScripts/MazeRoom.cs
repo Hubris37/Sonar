@@ -18,6 +18,10 @@ public class MazeRoom : ScriptableObject {
         return cells;
     }
 
+    public int roomsCount() {
+        return cells.Count;
+    }
+
 	public void Assimilate (MazeRoom room) {
 		for (int i = 0; i < room.cells.Count; i++) {
 			Add(room.cells[i]);
