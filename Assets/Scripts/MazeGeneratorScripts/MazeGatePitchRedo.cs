@@ -92,7 +92,7 @@ public class MazeGatePitchRedo : MazeDoor {
 			}
 			float deg = (pitchPoint - pitchCurVal) * pitchMultiplier;
 			key.localEulerAngles = Vector3.forward * deg; //(pitchCurVal - pitchPoint) % 360;// * pitchMultiplier;
-			print (deg);
+			//print (deg);
 		}
 
 	}
