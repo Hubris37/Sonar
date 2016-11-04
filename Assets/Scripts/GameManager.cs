@@ -162,7 +162,7 @@ public class GameManager : MonoBehaviour {
 			isDead();
 			playerIsDead = true;
 			player.freezeMovement = true;
-			Time.timeScale = 0.0000001f;
+			Time.timeScale = 0.1f;
 		}
 
     }
