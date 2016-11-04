@@ -37,7 +37,7 @@ public class TrapCrush : MonoBehaviour {
 		Vector3 initPos = crusher.transform.position;
 		Vector3 attackPos = initPos + Vector3.down * 16;
 		Vector3 initSize = crusher.transform.localScale;
-		Vector3 attackSize = initSize + Vector3.down * 16;
+		Vector3 attackSize = initSize + Vector3.up * 16;
 
 		while (percent < 1) {
 			percent += attackSpeed * Time.deltaTime;
