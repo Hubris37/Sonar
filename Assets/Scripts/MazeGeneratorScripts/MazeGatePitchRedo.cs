@@ -12,7 +12,7 @@ public class MazeGatePitchRedo : MazeDoor {
 	float pitchMultiplier;
 	float maxPitch = 700;
 	float pitchThreshold = 10;
-	int minPitch = 200;
+	int minPitch = 300;
 
 	public Transform key;
 	public Transform keyGoal;
