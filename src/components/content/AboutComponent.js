@@ -64,7 +64,6 @@ let groupMembers = [{
   ]
 }]
 
-// TODO: add contributions
 const memberTemplate  = (member) => (
   <div className="member" key={member.name}>
     <p className='name'>{member.name}</p>
