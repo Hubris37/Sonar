@@ -86,6 +86,7 @@ public class GameManager : MonoBehaviour {
 		if(Input.GetKeyDown("l"))
 		{
 			//isReborn();
+			Time.timeScale = 1;
 			SceneManager.LoadScene("TrainingArena");
 		}
 
@@ -127,7 +128,7 @@ public class GameManager : MonoBehaviour {
         DestroyLevel();
 		level = startingLevel;
         chefAmount = startChefAmount;
-		BeginGame ();
+		Invoke("BeginGame", 0.1f);
 		isReborn();
 		player.freezeMovement = false;
 		playerIsDead = false;
@@ -149,7 +150,7 @@ public class GameManager : MonoBehaviour {
 		totRoomsCleared++;
 		tempRoomsCleared++;
 		isReborn();
-		BeginGame();
+		Invoke("BeginGame", 0.1f);
 		AudioManager.instance.PlaySound(winSound, player.transform.position);
 		SaveRoomsCleared();
 	}
