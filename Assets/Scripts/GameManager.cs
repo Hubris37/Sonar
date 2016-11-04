@@ -121,6 +121,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void RestartGame () {
+		Time.timeScale = 1;
         DestroyLevel();
 		level = startingLevel;
         chefAmount = startChefAmount;
@@ -151,11 +152,13 @@ public class GameManager : MonoBehaviour {
 	}
 
     public void LostGame() {
-        AudioManager.instance.PlaySound(loseSound, player.transform.position);
-        isDead();
-		playerIsDead = true;
-		player.freezeMovement = true;
-        
+		if(!playerIsDead) {
+			AudioManager.instance.PlaySound(loseSound, player.transform.position);
+			isDead();
+			playerIsDead = true;
+			player.freezeMovement = true;
+			Time.timeScale = 0.0000001f;
+		}
 		//RestartGame();
     }
 

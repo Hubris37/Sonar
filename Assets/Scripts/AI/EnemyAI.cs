@@ -283,7 +283,6 @@ public abstract class EnemyAI : MonoBehaviour {
         Vector3 dif = playerPos - transform.position;
         dif.y = 0;
         if (dif.magnitude <= grabRange) {
-            gameManager.player.transform.position += new Vector3(40, 0, 40);
             gameManager.LostGame();
         }
     }
