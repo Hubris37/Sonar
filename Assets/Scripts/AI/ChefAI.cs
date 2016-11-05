@@ -51,7 +51,6 @@ public class ChefAI : EnemyAI {
         findPath();
         move();
         checkAggro();
-        print(grabCooldown);
     }
 
     protected override void onAggro() {
