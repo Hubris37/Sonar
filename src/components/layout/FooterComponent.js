@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-require('styles/sections/Footer.css');
+require('styles/layout/Footer.css');
 
 let repos = [{
     name:'WebVRDemo',

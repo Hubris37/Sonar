@@ -2,8 +2,8 @@ require('normalize.css/normalize.css');
 require('styles/App.css');
 
 import React from 'react';
-import HeaderComponent from './sections/HeaderComponent'
-import FooterComponent from './sections/FooterComponent'
+import HeaderComponent from './layout/HeaderComponent'
+import FooterComponent from './layout/FooterComponent'
 import AboutComponent from './content/AboutComponent'
 import DemoComponent from './content/DemoComponent'
 import WebVRDemoComponent from './content/WebVRDemoComponent'
