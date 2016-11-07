@@ -32,6 +32,12 @@
   flex: 1;
 }
 
+@media screen and (max-width: 600px) {
+  .member {
+    min-width: 80%;
+  }
+}
+
 .member .name, .member .email{
   text-align: center;
 }
