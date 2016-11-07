@@ -31,7 +31,40 @@ const Design = (props) => (
 const Testimonials = (props) => (
   <div className="Testimonials">
     <blockquote>
-    <p>User testimonial be here</p>
+    <p>It&#39;s like being Daredevil... on crack.</p>
+    <p className="name">Marcus, 24</p>
+    </blockquote>
+    <blockquote>
+    <p>It is fun to play, it is scary and it has lots of potential.</p>
+    <p className="name">Linn, 23</p>
+    </blockquote>
+    <blockquote>
+    <p>You were supposed to talk but I forgot.</p>
+    <p className="name">Björn, 25</p>
+    </blockquote>
+    <blockquote>
+    <p>It was exciting and you felt a bit uneasy. At first you talk and look around, but then you realize you can find out were threats are just by listening.</p>
+    <p className="name">David, 26</p>
+    </blockquote>
+    <blockquote>
+    <p>It was fun because it was dark and you could see trough walls.</p>
+    <p className="name">Isabel, 23</p>
+    </blockquote>
+    <blockquote>
+    <p>It was entertaining as a thriller because you were both harmless and vulnerable. Escape was the only option. You quite are literally a chicken.</p>
+    <p className="name">Marcus, 23</p>
+    </blockquote>
+    <blockquote>
+    <p>It was scary because you get so immersed. I WAS THE CHICKEN.</p>
+    <p className="name">Simone, 25</p>
+    </blockquote>
+    <blockquote>
+    <p>Sound is how you see, but also how you get noticed. My strategy? Keep quiet.</p>
+    <p className="name">Emma, 23</p>
+    </blockquote>
+    <blockquote>
+    <p>I could imagine this becoming commercially viable. I would gladly pay a couple bucks for this!</p>
+    <p className="name">Ewoud, 27</p>
     </blockquote>
   </div>
 )

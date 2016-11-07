@@ -5,13 +5,14 @@ import React from 'react';
 import HeaderComponent from './layout/HeaderComponent'
 import FooterComponent from './layout/FooterComponent'
 import AboutComponent from './content/AboutComponent'
-import {Introduction, Technology, Design} from './sections'
+import {Introduction, Technology, Design, Testimonials} from './sections'
 
 
 let components = {
   'Introduction': <Introduction/>,
   'Technology': <Technology/>,
   'Design': <Design/>,
+  'Testimonials': <Testimonials/>,
   'About': <AboutComponent/>
 }
 

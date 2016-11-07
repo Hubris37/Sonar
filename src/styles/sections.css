@@ -1,3 +1,31 @@
 .intro-component {
   /*border: 1px dashed #f00;*/
 }
+
+div.Testimonials{
+  font-style: italic;
+  font-family: "Lora", serif;
+}
+
+/* The names of those providing the testimonials*/
+.Testimonials p{
+  color: #bbb;
+  text-align: right;
+  margin-right: 5%;
+  line-height: 1.2;
+}
+
+.Testimonials blockquote{
+  margin: 3em 10% 3em 5%;
+}
+
+.Testimonials blockquote p{
+  text-align: left;
+}
+
+.Testimonials p.name {
+  color: #ba8f1f;
+  font-style: normal;
+  font-weight: bold;
+  text-align: right;
+}
