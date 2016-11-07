@@ -4,13 +4,23 @@ import React from 'react';
 
 require('styles/layout/Header.css');
 
+
+let logo = require('../../android-chrome-192x192.png')
+let brand = {
+  content: <div id="brand"><img src={logo} id="brand-logo" alt="brand logo"/>
+    <span>SounDark</span>
+  </div>,
+  id: '#'
+}
+
 class HeaderComponent extends React.Component {
 
   render() {
+    let items = [].concat(brand,this.props.items)
     return (
       <div className="header-component">
         <ul>
-          {this.props.items.map(item => <li key={item.id}><a href={item.id}> {item.content}</a></li>)}
+          {items.map(item => <li key={item.id}><a href={item.id}> {item.content}</a></li>)}
         </ul>
       </div>
     );
