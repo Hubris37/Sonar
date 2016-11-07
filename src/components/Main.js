@@ -5,34 +5,17 @@ import React from 'react';
 import HeaderComponent from './layout/HeaderComponent'
 import FooterComponent from './layout/FooterComponent'
 import AboutComponent from './content/AboutComponent'
-import DemoComponent from './content/DemoComponent'
-import WebVRDemoComponent from './content/WebVRDemoComponent'
-import IntroComponent from './content/IntroComponent'
+import {Introduction, Technology, Design} from './sections'
 
-let logo = require('../android-chrome-192x192.png')
-let brand = {
-  content: <div id="brand"><img src={logo} id="brand-logo" alt="brand logo"/>
-    <span>SounDark</span>
-  </div>,
-  id: '#'
-}
-
-let sectionNames = [
-  'Introduction',
-  'WebVR',
-  // 'The project',
-  'Demo',
-  'About'
-]
 
 let components = {
-  'Introduction': <IntroComponent/>,
-  'WebVR': <WebVRDemoComponent/>,
-  'Demo': <DemoComponent/>,
+  'Introduction': <Introduction/>,
+  'Technology': <Technology/>,
+  'Design': <Design/>,
   'About': <AboutComponent/>
 }
 
-let sections = sectionNames.map(section => ({
+let sections = Object.keys(components).map(section => ({
   content: section,
   id: '#' + section
 }))
@@ -46,12 +29,11 @@ const sectionTemplate = section => <div className='section'>
   </div>
 </div>
 
-// {groupMembers.map(member=> <img src={member.image} key={member.name}  alt={member.name} />)}
 class AppComponent extends React.Component {
   render() {
     return (
       <div className="index">
-        <HeaderComponent items={[].concat(brand, sections)}/>
+        <HeaderComponent items={sections}/>
         <main>
         {sections.map(sectionTemplate)}
         </main>

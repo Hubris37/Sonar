@@ -1,10 +1,10 @@
-/* Font-stack: Open Sans for headings and Lora for content */
-@import 'https://fonts.googleapis.com/css?family=Lora|Megrim|Open+Sans';
+/* Font-stack:Ralewayfor headings and Lora for content */
+@import 'https://fonts.googleapis.com/css?family=Lora|Megrim|Raleway';
 
 /* Base Application Styles */
 body {
   background: #222;
-  font-family: "Open Sans", sans-serif;
+  font-family: Raleway, sans-serif;
   /*background-image: url('../images/waves.png');*/
   background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('../images/waves.png');
   background-size: 20vw;
@@ -25,6 +25,10 @@ h6 { font-size: .75em; }
 h1, h2, h3, h4, h5, h6{
   color: #fc4;
   font-family: "Lora", serif;
+}
+
+p{
+  line-height: 1.4em;
 }
 
 
