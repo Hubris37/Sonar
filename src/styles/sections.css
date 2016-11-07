@@ -1,5 +1,5 @@
-.intro-component {
-  /*border: 1px dashed #f00;*/
+.section-content > * {
+  width:90%;
 }
 
 div.Testimonials{
@@ -16,7 +16,7 @@ div.Testimonials{
 }
 
 .Testimonials blockquote{
-  margin: 3em 10% 3em 5%;
+  padding: 3em 10% 3em 5%;
 }
 
 .Testimonials blockquote p{
