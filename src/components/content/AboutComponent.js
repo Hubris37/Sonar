@@ -67,7 +67,6 @@ let groupMembers = [{
 const memberTemplate  = (member) => (
   <div className="member" key={member.name}>
     <p className='name'>{member.name}</p>
-
     <div style={{backgroundImage: 'url(' + member.image + ')'}} className="member-image"/>
     <div className='email'>
       <i className="material-icons">email</i>
@@ -75,7 +74,7 @@ const memberTemplate  = (member) => (
     </div>
     <ul className='contributions'>
       {member.contributions.map(function(contribution){
-        return <li>{contribution}</li>;
+        return <li key={contribution}>{contribution}</li>;
       })}
     </ul>
   </div>

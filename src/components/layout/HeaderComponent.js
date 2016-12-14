@@ -14,11 +14,10 @@ let brand = {
 }
 
 class HeaderComponent extends React.Component {
-
   render() {
     let items = [].concat(brand,this.props.items)
     return (
-      <div className="header-component">
+      <div className={`header-component ${this.props.isSticky ? 'sticky' : ''}`}>
         <ul>
           {items.map(item => <li key={item.id}><a href={item.id}> {item.content}</a></li>)}
         </ul>
