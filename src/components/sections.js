@@ -23,7 +23,7 @@ const Design = (props) => (
       <div className="Design">
       <p>Although SounDark managed to entertain many players, early testing proved that most were not comfortable making sounds in order to interact with the game. This cannot be easily solved as it has little to do with game implementation and more to do with culture and societal norms.</p>
       <p>The way we handled this was by making the doors in the maze into a mini-game that could not be completed without sound. At the same time</p>
-      <h1 id="challenges">Challenges</h1>
+      <h2 id="challenges">Challenges</h2>
       <p>Simulating soundwaves can be a daunting task. Two viable solutions were available a more physically correct mesh simulation or a simple ray-tracing approach. In the end we opted for ray-tracing as it provided good enough results.</p>
       </div>
 )
