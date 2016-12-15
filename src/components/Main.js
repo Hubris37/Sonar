@@ -5,6 +5,7 @@ import React from 'react';
 import HeaderComponent from './layout/HeaderComponent'
 import FooterComponent from './layout/FooterComponent'
 import AboutComponent from './content/AboutComponent'
+import ForskarFredag from './content/ForskarFredagComponent'
 import {Introduction, Technology, Design, Testimonials} from './sections'
 
 let landingImage = <img src={require('../images/landing-image.jpg')} id="landing-image" alt="SounDark landing image"/>
@@ -13,21 +14,23 @@ let components = {
   'Introduction': <Introduction/>,
   'Technology': <Technology/>,
   'Design': <Design/>,
+  'Forskarfredag': <ForskarFredag/>,
   'Testimonials': <Testimonials/>,
   'About': <AboutComponent/>
 }
 
 let sections = Object.keys(components).map(section => ({
-  content: section,
+  name: section,
   id: '#' + section
 }))
 
-const sectionTemplate = section => <div className='section' key={sections.id}>
+
+const sectionTemplate = section => <div className='section' key={section.id}>
   <h1>
-    <a name={section.content}>{section.content}</a>
+    <a name={section.name}>{section.name}</a>
   </h1>
   <div className='section-content'>
-    {components[section.content]}
+    {components[section.name]}
   </div>
 </div>
 

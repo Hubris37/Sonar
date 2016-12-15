@@ -65,6 +65,7 @@
     "normalize.css": "^4.0.0",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
+    "react-image-gallery": "^0.7.4",
     "react-slick": "^0.14.5"
   },
   "homepage": "https://hubris37.github.io/Sonar/"
