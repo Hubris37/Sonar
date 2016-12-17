@@ -1,0 +1,39 @@
+/* Font-stack:Ralewayfor headings and Lora for content */
+@import 'https://fonts.googleapis.com/css?family=Lora|Megrim|Raleway';
+
+/* Base Application Styles */
+body {
+  background: #222;
+  font-family: Raleway, sans-serif;
+  /*background-image: url('../images/waves.png');*/
+  background: linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url('./images/waves.png');
+  background-size: 20vw;
+  color: #ddd;
+  margin: 0;
+}
+
+/** Purple is too dark to read on black so make links orange*/
+a{
+  color: #f84;
+}
+
+h1 { font-size: 2em; }
+h2 { font-size: 1.5em; }
+h3 { font-size: 1.17em; }
+h4 { font-size: 1.12em; }
+h5 { font-size: .83em; }
+h6 { font-size: .75em; }
+h1, h2, h3, h4, h5, h6{
+  color: #fc4;
+  font-family: "Lora", serif;
+}
+
+p{
+  line-height: 1.4em;
+  text-align: justify;
+}
+
+
+a:visited{
+  color: #949;
+}

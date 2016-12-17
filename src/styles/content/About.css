@@ -1,0 +1,81 @@
+.about-component {
+  /*border: 1px dashed #f00;*/
+  min-width:0;
+  text-align: center;
+
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+
+/*.member-image{
+  width: 80%;
+  margin: 0 auto;
+}*/
+
+.member-image{
+  /*width: 80%;*/
+  margin: 0 auto;
+  width:  80%;
+  height: 300px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.member {
+  vertical-align: top;
+  display: inline-block;
+  min-width: 40%;
+  flex: 1;
+}
+
+@media screen and (max-width: 600px) {
+  .member {
+    min-width: 80%;
+  }
+}
+
+.member .name, .member .email{
+  text-align: center;
+}
+.member .name{
+  font-size: 1.3em;
+  font-family: "Lora", serif;
+  color: #fc4;
+}
+.member .email{
+  color: #c39c34;
+}
+
+div.email{
+  margin: 1em 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.member .contributions {
+  display: inline-block;
+  list-style: none;
+  -webkit-padding-start: 0;
+  margin-top: 0;
+}
+
+.member .contributions li {
+
+}
+
+.member .contributions li:nth-child(even) {
+  color: #aaa;
+}
+
+.member .contributions li:nth-child(odd) {
+  color: #ccc;
+}
+
+.member .contributions li:not(:first-child) {
+  margin-top: 8px;
+}
