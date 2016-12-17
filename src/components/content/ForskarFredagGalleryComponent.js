@@ -12,12 +12,9 @@ const imageNames = [
   'StrangerDanger.jpg'
 ]
 //Development path
-// const path = '../../images/ForskarFredag/'
+const path = '../../images/forskar-fredag/'
 
-//Distribution path
-const path = 'https://hubris37.github.io/Sonar/src/images/forskarFredag/'
-
-const imagePaths = imageNames.map(filename =>path+filename)
+const imagePaths = imageNames.map(filename =>require('../../images/forskar-fredag/'+filename))
 
 const images = imagePaths.map( (path, i) => ({
     original: path,
