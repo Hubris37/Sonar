@@ -43,7 +43,7 @@ const Testimonials = (props) => (
     <p className="name">Björn, 25</p>
     </blockquote>
     <blockquote>
-    <p className="quote">It was exciting and you felt a bit uneasy. At first you talk and look around, but then you realize you can find out were threats are just by listening.</p>
+    <p className="quote">It was exciting and you felt a bit uneasy. At first you talk and look around, but then you realize you can find out where threats are just by listening.</p>
     <p className="name">David, 26</p>
     </blockquote>
     <blockquote>
