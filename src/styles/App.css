@@ -25,7 +25,7 @@ main{
 }
 
 img#landing-image {
-    width: 100%;
+    width: 100vw;
     margin-bottom: -5px;
 }
 
@@ -41,7 +41,6 @@ img#landing-image {
 @media screen and (min-width: 601px) and (max-width: 800px) {
   main {
     padding: 5%;
-    margin: 0 20%;
     width: 80%;
   }
 }
@@ -50,6 +49,5 @@ img#landing-image {
   main {
     padding: 5%;
     width: 90%;
-    margin: 0;
   }
 }

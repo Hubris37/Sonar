@@ -6,6 +6,7 @@
   z-index: 100;
   background: rgba(0, 0, 0, 0.8);
   width: 100%;
+  clear: both;
 }
 
 .sticky{
@@ -17,29 +18,20 @@
 .header-component ul{
   padding: 0;
   margin: 0;
-  height: 42px;
   list-style: none;
-  display: -ms-flexbox;
-  display: -webkit-flex;
   display: flex;
-
-  -ms-flex-align: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-
+  flex-wrap: wrap;
   align-items: center;
+  text-align: center;
   justify-content: space-around;
 }
-
 .header-component ul li{
-  display: inline-block;
-  height: 100%;
-  box-sizing: border-box;
+  height: 3em;
+  flex-grow: 1;
+  flew-basis: 10em;  /*Do no let them be thinner than ~15 letters*/
 }
+
 .header-component ul li:not(:first-child){
-  align-self: flex-end;
-  flex: 1;
-  text-align: center;
   border-bottom: 4px solid #333;
 }
 
@@ -60,6 +52,13 @@
 
 .header-component ul li:not(:first-child):hover {
   border-bottom: 4px solid #fc4;
+}
+
+.btn-open {
+    position: relative;
+    top: -14px;
+    left: 25vw;
+    display: none;
 }
 
 #brand{
@@ -83,17 +82,23 @@
   padding: 5px 0;
 }
 
-@media screen and (max-width: 600px) {
-  .header-component ul li:not(:first-child) {
-    display: none;
+
+
+@media screen and (max-width: 800px) {
+  .header-component ul{
+    flex-flow: column;
   }
 
-  .header-component ul li {
+  .header-component ul li{
+    flex-basis:auto;
     width: 100%;
-    text-align: center;
   }
 
-  #brand {
-    width: 100%;
+  ul.is-closed li:not(:first-child){
+    display:none;
+  }
+
+  .btn-open {
+      display: inline;
   }
 }
