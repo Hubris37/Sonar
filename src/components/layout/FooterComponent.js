@@ -5,15 +5,13 @@ import React from 'react';
 require('../../styles/layout/Footer.css');
 
 let repos = [{
-    name:'WebVRDemo',
-    url:'https://github.com/RodrigoRoaRodriguez/WebVRDemo'
-  },{
-    name:'Demo',
+    name:'Source',
     url:'https://github.com/Hubris37/Sonar'
   },{
-    name:'Webpage',
-    url:'https://github.com/Hubris37/Sonar/tree/gh-pages'
-  }]
+    name:'Webpage Source',
+    url:'https://github.com/Hubris37/Sonar/tree/webpage-source'
+  },
+]
 
 class FooterComponent extends React.Component {
   render() {
