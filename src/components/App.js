@@ -2,18 +2,18 @@ import React from 'react';
 import HeaderComponent from './layout/HeaderComponent'
 import FooterComponent from './layout/FooterComponent'
 import AboutComponent from './content/AboutComponent'
-import ForskarFredag from './content/ForskarFredagGalleryComponent'
+import AllGalleries from './content/Galleries'
 import {Introduction, Technology, Design, Testimonials} from './sections'
 
 require('../styles/App.css');
 
-let landingImage = <img src={require('../images/landing-image.jpg')} id="landing-image" alt="SounDark landing image"/>
+let landingImage = <img src={require('../images/landing-image.jpg')} id="landing-image" alt="SounDark landing"/>
 
 let components = {
   'Introduction': <Introduction/>,
   'Technology': <Technology/>,
   'Design': <Design/>,
-  'Forskarfredag': <ForskarFredag/>,
+  'Images': <AllGalleries/>,
   'Testimonials': <Testimonials/>,
   'About': <AboutComponent/>
 }
@@ -63,7 +63,7 @@ class AppComponent extends React.Component {
       rel="stylesheet"/>
         {landingImage}
         <HeaderComponent
-          isSticky = {this.state.isHeaderSticky}
+          isSticky={this.state.isHeaderSticky}
           items={sections}/>
         <main>
         {sections.map(sectionTemplate)}
