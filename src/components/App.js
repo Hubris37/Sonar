@@ -2,7 +2,8 @@ import React from 'react';
 import HeaderComponent from './layout/HeaderComponent'
 import FooterComponent from './layout/FooterComponent'
 import AboutComponent from './content/AboutComponent'
-import AllGalleries from './content/Galleries'
+import AllGalleries from './content/GalleriesComponent'
+import {Trailer} from './content/videos'
 import {Introduction, Technology, Design, Testimonials} from './sections'
 
 require('../styles/App.css');
@@ -10,6 +11,7 @@ require('../styles/App.css');
 let landingImage = <img src={require('../images/landing-image.jpg')} id="landing-image" alt="SounDark landing"/>
 
 let components = {
+  'Trailer':<Trailer/>,
   'Introduction': <Introduction/>,
   'Technology': <Technology/>,
   'Design': <Design/>,
